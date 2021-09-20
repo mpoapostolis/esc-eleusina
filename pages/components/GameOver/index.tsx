@@ -2,7 +2,7 @@ import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 import clsx from "clsx";
 
-export default function Menu(props: React.HTMLProps<HTMLElement>) {
+export default function GameOver(props: React.HTMLProps<HTMLElement>) {
   const store = useStore();
 
   let start = loadSound("/sounds/start.ogg");
@@ -11,7 +11,7 @@ export default function Menu(props: React.HTMLProps<HTMLElement>) {
     <div
       style={{ background: "#0008" }}
       className={clsx("h-screen absolute z-50 w-screen", {
-        hidden: store.modal !== "menu",
+        hidden: store.modal !== "gameOver",
       })}
     >
       <div className="w-full h-28">
@@ -22,25 +22,10 @@ export default function Menu(props: React.HTMLProps<HTMLElement>) {
 
       <div className="w-full my-auto h-3/5 rounded-3xl p-5 gap-x-4  md:max-w-sm mx-auto grid grid-cols-1 place-items-center">
         <div className="w-full h-full justify-end flex-col flex">
-          <h1 className="text-white text-2xl font-black">Goal</h1>
-
-          <h5 className="mt-4 text-base text-gray-300">
-            -Hit & break the boxes
-            <br />
-            -Find the key
-            <br />
-            -Open the door
-            <br />
-            <br />
-          </h5>
-
-          <h1 className="text-white text-2xl font-black">Tips</h1>
-          <h5 className="mt-4 mb-10 text-base text-gray-300">
-            -Press &quot;esc&quot; to open menu
-            <br />
-            -Press &quot;i&quot; to open inventory
-          </h5>
-
+          <h1 className="text-white text-6xl font-black">Game over</h1>
+          <h5 className="mt-4 text-base text-gray-300"></h5>
+          <br />
+          <br />
           <a
             onClick={() => {
               store.setOpenModal(undefined);
@@ -59,13 +44,11 @@ export default function Menu(props: React.HTMLProps<HTMLElement>) {
             <div className="flex items-center w-64 gap-x-2">
               <img
                 className="w-10 mr-10"
-                src="https://s2.svgbox.net/materialui.svg?ic=games&color=fffc"
+                src="https://s2.svgbox.net/materialui.svg?ic=refresh&color=fffc"
                 width="32"
                 height="32"
               />
-              <span className="">
-                {store.stage === 0 ? `Start Game` : "Resume"}
-              </span>
+              <span className="">Play again</span>
             </div>
           </a>
         </div>

@@ -1,21 +1,30 @@
 import { useCountdown } from "rooks";
 import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
+import { useTimer } from "use-timer";
+import { useEffect } from "react";
 
-const endTime = new Date(Date.now() + 1000 * 60);
 export default function Ui() {
-  let dap = loadSound("/sounds/dap.ogg");
-
+  const dap = loadSound("/sounds/dap.ogg");
   const store = useStore();
-  const count = useCountdown(endTime, {
-    interval: 1000,
-    onDown: () => console.log("onDown"),
-    onEnd: () => console.log("onEnd"),
+
+  const { time, start, pause, reset, status } = useTimer({
+    initialTime: 60,
+    timerType: "DECREMENTAL",
+    onTimeUpdate: (t) => store.setTimer(t),
+    step: 1,
+    endTime: 0,
+    onTimeOver: () => {
+      store.setOpenModal("gameOver");
+    },
   });
+
+  useEffect(start, []);
+
   return (
     <div className="fixed flex flex-col justify-between  pointer-events-none z-50 h-screen w-screen">
       <div className="stroke text-white drop-shadow-2xl text-5xl p-3">
-        <div className="">Time: {count}</div>
+        <div className="">Time: {time}</div>
       </div>
 
       <div className="flex p-3 justify-end">
@@ -28,8 +37,9 @@ export default function Ui() {
         </button>
         <button
           onClick={() => {
-            dap.play();
-            store.setOpenMenu(true);
+            if (dap.play) dap.play();
+            store.setOpenModal("menu");
+            pause();
           }}
           className="border-4 mx-2 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
         >
