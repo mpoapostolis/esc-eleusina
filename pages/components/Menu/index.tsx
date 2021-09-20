@@ -1,7 +1,9 @@
-import { Store, useStore } from "../../../store";
+import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
+import clsx from "clsx";
+import { useEffect } from "react";
 
-export default function Intro(props: React.HTMLProps<HTMLElement>) {
+export default function Menu(props: React.HTMLProps<HTMLElement>) {
   const store = useStore();
 
   let start = loadSound("/sounds/start.ogg");
@@ -9,29 +11,44 @@ export default function Intro(props: React.HTMLProps<HTMLElement>) {
   return (
     <div
       style={{ background: "#0008" }}
-      className="h-screen absolute z-50 w-screen"
+      className={clsx("h-screen absolute z-50 w-screen", {
+        hidden: !store.menu,
+      })}
     >
-      <div className="w-full h-32">
+      <div className="w-full h-28">
         <h1 className="m-3 text-white text-5xl font-black">Stage 1</h1>
         <h1 className="m-3 text-white text font-black">Break the boxes</h1>
       </div>
+      <hr className="opacity-50" />
 
       <div className="w-full my-auto h-3/5 rounded-3xl p-5 gap-x-4  md:max-w-sm mx-auto grid grid-cols-1 place-items-center">
-        <div className="w-full h-full justify-center flex-col flex">
-          <h1 className="text-white text-3xl font-black">Goal:</h1>
+        <div className="w-full h-full justify-end flex-col flex">
+          <h1 className="text-white text-2xl font-black">Goal</h1>
 
-          <h5 className="mt-4 mb-10 text-base text-gray-300">
+          <h5 className="mt-4 text-base text-gray-300">
             -Hit & break the boxes
             <br />
             -Find the key
             <br />
             -Open the door
+            <br />
+            <br />
+          </h5>
+
+          <h1 className="text-white text-2xl font-black">Tips</h1>
+          <h5 className="mt-4 mb-10 text-base text-gray-300">
+            -Press "esc" to open menu
+            <br />
+            -Press "i" to open inventory
           </h5>
 
           <a
             onClick={() => {
-              store.setStage(1);
-              start.play();
+              store.setOpenMenu(false);
+              if (store.stage === 0 && start.play) {
+                store.setStage(1);
+                start.play();
+              }
             }}
             role="button"
             className={`w-full text-shadow  bg-gradient-to-tl  border
@@ -41,12 +58,14 @@ export default function Intro(props: React.HTMLProps<HTMLElement>) {
           >
             <div className="flex items-center w-64 gap-x-2">
               <img
-                className="w-10 mr-4"
+                className="w-10 mr-10"
                 src="https://s2.svgbox.net/materialui.svg?ic=games&color=fffc"
                 width="32"
                 height="32"
               />
-              <span>Start Game</span>
+              <span className="">
+                {store.stage === 0 ? `Start Game` : "Resume"}
+              </span>
             </div>
           </a>
         </div>

@@ -9,13 +9,13 @@ export default function useKeyPress(targetKey: string) {
   // If pressed key is our target key then set to true
   function downHandler({ key }: K) {
     if (key === targetKey) {
-      setKeyPressed(true);
+      setKeyPressed(false);
     }
   }
   // If released key is our target key then set to false
   const upHandler = ({ key }: K) => {
     if (key === targetKey) {
-      setKeyPressed(false);
+      setKeyPressed(true);
     }
   };
   // Add event listeners
