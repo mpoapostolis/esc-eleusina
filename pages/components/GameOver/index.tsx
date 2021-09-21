@@ -2,10 +2,8 @@ import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 import clsx from "clsx";
 
-export default function GameOver(props: React.HTMLProps<HTMLElement>) {
+export default function GameOver() {
   const store = useStore();
-
-  let start = loadSound("/sounds/start.ogg");
 
   return (
     <div
@@ -28,12 +26,9 @@ export default function GameOver(props: React.HTMLProps<HTMLElement>) {
           <br />
           <a
             onClick={() => {
+              store.setStage(1);
+              store.setTimer(60);
               store.setOpenModal(undefined);
-              if (store.stage === 0 && start.play) {
-                store.setStage(1);
-                store.setTimer(60);
-                start.play();
-              }
             }}
             role="button"
             className={`w-full text-shadow  bg-gradient-to-tl  border
@@ -45,6 +40,7 @@ export default function GameOver(props: React.HTMLProps<HTMLElement>) {
               <img
                 className="w-10 mr-10"
                 src="https://s2.svgbox.net/materialui.svg?ic=refresh&color=fffc"
+                alt="game over"
                 width="32"
                 height="32"
               />

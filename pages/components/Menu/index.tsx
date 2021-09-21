@@ -2,7 +2,7 @@ import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 import clsx from "clsx";
 
-export default function Menu(props: React.HTMLProps<HTMLElement>) {
+export default function Menu() {
   const store = useStore();
 
   let start = loadSound("/sounds/start.ogg");
@@ -66,6 +66,27 @@ export default function Menu(props: React.HTMLProps<HTMLElement>) {
               <span className="">
                 {store.stage === 0 ? `Start Game` : "Resume"}
               </span>
+            </div>
+          </a>
+          <a
+            onClick={() => {
+              store.setOpenModal(undefined);
+              store.setTimer(60);
+            }}
+            role="button"
+            className={`w-full mt-2 text-shadow  bg-gradient-to-tl  border
+                          text-center flex justify-center items-center h-20 text-yellow-50
+                          rounded-md transform transition text-lg 
+                          hover:underline hover:bg-black duration-150 font-bold shadow-lg`}
+          >
+            <div className="flex items-center w-64 gap-x-2">
+              <img
+                className="w-10 mr-10"
+                src="https://s2.svgbox.net/materialui.svg?ic=refresh&color=fffc"
+                width="32"
+                height="32"
+              />
+              <span className="">Restart</span>
             </div>
           </a>
         </div>

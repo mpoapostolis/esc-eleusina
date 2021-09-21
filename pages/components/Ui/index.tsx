@@ -9,7 +9,7 @@ export default function Ui() {
   const store = useStore();
 
   const { time, start, pause, reset, status } = useTimer({
-    initialTime: 60,
+    initialTime: store.timer,
     timerType: "DECREMENTAL",
     onTimeUpdate: (t) => store.setTimer(t),
     step: 1,
