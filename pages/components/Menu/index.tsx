@@ -25,9 +25,9 @@ export default function Menu() {
           <h1 className="text-white text-2xl font-black">Goal</h1>
 
           <h5 className="mt-4 text-base text-gray-300">
-            -Hit & break the boxes
+            -Hit the box & open the gate
             <br />
-            -Find the key
+            -Find the spinning coin
             <br />
             -Open the door
             <br />
