@@ -8,7 +8,7 @@ export default function GameOver() {
   return (
     <div
       style={{ background: "#0008" }}
-      className={clsx("h-screen absolute z-50 w-screen", {
+      className={clsx("h-full absolute z-50 w-screen", {
         hidden: store.modal !== "gameOver",
       })}
     >

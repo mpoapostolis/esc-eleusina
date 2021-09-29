@@ -1,6 +1,6 @@
 import create from "zustand";
 
-type Modal = "menu" | "gameOver" | undefined;
+type Modal = "menu" | "gameOver" | "inventory" | undefined;
 
 export type Store = {
   timer: number;

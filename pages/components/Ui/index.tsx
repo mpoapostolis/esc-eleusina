@@ -26,9 +26,20 @@ export default function Ui() {
       <div className="stroke text-white drop-shadow-2xl text-5xl p-3">
         <div className="">Time: {time}</div>
       </div>
+      <img
+        src="/map.png"
+        className="fixed -right-20  lg:block hidden w-3/12 "
+      />
 
       <div className="flex p-3 justify-end">
-        <button className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto">
+        <button
+          onClick={() => {
+            if (dap.play) dap.play();
+            store.setOpenModal("inventory");
+            pause();
+          }}
+          className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+        >
           <img
             src="https://s2.svgbox.net/illlustrations.svg?ic=travel-bag&color=000"
             width={48}
