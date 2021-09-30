@@ -44,8 +44,7 @@ export default function Menu() {
           <a
             onClick={() => {
               store.setOpenModal(undefined);
-              if (store.stage === 0 && start.play) {
-                store.setStage(1);
+              if (store.stage === "intro" && start.play) {
                 store.setTimer(60);
                 start.play();
               }
@@ -64,7 +63,7 @@ export default function Menu() {
                 height="32"
               />
               <span className="">
-                {store.stage === 0 ? `Start Game` : "Resume"}
+                {store.stage === "intro" ? `Start Game` : "Resume"}
               </span>
             </div>
           </a>

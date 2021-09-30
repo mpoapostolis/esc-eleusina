@@ -1,59 +1,24 @@
-import { Canvas, MeshProps, useFrame } from "@react-three/fiber";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import type { NextPage } from "next";
 import Menu from "./components/Menu";
 import { useStore } from "../store";
 import Ui from "./components/Ui";
 import GameOver from "./components/GameOver";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
-import { loadSound } from "../utils";
+import { Suspense } from "react";
+import { Html, OrbitControls } from "@react-three/drei";
 import Inventory from "./components/Inventory";
+import * as THREE from "three";
+import Scenes from "./components/Scenes";
 
-function Box(props: any) {
-  const dap = loadSound("/sounds/dap.ogg");
+function Environment() {
+  const store = useStore();
+  const { scene } = useThree();
+  const texture = useLoader(THREE.TextureLoader, `/scenes/${store.stage}.jpg`);
 
-  // This reference will give us direct access to the THREE.Mesh object
-  const ref = useRef<any>();
-  // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => (ref.current.rotation.x += 0.01));
-  // Return the view, these are regular Threejs elements expressed in JSX
-  return (
-    <mesh
-      ref={ref}
-      scale={props.scale ?? 2}
-      onClick={(event) => {
-        if (dap.play) dap.play();
-        setActive(!active);
-        props.openGate();
-      }}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}
-      {...props}
-    >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={"green"} />
-    </mesh>
-  );
-}
-
-function Gate(p: MeshProps & { rotate: number }) {
-  const { scene } = useGLTF("/models/gate/scene.gltf");
-  let s = scene.clone();
-  let r = useRef<any>();
-  useFrame((state, delta) => {
-    r.current.rotation.z += 0.003;
-  });
-  useEffect(() => {
-    r.current.rotation.y = p.rotate;
-  }, [r.current]);
-  return (
-    <mesh {...p} ref={r}>
-      <primitive object={s} />;
-    </mesh>
-  );
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  texture.encoding = THREE.sRGBEncoding;
+  scene.background = texture;
+  return null;
 }
 
 const Home: NextPage = () => {
@@ -63,25 +28,22 @@ const Home: NextPage = () => {
       <Menu />
       <GameOver />
       <Inventory />
-      {store.stage > 0 && !store.modal && <Ui />}
+      {!store.modal && <Ui />}
 
       <div className="canvas">
         <Canvas>
-          <pointLight position={[-2, 2, 1.25]} color="white" />
-          <pointLight position={[-5, -5, -5]} />
+          <ambientLight position={[0, 40, 0]} color="#fff" />
+
           <OrbitControls
-            enableZoom={false}
+            position={[0, 0, 0]}
             makeDefault
-            maxDistance={0.1}
+            maxDistance={0.4}
             enablePan={false}
           />
           <Suspense fallback={<Html>loading..</Html>}>
-            <Environment path="/scenes" preset="apartment" background />
-            <Gate rotate={-20} position={[5, 0, -3.5]} />
-            <Gate rotate={0} position={[0, 0, -5.5]} />
-            <Gate rotate={20} position={[-5, -0, -3.5]} />
+            <Environment />
+            <Scenes />
           </Suspense>
-          <Box args={[10, 10, 10]}></Box>
         </Canvas>
       </div>
     </div>

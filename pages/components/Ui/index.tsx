@@ -1,8 +1,9 @@
 import { useCountdown } from "rooks";
-import { useStore } from "../../../store";
-import { loadSound } from "../../../utils";
-import { useTimer } from "use-timer";
 import { useEffect } from "react";
+import { loadSound } from "../../../utils";
+import { useStore } from "../../../store";
+import { useTimer } from "use-timer";
+import clsx from "clsx";
 
 export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
@@ -26,10 +27,38 @@ export default function Ui() {
       <div className="stroke text-white drop-shadow-2xl text-5xl p-3">
         <div className="">Time: {time}</div>
       </div>
-      <img
-        src="/map.png"
-        className="fixed -right-20  lg:block hidden w-3/12 "
-      />
+      <div
+        className={clsx(
+          { hidden: store.stage === "intro" },
+          "fixed top-5 right-5 grid grid-cols-2 w-60 h-60 "
+        )}
+      >
+        <div
+          className={clsx(
+            { "bg-green-400": store.stage === "archeologikos" },
+            "rounded-3xl"
+          )}
+        />
+        <div
+          className={clsx(
+            { "bg-green-400": store.stage === "elaioyrgeio" },
+            "rounded-3xl"
+          )}
+        />
+        <div
+          className={clsx(
+            { "bg-green-400": store.stage === "karavi" },
+            "rounded-3xl"
+          )}
+        />
+        <div
+          className={clsx(
+            { "bg-green-400": store.stage === "livadi" },
+            "rounded-3xl"
+          )}
+        />
+        <img className="absolute w-full h-full border" src="/map.png" />
+      </div>
 
       <div className="flex p-3 justify-end">
         <button
