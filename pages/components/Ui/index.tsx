@@ -1,4 +1,3 @@
-import { useCountdown } from "rooks";
 import { useEffect } from "react";
 import { loadSound } from "../../../utils";
 import { useStore } from "../../../store";
@@ -9,7 +8,7 @@ export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
   const store = useStore();
 
-  const { time, start, pause, reset, status } = useTimer({
+  const { time, start, pause } = useTimer({
     initialTime: store.timer,
     timerType: "DECREMENTAL",
     onTimeUpdate: (t) => store.setTimer(t),
@@ -65,14 +64,13 @@ export default function Ui() {
           onClick={() => {
             if (dap.play) dap.play();
             store.setOpenModal("inventory");
-            store.setInventoryNotf(0);
             pause();
           }}
           className=" relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
         >
-          {store.inventoryNotf > 0 && (
+          {store.inventoryNotf.length > 0 && (
             <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
-              {store.inventoryNotf}
+              {store.inventoryNotf.length}
             </div>
           )}
 
@@ -105,6 +103,42 @@ export default function Ui() {
           </svg>
         </button>
       </div>
+
+      {store.dialogue.length > 0 && (
+        <div
+          style={{ width: "88vw" }}
+          onClick={() => store.nextDialogue()}
+          className="fixed bottom-0 pointer-events-auto"
+        >
+          <div
+            style={{
+              background: "#000e",
+            }}
+            className="flex border-yellow-400 border-4 rounded items-start w-full p-8"
+          >
+            <div className="flex bg justify-center items-center w-36">
+              <img src="/images/mistis.png " className="w-full" alt="" />
+            </div>
+            <button
+              onClick={() => {
+                store.setDialogue([]);
+                if (dap.play) dap.play();
+              }}
+              className="m-3 text-white  text-5xl absolute right-10 top-0 font-black"
+            >
+              x
+            </button>
+            <div className="text-white rounded break-words text-4xl px-6 py-4 w-full h-full mx-auto ">
+              {store.dialogue[0]}
+            </div>
+            {store.dialogue.length - 1 > 0 && (
+              <button className="m-3 text-white  text-3xl animate-pulse absolute right-10 bottom-0 font-black">
+                Συνέχεια...
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

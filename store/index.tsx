@@ -11,39 +11,60 @@ export type Scene =
 export type Item = {
   name: string;
   src: string;
-};
+  description: string;
+} & Record<string, any>;
 
 export type Store = {
   timer: number;
   modal: Modal;
   inventory: Item[];
-  inventoryNotf: number;
-  invHas: (e: string) => boolean;
+  inventoryNotf: string[];
   stage: Scene;
   audio: string;
+  dialogue: string[];
+  setDialogue: (s: string[]) => void;
+  nextDialogue: () => void;
+  invHas: (e: string) => boolean;
   setIntentory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
-  setInventoryNotf: (n: number) => void;
+  setInventoryNotf: (n: string) => void;
+  removeInventoryNotf: (n: string) => void;
   setAudio: (s: string) => void;
   setTimer: (n: number) => void;
   setStage: (n: Scene) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
-  timer: 60,
+  timer: 360,
   stage: "intro",
   audio: "",
   modal: "menu",
+  inventory: [],
+  inventoryNotf: [],
+  dialogue: [],
+  setDialogue: (d: string[]) => set(() => ({ dialogue: d })),
+  nextDialogue: () => {
+    set((state) => {
+      const [_, ...dialogue] = state.dialogue;
+      return { dialogue };
+    });
+  },
   invHas: (e: string) =>
     get()
       .inventory.map((i) => i.name)
       .includes(e),
 
-  inventory: [],
-  inventoryNotf: 0,
   setIntentory: (i: Item) =>
     set((state) => ({ inventory: [...state.inventory, i] })),
-  setInventoryNotf: (n: number) => set(() => ({ inventoryNotf: n })),
+  setInventoryNotf: (n: string) =>
+    set((state) => {
+      return { inventoryNotf: [...state.inventoryNotf, n] };
+    }),
+  removeInventoryNotf: (n: string) =>
+    set((state) => {
+      return { inventoryNotf: state.inventoryNotf.filter((i) => i !== n) };
+    }),
+
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
   setTimer: (n: number) => set(() => ({ timer: n })),

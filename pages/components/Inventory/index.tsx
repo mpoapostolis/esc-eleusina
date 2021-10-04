@@ -1,32 +1,16 @@
 import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 import clsx from "clsx";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
-function Wrapper(props: any) {
-  // This reference will give us direct access to the THREE.Mesh object
-  const ref = useRef<any>();
-  // Set up state for the hovered and active state
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => {
-    ref.current.rotation.y += 0.02;
-  });
-  // Return the view, these are regular Threejs elements expressed in JSX
-  return (
-    <mesh ref={ref} scale={props.scale ?? 2} {...props}>
-      {props.children}
-    </mesh>
-  );
-}
 export default function Inventory() {
   const store = useStore();
   const dap = loadSound("/sounds/dap.ogg");
-
+  const [selected, setSelect] = useState<number | undefined>();
   return (
     <div
       style={{ background: "#000c" }}
-      className={clsx("h-full absolute z-50 w-screen", {
+      className={clsx("h-full fixed z-50 w-screen min-h-screen", {
         hidden: store.modal !== "inventory",
       })}
     >
@@ -35,6 +19,7 @@ export default function Inventory() {
         <button
           onClick={() => {
             store.setOpenModal(undefined);
+            setSelect(undefined);
             if (dap.play) dap.play();
           }}
           className="m-3 text-white text-5xl font-black"
@@ -42,29 +27,62 @@ export default function Inventory() {
           x
         </button>
       </div>
+
       <hr className="opacity-50" />
 
-      <div className="max-w-md h-4/5 mt-20 rounded-3xl p-5 md:max-w-sm mx-auto place-items-center">
-        <div className="w-full  h-12  overflow rounded-t-2xl"></div>
-        <div className="border-dashed rounded-lg p-3 border-2">
-          <div
-            style={{
-              backgroundImage: `url(/inventory.png)`,
-            }}
-            className="grid  grid-cols-3"
-          >
-            {[...Array(9)].map((_, i) => (
-              <div
-                key={i}
-                className="relative border flex items-center justify-center border-white p-3 w-full h-32 z-50"
-              >
-                {store.inventory[i] && (
-                  <img src={store.inventory[i].src} alt="" />
-                )}
-              </div>
-            ))}
+      <div
+        className={clsx("grid h-full gap-2 transition duration-200", {
+          "grid-cols-2": Number(selected) > -1,
+        })}
+      >
+        <div className="mt-20 rounded-3xl p-5 md:max-w-md mx-auto place-items-center">
+          <div className="w-full  h-12  overflow rounded-t-2xl"></div>
+          <div className="border-dashed w-full rounded-lg p-3 ">
+            <div className="grid  grid-cols-3">
+              {[...Array(9)].map((_, i) => (
+                <div
+                  key={i}
+                  onClick={() => {
+                    if (store.inventoryNotf.length > 0)
+                      store.removeInventoryNotf(store.inventory[i].name);
+                    setSelect(store.inventory[i] ? i : undefined);
+                  }}
+                  className={clsx(
+                    "border flex flex-col items-center justify-center text-white border-white p-3 w-32 h-32 z-50",
+                    {
+                      "bg-green-600": selected === i,
+                    }
+                  )}
+                >
+                  {store.inventory[i] && (
+                    <div className="relative">
+                      <div className="text-xs absolute mx-auto -bottom-3  w-full text-center ">
+                        {store.inventory[i].name}
+                      </div>
+                      <img
+                        className="w-full"
+                        src={store.inventory[i].src}
+                        alt=""
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+
+        {Number(selected) > -1 && (
+          <div className="h-full p-5 text-white">
+            <div className="w-full  flex items-center justify-start">
+              <img className="w-56 h-56" src="/images/stone.png" alt="" />
+            </div>
+            <hr className="opacity-25" />
+            <div className="text-2xl">
+              {store.inventory[Number(selected)]?.description}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

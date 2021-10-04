@@ -9,7 +9,6 @@ import React, {
   ReactChild,
   ReactNode,
   Suspense,
-  useContext,
 } from "react";
 import { Html, OrbitControls } from "@react-three/drei";
 import Inventory from "./components/Inventory";
