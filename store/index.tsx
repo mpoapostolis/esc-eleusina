@@ -8,12 +8,21 @@ export type Scene =
   | "karavi"
   | "livadi";
 
+export type Item = {
+  name: string;
+  src: string;
+};
+
 export type Store = {
   timer: number;
   modal: Modal;
+  inventory: Item[];
+  inventoryNotf: number;
   stage: Scene;
   audio: string;
+  setIntentory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
+  setInventoryNotf: (n: number) => void;
   setAudio: (s: string) => void;
   setTimer: (n: number) => void;
   setStage: (n: Scene) => void;
@@ -24,8 +33,13 @@ export const useStore = create<Store>((set) => ({
   stage: "intro",
   audio: "",
   modal: "menu",
-  setOpenModal: (s: Modal) => set((state) => ({ modal: s })),
-  setAudio: (s: string) => set((state) => ({ audio: s })),
-  setTimer: (n: number) => set((state) => ({ timer: n })),
-  setStage: (n: Scene) => set((state) => ({ stage: n })),
+  inventory: [],
+  inventoryNotf: 0,
+  setIntentory: (i: Item) =>
+    set((state) => ({ inventory: [...state.inventory, i] })),
+  setInventoryNotf: (n: number) => set(() => ({ inventoryNotf: n })),
+  setOpenModal: (s: Modal) => set(() => ({ modal: s })),
+  setAudio: (s: string) => set(() => ({ audio: s })),
+  setTimer: (n: number) => set(() => ({ timer: n })),
+  setStage: (n: Scene) => set(() => ({ stage: n })),
 }));
