@@ -18,6 +18,7 @@ export type Store = {
   modal: Modal;
   inventory: Item[];
   inventoryNotf: number;
+  invHas: (e: string) => boolean;
   stage: Scene;
   audio: string;
   setIntentory: (i: Item) => void;
@@ -28,11 +29,16 @@ export type Store = {
   setStage: (n: Scene) => void;
 };
 
-export const useStore = create<Store>((set) => ({
+export const useStore = create<Store>((set, get) => ({
   timer: 60,
   stage: "intro",
   audio: "",
   modal: "menu",
+  invHas: (e: string) =>
+    get()
+      .inventory.map((i) => i.name)
+      .includes(e),
+
   inventory: [],
   inventoryNotf: 0,
   setIntentory: (i: Item) =>

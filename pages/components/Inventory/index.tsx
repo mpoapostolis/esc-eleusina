@@ -56,17 +56,11 @@ export default function Inventory() {
             {[...Array(9)].map((_, i) => (
               <div
                 key={i}
-                className="relative border  border-white   w-full h-32 z-50"
+                className="relative border flex items-center justify-center border-white p-3 w-full h-32 z-50"
               >
-                <Canvas>
-                  <pointLight position={[0, 0, 2.5]} color="white" />
-                  <mesh>
-                    <Wrapper>
-                      <boxGeometry args={[1, 1, 1]} />
-                      <meshStandardMaterial color={"#0f0"} />
-                    </Wrapper>
-                  </mesh>
-                </Canvas>
+                {store.inventory[i] && (
+                  <img src={store.inventory[i].src} alt="" />
+                )}
               </div>
             ))}
           </div>

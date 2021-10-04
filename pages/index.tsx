@@ -4,7 +4,13 @@ import Menu from "./components/Menu";
 import { useStore } from "../store";
 import Ui from "./components/Ui";
 import GameOver from "./components/GameOver";
-import { Suspense } from "react";
+import React, {
+  FunctionComponent,
+  ReactChild,
+  ReactNode,
+  Suspense,
+  useContext,
+} from "react";
 import { Html, OrbitControls } from "@react-three/drei";
 import Inventory from "./components/Inventory";
 import * as THREE from "three";

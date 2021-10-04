@@ -65,23 +65,31 @@ export default function Ui() {
           onClick={() => {
             if (dap.play) dap.play();
             store.setOpenModal("inventory");
+            store.setInventoryNotf(0);
             pause();
           }}
-          className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          className=" relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
         >
+          {store.inventoryNotf > 0 && (
+            <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
+              {store.inventoryNotf}
+            </div>
+          )}
+
           <img
             src="https://s2.svgbox.net/illlustrations.svg?ic=travel-bag&color=000"
             width={48}
             height={48}
           />
         </button>
+
         <button
           onClick={() => {
             if (dap.play) dap.play();
             store.setOpenModal("menu");
             pause();
           }}
-          className="border-4 mx-2 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          className="border-4 mr-2 ml-5 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
         >
           <svg
             width="48"
