@@ -24,22 +24,67 @@ function Intro() {
       {store.invHas("stone") && store.inventoryNotf.length === 0 && (
         <>
           <Portal
-            onClick={() => store.setStage("archeologikos")}
+            onPointerLeave={() => {
+              store.setDialogue([]);
+            }}
+            onPointerEnter={() => {
+              store.setDialogue([
+                `Η μάνα Γη 
+                γερνάει 
+                όταν χαθεί η Κόρη.`,
+              ]);
+            }}
+            onClick={() => {
+              store.setStage("archeologikos");
+            }}
             src="archeologikos"
             position={[10, 0, 0]}
           />
           <Portal
-            onClick={() => store.setStage("elaioyrgeio")}
+            onPointerLeave={() => {
+              store.setDialogue([]);
+            }}
+            onPointerEnter={() => {
+              store.setDialogue([
+                `Κι άξαφνα
+                είδα ορθωμένα μπρος στα μάτια μου τα δυο κατάμαυρα άλογά του
+                σαν τυφλωμένα απ’ το φως..`,
+              ]);
+            }}
+            onClick={() => {
+              store.setStage("elaioyrgeio");
+            }}
             src="elaioyrgeio"
             position={[-10, 0, 0]}
           />
           <Portal
-            onClick={() => store.setStage("karavi")}
+            onPointerLeave={() => {
+              store.setDialogue([]);
+            }}
+            onPointerEnter={() => {
+              store.setDialogue([
+                `Τα ίδια μαύρα κουρελιασμένα σύννεφα
+                να μπλέχουν στα κατάρτια τους...`,
+              ]);
+            }}
+            onClick={() => {
+              store.setStage("karavi");
+            }}
             src="karavi"
             position={[0, 0, 10]}
           />
           <Portal
-            onClick={() => store.setStage("livadi")}
+            onPointerLeave={() => {
+              store.setDialogue([]);
+            }}
+            onPointerEnter={() => {
+              store.setDialogue([
+                `Όταν έπαιζε µε του Ωκεανού τις κόρες  στον τρυφερό λειµώνα..`,
+              ]);
+            }}
+            onClick={() => {
+              store.setStage("livadi");
+            }}
             src="livadi"
             position={[0, 0, -10]}
           />
