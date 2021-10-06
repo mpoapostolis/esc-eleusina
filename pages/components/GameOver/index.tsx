@@ -27,7 +27,7 @@ export default function GameOver() {
           <a
             onClick={() => {
               store.setStage("intro");
-              store.setTimer(60);
+              store.setTimer(600);
               store.setOpenModal(undefined);
             }}
             role="button"

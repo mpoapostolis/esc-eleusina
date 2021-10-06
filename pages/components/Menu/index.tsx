@@ -45,7 +45,7 @@ export default function Menu() {
             onClick={() => {
               store.setOpenModal(undefined);
               if (store.stage === "intro" && start.play) {
-                store.setTimer(60);
+                store.setTimer(600);
                 start.play();
               }
             }}
@@ -70,7 +70,7 @@ export default function Menu() {
           <a
             onClick={() => {
               store.setOpenModal(undefined);
-              store.setTimer(60);
+              store.setTimer(600);
             }}
             role="button"
             className={`w-full mt-2 text-shadow  bg-gradient-to-tl  border

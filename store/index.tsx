@@ -32,11 +32,12 @@ export type Store = {
   setAudio: (s: string) => void;
   setTimer: (n: number) => void;
   setStage: (n: Scene) => void;
+  removeInvItem: (s: string) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
   timer: 360,
-  stage: "intro",
+  stage: "archeologikos",
   audio: "",
   modal: "menu",
   inventory: [],
@@ -64,7 +65,10 @@ export const useStore = create<Store>((set, get) => ({
     set((state) => {
       return { inventoryNotf: state.inventoryNotf.filter((i) => i !== n) };
     }),
-
+  removeInvItem: (s: string) =>
+    set((state) => ({
+      inventory: state.inventory.filter((item) => item.name !== s),
+    })),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
   setTimer: (n: number) => set(() => ({ timer: n })),

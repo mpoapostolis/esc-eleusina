@@ -1,27 +1,30 @@
-import { useLoader } from "@react-three/fiber";
 import { useStore } from "../../../store";
 import Portal from "../Portal";
-import * as THREE from "three";
 import { useEffect, useState } from "react";
 import { loadSound } from "../../../utils";
+import Img from "../Img";
+
+const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
+και συ τ’ ουρανού κλέος,
+γιατί μ’ αφήσατε; Τί σας έκανε
+να τραβηχτείτε από πάνω μου,
+για να παραδοθώ στου σκοταδιού την αφή;`;
 
 function Intro() {
   const store = useStore();
-  const texture = useLoader(THREE.TextureLoader, "/images/stone.png");
-  const [hoverd, setHovered] = useState(false);
   const dap = loadSound("/sounds/dap.ogg");
-
+  const [openPortals, setOpenPortals] = useState(false);
   useEffect(() => {
-    if (store.timer === 55)
+    if (store.timer === 595 && !openPortals)
       store.setDialogue([
         "Ψάξε στο έδαφος για μία πέτρινη πλάκα",
         "Ανοίξε το inventory, διαβάσε τον Όρκο του Μύστη για να εμφανιστούν οι πύλες",
       ]);
-  }, [store.timer]);
+  }, [store.timer, openPortals]);
 
   return (
     <>
-      {store.invHas("stone") && store.inventoryNotf.length === 0 && (
+      {openPortals && (
         <>
           <Portal
             onPointerLeave={() => {
@@ -35,6 +38,7 @@ function Intro() {
               ]);
             }}
             onClick={() => {
+              store.setDialogue([]);
               store.setStage("archeologikos");
             }}
             src="archeologikos"
@@ -52,6 +56,7 @@ function Intro() {
               ]);
             }}
             onClick={() => {
+              store.setDialogue([]);
               store.setStage("elaioyrgeio");
             }}
             src="elaioyrgeio"
@@ -68,6 +73,7 @@ function Intro() {
               ]);
             }}
             onClick={() => {
+              store.setDialogue([]);
               store.setStage("karavi");
             }}
             src="karavi"
@@ -83,6 +89,7 @@ function Intro() {
               ]);
             }}
             onClick={() => {
+              store.setDialogue([]);
               store.setStage("livadi");
             }}
             src="livadi"
@@ -90,12 +97,11 @@ function Intro() {
           />
         </>
       )}
-      {!store.invHas("stone") && (
-        <mesh
-          onPointerEnter={() => setHovered(true)}
-          onPointerLeave={() => setHovered(false)}
+      {!openPortals && (
+        <Img
+          hideWhen={store.invHas("stone")}
+          src={`/images/stone.png`}
           onClick={() => {
-            if (dap.play) dap.play();
             store.setInventoryNotf("stone");
             store.setIntentory({
               name: "stone",
@@ -105,14 +111,15 @@ function Intro() {
               γιατί μ’ αφήσατε; Τί σας έκανε
               να τραβηχτείτε από πάνω μου,
               για να παραδοθώ στου σκοταδιού την αφή;`,
+              action: () => {
+                setOpenPortals(true);
+                store.setDialogue([OrkosMisti]);
+                store.removeInvItem("stone");
+              },
             });
           }}
           position={[0, -15, -11]}
-          scale={hoverd ? 1.2 : 1}
-        >
-          <planeBufferGeometry attach="geometry" args={[4, 7]} />
-          <meshBasicMaterial attach="material" map={texture} transparent />
-        </mesh>
+        />
       )}
     </>
   );

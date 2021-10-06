@@ -1,31 +1,80 @@
 import { useStore } from "../../../store";
-import Portal from "../Portal";
-
+import Img from "../Img";
 function Archeologikos() {
   const store = useStore();
+
   return (
-    <>
-      <Portal
-        onClick={() => store.setStage("intro")}
-        src="intro"
-        position={[10, 0, 0]}
+    <group>
+      <Img
+        hideWhen={store.invHas("stone")}
+        src={`/images/stone.png`}
+        onClick={() => {
+          store.setInventoryNotf("stone");
+          store.setIntentory({
+            name: "stone",
+            src: "/images/stone.png",
+            description: `Φως που σε λάτρεψα, όπως κάθε θνητός
+              και συ τ’ ουρανού κλέος,
+              γιατί μ’ αφήσατε; Τί σας έκανε
+              να τραβηχτείτε από πάνω μου,
+              για να παραδοθώ στου σκοταδιού την αφή;`,
+          });
+        }}
+        position={[2, -15, -20]}
       />
-      <Portal
-        onClick={() => store.setStage("elaioyrgeio")}
-        src="elaioyrgeio"
-        position={[-10, 0, 0]}
+      <Img
+        hideWhen={store.invHas("alpha")}
+        src={`/images/alpha.png`}
+        onClick={() => {
+          store.setInventoryNotf("alpha");
+          store.setIntentory({
+            name: "alpha",
+            src: "/images/alpha.png",
+            description: `Φως που σε λάτρεψα, όπως κάθε θνητός
+              και συ τ’ ουρανού κλέος,
+              γιατί μ’ αφήσατε; Τί σας έκανε
+              να τραβηχτείτε από πάνω μου,
+              για να παραδοθώ στου σκοταδιού την αφή;`,
+          });
+        }}
+        position={[-10, -15, 100]}
       />
-      <Portal
-        onClick={() => store.setStage("karavi")}
-        src="karavi"
-        position={[0, 0, 10]}
+      <Img
+        hideWhen={store.invHas("emoji")}
+        src={`/images/emoji.png`}
+        onClick={() => {
+          store.setInventoryNotf("emoji");
+          store.setIntentory({
+            name: "emoji",
+            src: "/images/emoji.png",
+            description: `Φως που σε λάτρεψα, όπως κάθε θνητός
+              και συ τ’ ουρανού κλέος,
+              γιατί μ’ αφήσατε; Τί σας έκανε
+              να τραβηχτείτε από πάνω μου,
+              για να παραδοθώ στου σκοταδιού την αφή;`,
+          });
+        }}
+        rotate
+        position={[-100, -15, 10]}
       />
-      <Portal
-        onClick={() => store.setStage("livadi")}
-        src="livadi"
-        position={[0, 0, -10]}
+      <Img
+        hideWhen={store.invHas("istos")}
+        src={`/images/istos.png`}
+        onClick={() => {
+          store.setInventoryNotf("istos");
+          store.setIntentory({
+            name: "istos",
+            src: "/images/istos.png",
+            description: `Φως που σε λάτρεψα, όπως κάθε θνητός
+              και συ τ’ ουρανού κλέος,
+              γιατί μ’ αφήσατε; Τί σας έκανε
+              να τραβηχτείτε από πάνω μου,
+              για να παραδοθώ στου σκοταδιού την αφή;`,
+          });
+        }}
+        position={[-10, -0, 10]}
       />
-    </>
+    </group>
   );
 }
 

@@ -59,7 +59,11 @@ export default function Ui() {
         <img className="absolute w-full h-full border" src="/map.png" />
       </div>
 
-      <div className="flex p-3 justify-end">
+      <div
+        className={clsx("flex p-3 justify-end", {
+          hidden: store.dialogue.length > 0,
+        })}
+      >
         <button
           onClick={() => {
             if (dap.play) dap.play();
@@ -104,19 +108,64 @@ export default function Ui() {
         </button>
       </div>
 
+      <div
+        className={clsx(
+          "absolute -bottom-3 rounded-3xl p-5 md:max-w-md  place-items-center",
+          {
+            hidden: store.dialogue.length > 0,
+          }
+        )}
+      >
+        <div className="border-dashed w-full rounded-lg p-3 ">
+          <div className="grid  pointer-events-auto grid-cols-3">
+            {[...Array(9)].map((_, i) => (
+              <div
+                style={{ background: "#000a" }}
+                key={i}
+                onClick={() => {
+                  const item = store.inventory[i];
+                  console.log(item);
+                  if (item.action) item.action();
+                  if (store.inventoryNotf.length > 0)
+                    store.removeInventoryNotf(item.name);
+                }}
+                className={clsx(
+                  "border flex flex-col w-20 h-20 items-center justify-center  text-white border-white p-3 z-50"
+                )}
+              >
+                {store.inventory[i] && (
+                  <div className="relative">
+                    <div className="text-xs absolute mx-auto -bottom-3  w-full text-center ">
+                      {store.inventory[i].name}
+                    </div>
+                    <img
+                      className="w-full"
+                      src={store.inventory[i].src}
+                      alt=""
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {store.dialogue.length > 0 && (
         <div
-          style={{ width: "88vw" }}
           onClick={() => store.nextDialogue()}
-          className="fixed bottom-0 pointer-events-auto"
+          style={{
+            minHeight: "300px",
+          }}
+          className="fixed bottom-0 pointer-events-auto  h-80 mb-2 w-full"
         >
-          <div
-            style={{
-              background: "#000e",
-            }}
-            className="flex border-yellow-400 border-4 rounded items-start w-full p-8"
-          >
-            <div className="flex bg justify-center items-center w-36">
+          <img
+            src="/images/dialogueBox.png"
+            className="w-full mx-auto absolute z-10 left-0  h-80 top-0"
+            alt=""
+          />
+          <div className="flex rounded items-start w-full p-4 h-full">
+            <div className="flex bg justify-center items-center z-50 w-40 mx-6">
               <img src="/images/mistis.png " className="w-full" alt="" />
             </div>
             <button
@@ -124,15 +173,15 @@ export default function Ui() {
                 store.setDialogue([]);
                 if (dap.play) dap.play();
               }}
-              className="m-3 text-white  text-5xl absolute right-10 top-0 font-black"
+              className="m-3 text-white  z-50 text-5xl absolute right-10 top-10 font-black"
             >
               x
             </button>
-            <div className="text-white rounded break-words text-4xl px-6 py-4 w-full h-full mx-auto ">
+            <div className="text-white z-50 rounded break-words mt-6 text-4xl px-10 py-4 w-full h-full mx-auto ">
               {store.dialogue[0]}
             </div>
             {store.dialogue.length - 1 > 0 && (
-              <button className="m-3 text-white  text-3xl animate-pulse absolute right-10 bottom-0 font-black">
+              <button className="m-3 text-white z-50 text-3xl animate-pulse absolute right-10 bottom-14 font-black">
                 Συνέχεια...
               </button>
             )}

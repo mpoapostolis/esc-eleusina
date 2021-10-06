@@ -45,7 +45,7 @@ export default function Inventory() {
                   onClick={() => {
                     if (store.inventoryNotf.length > 0)
                       store.removeInventoryNotf(store.inventory[i].name);
-                    setSelect(store.inventory[i] ? i : undefined);
+                    if (store.inventory[i]) setSelect(i);
                   }}
                   className={clsx(
                     "border flex flex-col items-center justify-center text-white border-white p-3 w-32 h-32 z-50",
@@ -74,7 +74,7 @@ export default function Inventory() {
 
         {Number(selected) > -1 && (
           <div className="h-full p-5 text-white">
-            <div className="w-full  flex items-center justify-start">
+            <div className="w-full flex items-center justify-start">
               <img className="w-56 h-56" src="/images/stone.png" alt="" />
             </div>
             <hr className="opacity-25" />
