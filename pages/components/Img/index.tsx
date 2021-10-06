@@ -1,10 +1,10 @@
 import { loadSound } from "../../../utils";
 import * as THREE from "three";
 import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Box } from "@react-three/drei";
 
-export default function Img(
+function Img(
   props: MeshProps & {
     hideWhen: boolean;
     src: string;
@@ -40,3 +40,9 @@ export default function Img(
     </mesh>
   );
 }
+Img.getInitialProps = () => {
+  const statusCode = 404;
+  return { statusCode };
+};
+
+export default Img;

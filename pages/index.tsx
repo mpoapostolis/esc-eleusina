@@ -14,6 +14,7 @@ import { Html, OrbitControls } from "@react-three/drei";
 import Inventory from "./components/Inventory";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
+import MiniGameOrder from "./components/MiniGameOrder";
 
 function Environment() {
   const store = useStore();
@@ -34,6 +35,7 @@ const Home: NextPage = () => {
       <GameOver />
       <Inventory />
       {!store.modal && <Ui />}
+      <MiniGameOrder />
 
       <div className="canvas">
         <Canvas>

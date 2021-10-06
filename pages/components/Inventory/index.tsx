@@ -75,9 +75,13 @@ export default function Inventory() {
         {Number(selected) > -1 && (
           <div className="h-full p-5 text-white">
             <div className="w-full flex items-center justify-start">
-              <img className="w-56 h-56" src="/images/stone.png" alt="" />
+              <img
+                className="w-56 h-56"
+                src={store.inventory[Number(selected)]?.src}
+                alt=""
+              />
             </div>
-            <hr className="opacity-25" />
+            <hr className="opacity-25 my-5" />
             <div className="text-2xl">
               {store.inventory[Number(selected)]?.description}
             </div>

@@ -78,7 +78,10 @@ export default function Menu() {
                           rounded-md transform transition text-lg 
                           hover:underline hover:bg-black duration-150 font-bold shadow-lg`}
           >
-            <div className="flex items-center w-64 gap-x-2">
+            <div
+              onClick={store.restart}
+              className="flex items-center w-64 gap-x-2"
+            >
               <img
                 className="w-10 mr-10"
                 src="https://s2.svgbox.net/materialui.svg?ic=refresh&color=fffc"

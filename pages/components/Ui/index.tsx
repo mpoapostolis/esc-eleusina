@@ -124,7 +124,6 @@ export default function Ui() {
                 key={i}
                 onClick={() => {
                   const item = store.inventory[i];
-                  console.log(item);
                   if (item.action) item.action();
                   if (store.inventoryNotf.length > 0)
                     store.removeInventoryNotf(item.name);

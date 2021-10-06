@@ -33,16 +33,27 @@ export type Store = {
   setTimer: (n: number) => void;
   setStage: (n: Scene) => void;
   removeInvItem: (s: string) => void;
+  restart: () => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
   timer: 360,
-  stage: "archeologikos",
+  stage: "intro",
   audio: "",
-  modal: "menu",
   inventory: [],
   inventoryNotf: [],
   dialogue: [],
+  modal: "menu",
+  restart: () =>
+    set(() => ({
+      timer: 360,
+      stage: "intro",
+      audio: "",
+      inventory: [],
+      inventoryNotf: [],
+      dialogue: [],
+      modal: "menu",
+    })),
   setDialogue: (d: string[]) => set(() => ({ dialogue: d })),
   nextDialogue: () => {
     set((state) => {
