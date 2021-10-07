@@ -1,7 +1,6 @@
 import { useStore } from "../../../store";
 import Portal from "../Portal";
 import { useEffect, useState } from "react";
-import { loadSound } from "../../../utils";
 import Img from "../Img";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
@@ -115,7 +114,7 @@ function Intro() {
             });
             setTimeout(() => {
               store.setDialogue([
-                `Ανοίξε το inventory, διαβάσε τον Όρκο του Μύστη για να εμφανιστούν οι πύλες`,
+                `Άνοιξε το inventory και διάβασε τον όρκο του Μύστη για να εμφανιστούν οι πύλες`,
               ]);
             }, 2000);
           }}
