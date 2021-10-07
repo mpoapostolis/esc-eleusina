@@ -60,8 +60,8 @@ export default function Ui() {
       </div>
 
       <div
-        className={clsx("flex p-3 justify-end", {
-          hidden: store.dialogue.length > 0,
+        className={clsx("flex p-3 justify-end opacity-100 transition", {
+          "hidden opacity-0": store.dialogue.length > 0,
         })}
       >
         <button

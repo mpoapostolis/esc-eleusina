@@ -15,11 +15,8 @@ function Intro() {
   const dap = loadSound("/sounds/dap.ogg");
   const [openPortals, setOpenPortals] = useState(false);
   useEffect(() => {
-    if (store.timer === 595 && !openPortals)
-      store.setDialogue([
-        "Ψάξε στο έδαφος για μία πέτρινη πλάκα",
-        "Ανοίξε το inventory, διαβάσε τον Όρκο του Μύστη για να εμφανιστούν οι πύλες",
-      ]);
+    if (store.timer === 588 && !openPortals)
+      store.setDialogue(["Ψάξε στο έδαφος για μία πέτρινη πλάκα"]);
   }, [store.timer, openPortals]);
 
   return (
@@ -117,6 +114,11 @@ function Intro() {
                 store.removeInvItem("stone");
               },
             });
+            setTimeout(() => {
+              store.setDialogue([
+                `Ανοίξε το inventory, διαβάσε τον Όρκο του Μύστη για να εμφανιστούν οι πύλες`,
+              ]);
+            }, 2000);
           }}
           position={[0, -15, -11]}
         />
