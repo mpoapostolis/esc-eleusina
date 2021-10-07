@@ -1,7 +1,8 @@
 import { useStore } from "../../../store";
 import Portal from "../Portal";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Img from "../Img";
+import { Preload } from "@react-three/drei";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
 και συ τ’ ουρανού κλέος,
@@ -23,8 +24,49 @@ function Intro() {
 
   return (
     <>
+      <group>
+        <Img
+          hideWhen={!store.invHas("Όρκο του Μύστη")}
+          forceScale={5}
+          src={`/images/orkos.png`}
+          size1={[13, 7, 0.1]}
+          onClick={() => setOpenPortals(true)}
+          position={[-30, -15, -50]}
+        />
+        <Img
+          hideWhen={
+            openPortals ||
+            store.invHas("stone") ||
+            store.invHas("Όρκο του Μύστη")
+          }
+          src={`/images/stone.png`}
+          onClick={() => {
+            store.setInventoryNotf("stone");
+            store.setIntentory({
+              name: "stone",
+              src: "/images/stone.png",
+              description: OrkosMisti,
+              action: () => {
+                store.setIntentory({
+                  name: "Όρκο του Μύστη",
+                  description: OrkosMisti,
+                  src: "/images/orkos.png",
+                });
+                store.removeInvItem("stone");
+              },
+            });
+            setTimeout(() => {
+              store.setDialogue([
+                `Άνοιξε το inventory και διάβασε τον όρκο του Μύστη για να εμφανιστούν οι πύλες`,
+              ]);
+            }, 2000);
+          }}
+          position={[0, -15, -11]}
+        />
+      </group>
       {openPortals && (
-        <>
+        <Suspense fallback="...">
+          <Preload all />
           <Portal
             onPointerLeave={() => {
               store.setDialogue([]);
@@ -94,44 +136,8 @@ function Intro() {
             src="livadi"
             position={[0, 0, -10]}
           />
-        </>
+        </Suspense>
       )}
-      <Img
-        hideWhen={!store.invHas("Όρκο του Μύστη")}
-        forceScale={5}
-        src={`/images/orkos.png`}
-        size={[12, 10, 0]}
-        onClick={() => setOpenPortals(true)}
-        position={[-35, -15, -70]}
-      />
-      <Img
-        hideWhen={
-          openPortals || store.invHas("stone") || store.invHas("Όρκο του Μύστη")
-        }
-        src={`/images/stone.png`}
-        onClick={() => {
-          store.setInventoryNotf("stone");
-          store.setIntentory({
-            name: "stone",
-            src: "/images/stone.png",
-            description: OrkosMisti,
-            action: () => {
-              store.setIntentory({
-                name: "Όρκο του Μύστη",
-                description: OrkosMisti,
-                src: "/images/orkos.png",
-              });
-              store.removeInvItem("stone");
-            },
-          });
-          setTimeout(() => {
-            store.setDialogue([
-              `Άνοιξε το inventory και διάβασε τον όρκο του Μύστη για να εμφανιστούν οι πύλες`,
-            ]);
-          }, 2000);
-        }}
-        position={[0, -15, -11]}
-      />
     </>
   );
 }

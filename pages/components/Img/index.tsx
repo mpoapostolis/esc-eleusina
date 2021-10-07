@@ -13,7 +13,7 @@ function Img(
     rotate?: boolean;
     offsetScale?: number;
     forceScale?: number;
-    size?: [number, number, number];
+    size1?: [number, number, number];
   }
 ) {
   const dap = loadSound("/sounds/dap.ogg");
@@ -41,7 +41,7 @@ function Img(
       position={props.position}
       scale={hoverd ? scale + offsetScale : scale}
     >
-      <boxBufferGeometry attach="geometry" args={props.args ?? [7, 10, 0]} />
+      <boxBufferGeometry attach="geometry" args={props.size1 ?? [7, 10, 0]} />
       <meshBasicMaterial transparent attach="material" map={texture} />
     </mesh>
   );
