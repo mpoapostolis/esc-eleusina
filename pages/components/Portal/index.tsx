@@ -8,15 +8,18 @@ function Portal(p: { src: Scene } & MeshProps) {
   texture.clone();
   const ref = useRef<any>();
   useFrame((state, delta) => {
-    // ref.current.rotation.x += 0.01;
+    if (ref.current.scale.x < 1) {
+      ref.current.scale.x += 0.02;
+      ref.current.scale.z += 0.02;
+      ref.current.scale.y += 0.02;
+    }
     ref.current.rotation.y += 0.004;
-    // ref.current.rotation.z += 0.01;
   });
 
   return (
     <>
       <ambientLight color="white" />
-      <mesh ref={ref} visible {...p}>
+      <mesh ref={ref} scale={0} visible {...p}>
         <sphereGeometry attach="geometry" args={[1, 32, 32]} />
         <meshStandardMaterial
           attach="material"
