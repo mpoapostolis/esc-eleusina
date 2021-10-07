@@ -60,8 +60,8 @@ export default function Ui() {
       </div>
 
       <div
-        className={clsx("flex p-3 justify-end opacity-100 transition", {
-          "hidden opacity-0": store.dialogue.length > 0,
+        className={clsx("flex p-3 justify-end", {
+          hidden: store.dialogue.length > 0,
         })}
       >
         <button
@@ -150,43 +150,47 @@ export default function Ui() {
         </div>
       </div>
 
-      {store.dialogue.length > 0 && (
-        <div
-          onClick={() => store.nextDialogue()}
-          style={{
-            minHeight: "300px",
-          }}
-          className="fixed bottom-0 pointer-events-auto  h-80 mb-2 w-full"
-        >
-          <img
-            src="/images/dialogueBox.png"
-            className="w-full mx-auto absolute z-10 left-0  h-80 top-0"
-            alt=""
-          />
-          <div className="flex rounded items-start w-full p-4 h-full">
-            <div className="flex bg justify-center items-center z-50 w-40 mx-6">
-              <img src="/images/mistis.png " className="w-full" alt="" />
-            </div>
-            <button
-              onClick={() => {
-                store.setDialogue([]);
-                if (dap.play) dap.play();
-              }}
-              className="m-3 text-white  z-50 text-5xl absolute right-10 top-10 font-black"
-            >
-              x
-            </button>
-            <div className="text-white z-50 rounded break-words mt-6 text-4xl px-10 py-4 w-full h-full mx-auto ">
-              {store.dialogue[0]}
-            </div>
-            {store.dialogue.length - 1 > 0 && (
-              <button className="m-3 text-white z-50 text-3xl animate-pulse absolute right-10 bottom-14 font-black">
-                Συνέχεια...
-              </button>
-            )}
+      <div
+        onClick={() => store.nextDialogue()}
+        style={{
+          minHeight: "300px",
+        }}
+        className={clsx(
+          "fixed bottom-0 pointer-events-auto  h-80 mb-2 duration-500 transition",
+          {
+            "w-full opacity-100": store.dialogue.length > 0,
+            "w-0 opacity-0": store.dialogue.length < 1,
+          }
+        )}
+      >
+        <img
+          src="/images/dialogueBox.png"
+          className="w-full mx-auto absolute z-10 left-0  h-80 top-0"
+          alt=""
+        />
+        <div className="flex rounded items-start w-full p-4 h-full">
+          <div className="flex bg justify-center items-center z-50 w-40 mx-6">
+            <img src="/images/mistis.png " className="w-full" alt="" />
           </div>
+          <button
+            onClick={() => {
+              store.setDialogue([]);
+              if (dap.play) dap.play();
+            }}
+            className="m-3 text-white  z-50 text-5xl absolute right-10 top-10 font-black"
+          >
+            x
+          </button>
+          <div className="text-white z-50 rounded break-words mt-6 text-4xl px-10 py-4 w-full h-full mx-auto ">
+            {store.dialogue[0]}
+          </div>
+          {store.dialogue.length - 1 > 0 && (
+            <button className="m-3 text-white z-50 text-3xl animate-pulse absolute right-10 bottom-14 font-black">
+              Συνέχεια...
+            </button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -7,11 +7,11 @@ function Portal(p: { src: Scene } & MeshProps) {
   const texture = useLoader(THREE.TextureLoader, `/scenes/${p.src}.jpg`);
   texture.clone();
   const ref = useRef<any>();
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (ref.current.scale.x < 1) {
-      ref.current.scale.x += 0.02;
-      ref.current.scale.z += 0.02;
-      ref.current.scale.y += 0.02;
+      ref.current.scale.x += 0.005;
+      ref.current.scale.z += 0.005;
+      ref.current.scale.y += 0.005;
     }
     ref.current.rotation.y += 0.004;
   });

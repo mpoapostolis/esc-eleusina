@@ -12,10 +12,9 @@ const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνη�
 
 function Intro() {
   const store = useStore();
-  const dap = loadSound("/sounds/dap.ogg");
   const [openPortals, setOpenPortals] = useState(false);
   useEffect(() => {
-    if (store.timer === 588 && !openPortals)
+    if (store.timer === 586 && !openPortals)
       store.setDialogue(["Ψάξε στο έδαφος για μία πέτρινη πλάκα"]);
   }, [store.timer, openPortals]);
 
