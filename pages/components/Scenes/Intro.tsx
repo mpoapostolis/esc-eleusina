@@ -17,6 +17,10 @@ function Intro() {
       store.setDialogue(["Ψάξε στο έδαφος για μία πέτρινη πλάκα"]);
   }, [store.timer, openPortals]);
 
+  useEffect(() => {
+    if (store.invHas(`Όρκο του Μύστη`)) setOpenPortals(true);
+  }, []);
+
   return (
     <>
       {openPortals && (
@@ -92,35 +96,42 @@ function Intro() {
           />
         </>
       )}
-      {!openPortals && (
-        <Img
-          hideWhen={store.invHas("stone")}
-          src={`/images/stone.png`}
-          onClick={() => {
-            store.setInventoryNotf("stone");
-            store.setIntentory({
-              name: "stone",
-              src: "/images/stone.png",
-              description: `Φως που σε λάτρεψα, όπως κάθε θνητός
-              και συ τ’ ουρανού κλέος,
-              γιατί μ’ αφήσατε; Τί σας έκανε
-              να τραβηχτείτε από πάνω μου,
-              για να παραδοθώ στου σκοταδιού την αφή;`,
-              action: () => {
-                setOpenPortals(true);
-                store.setDialogue([OrkosMisti]);
-                store.removeInvItem("stone");
-              },
-            });
-            setTimeout(() => {
-              store.setDialogue([
-                `Άνοιξε το inventory και διάβασε τον όρκο του Μύστη για να εμφανιστούν οι πύλες`,
-              ]);
-            }, 2000);
-          }}
-          position={[0, -15, -11]}
-        />
-      )}
+      <Img
+        hideWhen={!store.invHas("Όρκο του Μύστη")}
+        forceScale={5}
+        src={`/images/orkos.png`}
+        size={[12, 10, 0]}
+        onClick={() => setOpenPortals(true)}
+        position={[-35, -15, -70]}
+      />
+      <Img
+        hideWhen={
+          openPortals || store.invHas("stone") || store.invHas("Όρκο του Μύστη")
+        }
+        src={`/images/stone.png`}
+        onClick={() => {
+          store.setInventoryNotf("stone");
+          store.setIntentory({
+            name: "stone",
+            src: "/images/stone.png",
+            description: OrkosMisti,
+            action: () => {
+              store.setIntentory({
+                name: "Όρκο του Μύστη",
+                description: OrkosMisti,
+                src: "/images/orkos.png",
+              });
+              store.removeInvItem("stone");
+            },
+          });
+          setTimeout(() => {
+            store.setDialogue([
+              `Άνοιξε το inventory και διάβασε τον όρκο του Μύστη για να εμφανιστούν οι πύλες`,
+            ]);
+          }, 2000);
+        }}
+        position={[0, -15, -11]}
+      />
     </>
   );
 }

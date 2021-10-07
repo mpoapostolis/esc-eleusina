@@ -42,7 +42,9 @@ const Home: NextPage = () => {
           <ambientLight position={[0, 40, 0]} color="#fff" />
 
           <OrbitControls
+            autoRotate
             position={[0, 0, 0]}
+            autoRotateSpeed={0.3}
             makeDefault
             maxDistance={0.4}
             enablePan={false}

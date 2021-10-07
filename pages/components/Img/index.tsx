@@ -11,7 +11,9 @@ function Img(
     rotY?: number;
     position: [number, number, number];
     rotate?: boolean;
-    scale?: number;
+    offsetScale?: number;
+    forceScale?: number;
+    size?: [number, number, number];
   }
 ) {
   const dap = loadSound("/sounds/dap.ogg");
@@ -23,7 +25,8 @@ function Img(
     if (props.rotate && ref.current) ref.current.rotation.y += 0.05;
     if (props.rotY && ref.current) ref.current.rotation.y = props.rotY;
   });
-
+  const scale = props.forceScale ?? 1;
+  const offsetScale = props.offsetScale ?? 0.2;
   return props.hideWhen ? (
     <Box />
   ) : (
@@ -36,9 +39,9 @@ function Img(
         if (props.onClick) props.onClick(evt);
       }}
       position={props.position}
-      scale={hoverd ? props.scale ?? 1.2 : 1}
+      scale={hoverd ? scale + offsetScale : scale}
     >
-      <boxBufferGeometry attach="geometry" args={[7, 10, 0]} />
+      <boxBufferGeometry attach="geometry" args={props.args ?? [7, 10, 0]} />
       <meshBasicMaterial transparent attach="material" map={texture} />
     </mesh>
   );

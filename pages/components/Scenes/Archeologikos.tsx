@@ -62,14 +62,14 @@ function Archeologikos() {
         src={`/images/keimeno_1.png`}
         onClick={() => setShowText(true)}
         position={[32, 0, -20]}
-        scale={5}
+        offsetScale={5}
         rotY={-1.0}
       />
 
       <Img
         hideWhen={showText}
         rotY={-1.0}
-        scale={3}
+        offsetScale={3}
         src={`/images/info.png`}
         onClick={() => setShowText(true)}
         position={[32, 0, -20]}
