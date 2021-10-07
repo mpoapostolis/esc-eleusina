@@ -6,10 +6,12 @@ import { Box } from "@react-three/drei";
 
 function Img(
   props: MeshProps & {
-    hideWhen: boolean;
+    hideWhen?: boolean;
     src: string;
+    rotY?: number;
     position: [number, number, number];
     rotate?: boolean;
+    scale?: number;
   }
 ) {
   const dap = loadSound("/sounds/dap.ogg");
@@ -19,6 +21,7 @@ function Img(
 
   useFrame(() => {
     if (props.rotate && ref.current) ref.current.rotation.y += 0.05;
+    if (props.rotY && ref.current) ref.current.rotation.y = props.rotY;
   });
 
   return props.hideWhen ? (
@@ -33,7 +36,7 @@ function Img(
         if (props.onClick) props.onClick(evt);
       }}
       position={props.position}
-      scale={hoverd ? 1.2 : 1}
+      scale={hoverd ? props.scale ?? 1.2 : 1}
     >
       <boxBufferGeometry attach="geometry" args={[7, 10, 0]} />
       <meshBasicMaterial transparent attach="material" map={texture} />
