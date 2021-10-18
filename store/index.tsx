@@ -37,7 +37,7 @@ export type Store = {
 };
 
 export const useStore = create<Store>((set, get) => ({
-  timer: 360,
+  timer: 600,
   stage: "intro",
   audio: "",
   inventory: [],
@@ -46,7 +46,7 @@ export const useStore = create<Store>((set, get) => ({
   modal: "menu",
   restart: () =>
     set(() => ({
-      timer: 360,
+      timer: 600,
       stage: "intro",
       audio: "",
       inventory: [],

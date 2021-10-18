@@ -44,6 +44,7 @@ function Archeologikos() {
         </>
       )}
       <Img
+        hightlightAfter={10}
         hideWhen={store.invHas("Αγέλαστος πέτρα") || store.invHas("stone")}
         src={`/images/stone.png`}
         onClick={() => {
@@ -76,6 +77,7 @@ function Archeologikos() {
       />
 
       <Img
+        hightlightAfter={10}
         hideWhen={store.invHas("Αγέλαστος πέτρα") || store.invHas("alpha")}
         src={`/images/alpha.png`}
         onClick={() => {
@@ -89,6 +91,7 @@ function Archeologikos() {
         position={[-10, -15, 100]}
       />
       <Img
+        hightlightAfter={10}
         hideWhen={store.invHas("Αγέλαστος πέτρα") || store.invHas("emoji")}
         src={`/images/emoji.png`}
         onClick={() => {
@@ -103,6 +106,7 @@ function Archeologikos() {
         position={[-100, -15, 10]}
       />
       <Img
+        hightlightAfter={10}
         hideWhen={store.invHas("Αγέλαστος πέτρα") || store.invHas("istos")}
         src={`/images/istos.png`}
         onClick={() => {

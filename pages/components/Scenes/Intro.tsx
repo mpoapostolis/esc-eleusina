@@ -39,6 +39,7 @@ function Intro() {
             store.invHas("stone") ||
             store.invHas("Όρκο του Μύστη")
           }
+          hightlightAfter={10}
           src={`/images/stone.png`}
           onClick={() => {
             store.setInventoryNotf("stone");
