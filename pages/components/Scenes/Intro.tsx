@@ -62,7 +62,7 @@ function Intro() {
               ]);
             }, 2000);
           }}
-          position={[0, -15, -11]}
+          position={[-0, -35, -60]}
         />
       </group>
       {openPortals && (

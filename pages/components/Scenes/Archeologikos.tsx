@@ -1,17 +1,7 @@
-import { Text } from "@react-three/drei";
 import { useState } from "react";
 import { useStore } from "../../../store";
 import Img from "../Img";
 import Portal from "../Portal";
-
-const keimeno = `Πάνω σου κάθισε η γερόντισσα
-όταν τον ουρανό είχε διασχίσει
-κι είχε διαβεί ολόκληρη την πλάση
-Μέρες εννέα κι άλλες τόσες νύχτες
-ταξίδευε
-Δέχτηκες τότε την καρδιά της στη δική σου
-θέλησες να της δώσεις την ύλη σου
-μα δεν μπόρεσες να δαμάσεις τη θεά`;
 
 function Archeologikos() {
   const store = useStore();

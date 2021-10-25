@@ -4,28 +4,60 @@ import Menu from "./components/Menu";
 import { useStore } from "../store";
 import Ui from "./components/Ui";
 import GameOver from "./components/GameOver";
-import React, {
-  FunctionComponent,
-  ReactChild,
-  ReactNode,
-  Suspense,
-} from "react";
-import { Html, OrbitControls } from "@react-three/drei";
+import React, { Suspense } from "react";
+import { Html, OrbitControls, useCubeTexture } from "@react-three/drei";
 import Inventory from "./components/Inventory";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
 import MiniGameOrder from "./components/MiniGameOrder";
 
-function Environment() {
+const Box = () => {
   const store = useStore();
-  const { scene } = useThree();
-  const texture = useLoader(THREE.TextureLoader, `/scenes/${store.stage}.jpg`);
+  const [px, nx, py, ny, pz, nz] = useLoader(THREE.TextureLoader, [
+    `/scenes/${store.stage}/px.png`,
+    `/scenes/${store.stage}/nx.png`,
+    `/scenes/${store.stage}/py.png`,
+    `/scenes/${store.stage}/ny.png`,
+    `/scenes/${store.stage}/pz.png`,
+    `/scenes/${store.stage}/nz.png`,
+  ]);
 
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  texture.encoding = THREE.sRGBEncoding;
-  scene.background = texture;
-  return null;
-}
+  return (
+    <mesh position={[0, 0, 0]}>
+      <boxGeometry args={[200, 200, 200]} />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={px}
+      />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={nx}
+      />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={py}
+      />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={ny}
+      />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={pz}
+      />
+      <meshStandardMaterial
+        attachArray="material"
+        side={THREE.DoubleSide}
+        map={nz}
+      />
+    </mesh>
+  );
+};
 
 const Home: NextPage = () => {
   const store = useStore();
@@ -40,17 +72,16 @@ const Home: NextPage = () => {
       <div className="canvas">
         <Canvas>
           <ambientLight position={[0, 40, 0]} color="#fff" />
-
           <OrbitControls
-            autoRotate
+            // autoRotate
             position={[0, 0, 0]}
             autoRotateSpeed={0.3}
             makeDefault
-            maxDistance={0.4}
+            maxDistance={0.000002}
             enablePan={false}
           />
           <Suspense fallback={<Html>loading..</Html>}>
-            <Environment />
+            <Box />
             <Scenes />
           </Suspense>
         </Canvas>
