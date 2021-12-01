@@ -1,4 +1,4 @@
-import { Canvas, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import type { NextPage } from "next";
 import Menu from "./components/Menu";
 import { useStore } from "../store";
@@ -13,6 +13,7 @@ import MiniGameOrder from "./components/MiniGameOrder";
 
 const Box = () => {
   const store = useStore();
+  if (store.stage === "jigSaw") return <mesh />;
   const [px, nx, py, ny, pz, nz] = useLoader(THREE.TextureLoader, [
     `/scenes/${store.stage}/px.png`,
     `/scenes/${store.stage}/nx.png`,
@@ -71,10 +72,18 @@ const Home: NextPage = () => {
 
       <div className="canvas">
         <Canvas>
+          <mesh
+            onPointerDown={() => {
+              store.setStage("jigSaw");
+            }}
+            position={[0, 0, -5]}
+          >
+            <boxGeometry args={[1, 1, 1]} />
+          </mesh>
+          <color attach="background" args={["lightblue"]} />
           <ambientLight position={[0, 40, 0]} color="#fff" />
           <OrbitControls
             // autoRotate
-            position={[0, 0, 0]}
             autoRotateSpeed={0.3}
             makeDefault
             maxDistance={0.000002}

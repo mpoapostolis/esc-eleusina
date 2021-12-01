@@ -36,7 +36,7 @@ function Img(
   const scale = props.forceScale ?? 1;
   const offsetScale = props.offsetScale ?? 0.2;
 
-  !props.hideWhen && console.log(mountTime - store.timer);
+  !props.hideWhen && mountTime - store.timer;
   return props.hideWhen ? (
     <Box />
   ) : (

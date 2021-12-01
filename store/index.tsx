@@ -6,6 +6,7 @@ export type Scene =
   | "elaioyrgeio"
   | "intro"
   | "karavi"
+  | "jigSaw"
   | "livadi";
 
 export type Item = {

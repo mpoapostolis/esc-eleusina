@@ -1,4 +1,5 @@
 import { Scene, useStore } from "../../../store";
+import JigSaw from "../JigSaw";
 import Archeologikos from "./Archeologikos";
 import Elaioyrgeio from "./Elaioyrgeio";
 import Intro from "./Intro";
@@ -17,6 +18,8 @@ const Component = (p: { scene: Scene }) => {
       return <Livadi />;
     case "archeologikos":
       return <Archeologikos />;
+    case "jigSaw":
+      return <JigSaw />;
 
     default:
       return <Intro />;
