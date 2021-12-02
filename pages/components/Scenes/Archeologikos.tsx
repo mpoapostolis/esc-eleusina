@@ -78,7 +78,7 @@ function Archeologikos() {
             description: ``,
           });
         }}
-        position={[-10, -15, 100]}
+        position={[-10, -15, 99]}
       />
       <Img
         hightlightAfter={10}
@@ -93,7 +93,7 @@ function Archeologikos() {
           });
         }}
         rotate
-        position={[-100, -15, 10]}
+        position={[-99, -15, 10]}
       />
       <Img
         hightlightAfter={10}

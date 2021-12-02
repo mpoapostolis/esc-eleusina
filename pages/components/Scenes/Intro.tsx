@@ -29,7 +29,6 @@ function Intro() {
           hideWhen={!store.invHas("Όρκο του Μύστη")}
           forceScale={5}
           src={`/images/orkos.png`}
-          size1={[13, 7, 0.1]}
           onClick={() => setOpenPortals(true)}
           position={[-30, -15, -50]}
         />
@@ -39,7 +38,6 @@ function Intro() {
             store.invHas("stone") ||
             store.invHas("Όρκο του Μύστη")
           }
-          hightlightAfter={10}
           src={`/images/stone.png`}
           onClick={() => {
             store.setInventoryNotf("stone");

@@ -10,10 +10,11 @@ import Inventory from "./components/Inventory";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
 import MiniGameOrder from "./components/MiniGameOrder";
+import { useRouter } from "next/dist/client/router";
+import Img from "./components/Img";
 
 const Box = () => {
   const store = useStore();
-  if (store.stage === "jigSaw") return <mesh />;
   const [px, nx, py, ny, pz, nz] = useLoader(THREE.TextureLoader, [
     `/scenes/${store.stage}/px.png`,
     `/scenes/${store.stage}/nx.png`,
@@ -22,6 +23,7 @@ const Box = () => {
     `/scenes/${store.stage}/pz.png`,
     `/scenes/${store.stage}/nz.png`,
   ]);
+  if (store.stage === "jigSaw") return <mesh />;
 
   return (
     <mesh position={[0, 0, 0]}>
@@ -62,6 +64,7 @@ const Box = () => {
 
 const Home: NextPage = () => {
   const store = useStore();
+  const router = useRouter();
   return (
     <div className="relative">
       <Menu />
@@ -72,14 +75,6 @@ const Home: NextPage = () => {
 
       <div className="canvas">
         <Canvas>
-          <mesh
-            onPointerDown={() => {
-              store.setStage("jigSaw");
-            }}
-            position={[0, 0, -5]}
-          >
-            <boxGeometry args={[1, 1, 1]} />
-          </mesh>
           <color attach="background" args={["lightblue"]} />
           <ambientLight position={[0, 40, 0]} color="#fff" />
           <OrbitControls
@@ -90,7 +85,14 @@ const Home: NextPage = () => {
             enablePan={false}
           />
           <Suspense fallback={<Html>loading..</Html>}>
-            <Box />
+            <Img
+              onPointerDown={() => {
+                router.push("/jigSaw");
+              }}
+              position={[0, 0, -35]}
+              src="/images/jigSaw.png"
+            />
+            {store.stage !== "jigSaw" && <Box />}
             <Scenes />
           </Suspense>
         </Canvas>

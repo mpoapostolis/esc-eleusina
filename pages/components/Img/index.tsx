@@ -1,9 +1,9 @@
 import { loadSound } from "../../../utils";
 import * as THREE from "three";
 import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Box } from "@react-three/drei";
-import { useStore } from "../../../store";
+import { Mesh } from "three";
 
 function Img(
   props: MeshProps & {
@@ -14,29 +14,19 @@ function Img(
     rotate?: boolean;
     offsetScale?: number;
     forceScale?: number;
-    size1?: [number, number, number];
+    args?: [number, number, number];
     hightlightAfter?: number;
   }
 ) {
   const dap = loadSound("/sounds/dap.ogg");
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [hoverd, setHovered] = useState(false);
-  const [mountTime, setMountTIme] = useState(0);
-  const ref = useRef<any>();
-  const store = useStore();
+  const ref = useRef<Mesh>();
 
-  useEffect(() => {
-    if (!props.hideWhen) setMountTIme(store.timer);
-  }, [props.hideWhen]);
-
-  useFrame(() => {
-    if (props.rotate && ref.current) ref.current.rotation.y += 0.05;
-    if (props.rotY && ref.current) ref.current.rotation.y = props.rotY;
+  useFrame((three) => {
+    if (ref.current) ref.current.lookAt(three.camera.position);
   });
-  const scale = props.forceScale ?? 1;
-  const offsetScale = props.offsetScale ?? 0.2;
 
-  !props.hideWhen && mountTime - store.timer;
   return props.hideWhen ? (
     <Box />
   ) : (
@@ -48,21 +38,11 @@ function Img(
         if (dap.play) dap.play();
         if (props.onClick) props.onClick(evt);
       }}
-      position={props.position}
-      scale={hoverd ? scale + offsetScale : scale}
+      scale={hoverd ? 1.2 : 1}
+      {...props}
     >
-      <boxBufferGeometry attach="geometry" args={props.size1 ?? [7, 10, 0]} />
-      <meshBasicMaterial
-        transparent
-        color={
-          props.hightlightAfter &&
-          mountTime - store.timer > props.hightlightAfter
-            ? "red"
-            : "white"
-        }
-        attach="material"
-        map={texture}
-      />
+      <planeGeometry attach="geometry" args={[10, 10]} />
+      <meshBasicMaterial transparent attach="material" map={texture} />
     </mesh>
   );
 }
