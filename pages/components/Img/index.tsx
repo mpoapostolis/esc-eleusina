@@ -38,7 +38,6 @@ function Img(
         if (dap.play) dap.play();
         if (props.onClick) props.onClick(evt);
       }}
-      scale={hoverd ? 1.2 : 1}
       {...props}
     >
       <planeGeometry attach="geometry" args={[10, 10]} />

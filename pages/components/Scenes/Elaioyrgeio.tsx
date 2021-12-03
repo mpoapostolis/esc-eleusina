@@ -1,32 +1,7 @@
-import { useStore } from "../../../store";
-import Portal from "../Portal";
+import Portals from "../Portals";
 
 function Elaioyrgeio() {
-  const store = useStore();
-  return (
-    <>
-      <Portal
-        onClick={() => store.setStage("archeologikos")}
-        src="archeologikos"
-        position={[10, 0, 0]}
-      />
-      <Portal
-        onClick={() => store.setStage("intro")}
-        src="intro"
-        position={[-10, 0, 0]}
-      />
-      <Portal
-        onClick={() => store.setStage("karavi")}
-        src="karavi"
-        position={[0, 0, 10]}
-      />
-      <Portal
-        onClick={() => store.setStage("livadi")}
-        src="livadi"
-        position={[0, 0, -10]}
-      />
-    </>
-  );
+  return <Portals />;
 }
 
 Elaioyrgeio.getInitialProps = () => {

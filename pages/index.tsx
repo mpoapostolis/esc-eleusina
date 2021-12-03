@@ -85,13 +85,15 @@ const Home: NextPage = () => {
             enablePan={false}
           />
           <Suspense fallback={<Html>loading..</Html>}>
-            <Img
-              onPointerDown={() => {
-                router.push("/jigSaw");
-              }}
-              position={[0, 0, -35]}
-              src="/images/jigSaw.png"
-            />
+            {store.stage === "elaioyrgeio" && (
+              <Img
+                onPointerDown={() => {
+                  router.push("/jigSaw");
+                }}
+                position={[0, 0, -35]}
+                src="/images/jigSaw.png"
+              />
+            )}
             {store.stage !== "jigSaw" && <Box />}
             <Scenes />
           </Suspense>

@@ -172,9 +172,6 @@ function JigSaw() {
             alt=""
           />
           <div className="flex rounded items-start w-full p-4 h-full">
-            <div className="flex bg justify-center items-center z-50 w-40 mx-6">
-              <img src="/images/mistis.png " className="w-full" alt="" />
-            </div>
             <button
               onClick={() => {
                 store.setDialogue([]);
