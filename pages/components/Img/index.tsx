@@ -1,7 +1,7 @@
 import { loadSound } from "../../../utils";
 import * as THREE from "three";
 import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box } from "@react-three/drei";
 import { Mesh } from "three";
 
@@ -20,7 +20,13 @@ function Img(
 ) {
   const dap = loadSound("/sounds/dap.ogg");
   const texture = useLoader(THREE.TextureLoader, props.src);
-  const [hoverd, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== "undefined")
+      document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
+
   const ref = useRef<Mesh>();
 
   useFrame((three) => {
