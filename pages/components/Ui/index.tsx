@@ -3,10 +3,17 @@ import { loadSound } from "../../../utils";
 import { useStore } from "../../../store";
 import { useTimer } from "use-timer";
 import clsx from "clsx";
+import useKeyPress from "../../../Hooks/useKeyPress";
 
 export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
   const store = useStore();
+  const iPressed = useKeyPress("i");
+  const escPressed = useKeyPress("Escape");
+  useEffect(() => {
+    if (iPressed) store.setOpenModal("inventory");
+    if (escPressed) store.setOpenModal("menu");
+  }, [iPressed, escPressed]);
 
   const { time, start, pause } = useTimer({
     initialTime: store.timer,
