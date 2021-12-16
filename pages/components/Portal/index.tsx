@@ -9,17 +9,13 @@ function Portal(p: { src: Scene } & MeshProps) {
   texture.clone();
   const ref = useRef<Mesh>();
   useFrame((three) => {
-    if (ref.current) ref.current.lookAt(three.camera.position);
+    if (ref.current) ref.current.rotation.y += 0.001;
   });
 
   return (
     <group position={p.position} scale={1} ref={ref}>
-      <mesh position={[0, 0, -1]}>
-        <planeGeometry args={[10.7, 10.7]} />
-        <meshBasicMaterial color="white" side={DoubleSide} />
-      </mesh>
-      <mesh {...p} scale={1} position={[0, 0, 0]}>
-        <planeGeometry attach="geometry" args={[10, 10]} />
+      <mesh {...p} scale={1} ref={ref} position={[0, 0, 0]}>
+        <sphereGeometry attach="geometry" args={[3]} />
         <meshStandardMaterial map={texture} />
       </mesh>
     </group>

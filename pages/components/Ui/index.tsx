@@ -36,34 +36,41 @@ export default function Ui() {
       <div
         className={clsx(
           { hidden: store.stage === "intro" },
-          "fixed top-5 right-5 grid grid-cols-2 w-60 h-60 "
+          "fixed pointer-events-auto top-5 right-5 grid grid-cols-2 w-60 h-60 "
         )}
       >
         <div
+          onClick={() => store.setStage("archeologikos")}
           className={clsx(
             { "bg-green-400": store.stage === "archeologikos" },
-            "rounded-3xl"
+            "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
+          onClick={() => store.setStage("elaioyrgeio")}
           className={clsx(
             { "bg-green-400": store.stage === "elaioyrgeio" },
-            "rounded-3xl"
+            "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
+          onClick={() => store.setStage("karavi")}
           className={clsx(
             { "bg-green-400": store.stage === "karavi" },
-            "rounded-3xl"
+            "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
+          onClick={() => store.setStage("livadi")}
           className={clsx(
             { "bg-green-400": store.stage === "livadi" },
-            "rounded-3xl"
+            "m-1 rounded-3xl cursor-pointer"
           )}
         />
-        <img className="absolute w-full h-full border" src="/map.png" />
+        <img
+          className="absolute w-full pointer-events-none z-0 h-full "
+          src="/map.png"
+        />
       </div>
 
       <div

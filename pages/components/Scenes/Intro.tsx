@@ -1,12 +1,7 @@
 import { useStore } from "../../../store";
-import Portal from "../Portal";
-import { EffectComposer, Outline } from "@react-three/postprocessing";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Img from "../Img";
-import { meshBounds, Preload } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
-import { DoubleSide, TextureLoader } from "three";
-import { SVGLoader } from "three-stdlib";
+
 import Portals from "../Portals";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
@@ -26,8 +21,6 @@ function Intro() {
   useEffect(() => {
     if (store.invHas(`Όρκο του Μύστη`)) setOpenPortals(true);
   }, []);
-  const { paths } = useLoader(SVGLoader, "/svg/12_TEXTBOX02.svg");
-  const ref = useRef();
 
   return (
     <>

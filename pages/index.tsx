@@ -5,7 +5,7 @@ import { useStore } from "../store";
 import Ui from "./components/Ui";
 import GameOver from "./components/GameOver";
 import React, { Suspense } from "react";
-import { Html, OrbitControls, useCubeTexture } from "@react-three/drei";
+import { Html, OrbitControls } from "@react-three/drei";
 import Inventory from "./components/Inventory";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
@@ -90,7 +90,8 @@ const Home: NextPage = () => {
                 onPointerDown={() => {
                   router.push("/jigSaw");
                 }}
-                position={[0, 0, -35]}
+                scale={0.5}
+                position={[-20, -5, -5]}
                 src="/images/jigSaw.png"
               />
             )}

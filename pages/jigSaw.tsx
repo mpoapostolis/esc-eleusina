@@ -2,13 +2,21 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import React, { Suspense, useRef, useState } from "react";
 import * as THREE from "three";
 import { Physics, PublicApi, useBox } from "@react-three/cannon";
-import { OrbitControls, Plane } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { EffectComposer, Outline } from "@react-three/postprocessing";
-import { Mesh, Vector3 } from "three";
+import {
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  PointLight,
+  Vector3,
+} from "three";
 import clsx from "clsx";
 import { useStore } from "../store";
 import { loadSound } from "../utils";
 import Link from "next/link";
+import { useEffect } from "react";
+import Column from "./components/Column";
 
 function Cube(props: any) {
   const [drag, setDrag] = useState(false);
@@ -18,8 +26,11 @@ function Cube(props: any) {
     args: [2, 2],
     type: "Static",
   }));
+  const three = useThree();
 
-  useFrame(({ mouse: { x, y }, viewport: { height, width } }) => {
+  useFrame(({ mouse: { x, y }, camera, viewport: { height, width } }) => {
+    if (ref.current) ref.current?.lookAt(camera.position);
+
     const vector = new Vector3(x, y, 0);
     vector.unproject(three.camera);
     const dir = vector.sub(three.camera.position).normalize();
@@ -27,7 +38,6 @@ function Cube(props: any) {
     const pos = three.camera.position.clone().add(dir.multiplyScalar(distance));
     drag && api.position.set(pos.x, pos.y, pos.z);
   });
-  const three = useThree();
   const toggleDrag = (evt: any) => {
     evt.stopPropagation();
     // @ts-ignore
@@ -59,19 +69,61 @@ function Cube(props: any) {
           transparent
           map={map}
           opacity={props.opacity}
-          side={THREE.DoubleSide}
         />
       </mesh>
     </Suspense>
   );
 }
 
-const Bg = () => {
+const Bg = (p: { help: boolean }) => {
   const map = useLoader(THREE.TextureLoader, "/images/jinx.jpg");
+  const ref = useRef<Mesh>();
+  const meshRef = useRef<MeshBasicMaterial>();
+  const three = useThree();
+  useEffect(() => {}, [three]);
+  const quaternion = new THREE.Quaternion();
+  quaternion.setFromAxisAngle(
+    new THREE.Vector3(0, 1, 0),
+    Math.cos(Math.PI) * 0.03
+  );
+  useFrame((t, dt) => {
+    if (!meshRef.current) return;
+    if (!ref.current) return;
+    if (p.help) {
+      if (t.camera.position.z > 0.01)
+        t.camera.position.lerp(new Vector3(11, 0, 0), 0.025);
+      if (t.camera.position.z > -9.0) {
+        t.camera.position.lerp(new Vector3(0, 0, -9), 0.025);
+      }
+    }
+    if (!p.help) {
+      if (t.camera.position.z < -0.01)
+        t.camera.position.lerp(new Vector3(11, 0, 0), 0.025);
+      if (t.camera.position.z < 9.0) {
+        t.camera.position.lerp(new Vector3(0, 0, 9), 0.025);
+      }
+    }
+
+    t.camera.lookAt(0, 0, 0);
+    t.camera.updateProjectionMatrix();
+
+    if (p.help && meshRef.current.opacity < 1.01)
+      meshRef.current.opacity += 0.005;
+    if (!p.help && meshRef.current.opacity > 0.7)
+      meshRef.current.opacity -= 0.005;
+  });
+
   return (
-    <mesh position={[0, 0, -0.1]}>
+    <mesh castShadow ref={ref} position={[0, 0, -0.1]}>
       <planeGeometry args={[6, 6]} />
-      <meshBasicMaterial transparent map={map} opacity={0.7} color="white" />
+      <meshBasicMaterial
+        ref={meshRef}
+        transparent={!p.help}
+        map={map}
+        side={DoubleSide}
+        opacity={0.7}
+        color="white"
+      />
     </mesh>
   );
 };
@@ -94,6 +146,7 @@ const pos = [
 
 const EmptyPlane = (p: any) => {
   const ref = useRef<Mesh>();
+
   return (
     <mesh ref={ref} {...p} onPointerOver={() => p.onPointerOver(ref)}>
       <planeGeometry args={[2, 2]} />
@@ -109,6 +162,27 @@ const getRandomPos = () =>
   Array(9)
     .fill("")
     .map(() => [getRandom(), getRandom(), 0]);
+
+function Lights() {
+  const ref = useRef<PointLight>();
+  useFrame((t) => {
+    if (!ref.current) return;
+    ref.current.position.copy(t.camera.position);
+    ref.current.lookAt(0, 0, 0);
+  });
+  return (
+    <group>
+      <pointLight
+        ref={ref}
+        position={[0, 10, 5]}
+        intensity={2}
+        color={0x0000ff}
+        distance={12}
+      />
+    </group>
+  );
+}
+
 function JigSaw() {
   const [isDragging, setIsDragging] = useState<number | null>();
   const [hovered, setHover] = useState<Mesh | null>(null);
@@ -121,7 +195,9 @@ function JigSaw() {
     if (isDragging) return idx === isDragging ? 1 : 0.1;
     return 1;
   };
+  const [help, setHelp] = useState(false);
   const store = useStore();
+
   return (
     <div>
       <div className="fixed flex flex-col justify-end  pointer-events-none z-50 h-screen w-screen">
@@ -130,13 +206,31 @@ function JigSaw() {
             hidden: store.dialogue.length > 0,
           })}
         >
+          <div
+            onClick={() => {
+              if (dap.play) dap.play();
+              setHelp(!help);
+            }}
+            className=" relative mr-2 border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          >
+            {store.inventoryNotf.length > 0 && (
+              <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
+                {store.inventoryNotf.length}
+              </div>
+            )}
+
+            <img
+              src="https://s2.svgbox.net/materialui.svg?ic=help_outline&color=ffd"
+              width={48}
+              height={48}
+            />
+          </div>
           <Link href="/">
             <a
               onClick={() => {
                 if (dap.play) dap.play();
-                setPositions(getRandomPos());
               }}
-              className=" relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+              className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
             >
               {store.inventoryNotf.length > 0 && (
                 <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
@@ -145,7 +239,7 @@ function JigSaw() {
               )}
 
               <img
-                src="https://s2.svgbox.net/materialui.svg?ic=exit_to_app&color=220"
+                src="https://s2.svgbox.net/materialui.svg?ic=exit_to_app&color=ffd"
                 width={48}
                 height={48}
               />
@@ -194,10 +288,23 @@ function JigSaw() {
       </div>{" "}
       <div className="canvas">
         <Canvas camera={{ position: [0, 0, 8] }} className="canvas">
-          <color attach="background" args={["grey"]} />
-          <OrbitControls enableRotate={false} makeDefault />
+          <Suspense fallback="loading...">
+            <Environment
+              background
+              files={[
+                "/scenes/miniGame/px.jpg",
+                "/scenes/miniGame/nx.jpg",
+                "/scenes/miniGame/py.jpg",
+                "/scenes/miniGame/ny.jpg",
+                "/scenes/miniGame/pz.jpg",
+                "/scenes/miniGame/nz.jpg",
+              ]}
+            />
+            <Column />
+          </Suspense>
+          {/* <Lights /> */}
           <Physics>
-            <Bg />
+            <Bg help={help} />
             {arr.map((_, idx) => (
               <EmptyPlane
                 key={idx}
