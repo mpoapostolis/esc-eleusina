@@ -1,4 +1,9 @@
 import create from "zustand";
+export type Level =
+  | "Φως-Σκοτάδι"
+  | "Υπόγειο-Επίγειο"
+  | "Παρελθόν-Παρόν"
+  | "ΕΙΝΑΙ-ΦΑΙΝΕΣΘΑΙ";
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
 export type Scene =
@@ -9,6 +14,12 @@ export type Scene =
   | "jigSaw"
   | "livadi";
 
+export type Account = {
+  accessToken?: string;
+  email?: string;
+  data?: Record<string, any>;
+};
+
 export type Item = {
   name: string;
   src: string;
@@ -16,13 +27,18 @@ export type Item = {
 } & Record<string, any>;
 
 export type Store = {
+  account: Account;
+  level: Level;
   timer: number;
   modal: Modal;
   inventory: Item[];
   inventoryNotf: string[];
-  stage: Scene;
+  scene: Scene;
   audio: string;
   dialogue: string[];
+  setEmail: (s: string) => void;
+  setToken: (s: string) => void;
+  setLevel: (s: Level) => void;
   setDialogue: (s: string[]) => void;
   nextDialogue: () => void;
   invHas: (e: string) => boolean;
@@ -32,29 +48,43 @@ export type Store = {
   removeInventoryNotf: (n: string) => void;
   setAudio: (s: string) => void;
   setTimer: (n: number) => void;
-  setStage: (n: Scene) => void;
+  setScene: (n: Scene) => void;
   removeInvItem: (s: string) => void;
   restart: () => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
   timer: 600,
-  stage: "intro",
+  account: {},
+  scene: "intro",
   audio: "",
+  level: "Φως-Σκοτάδι",
   inventory: [],
+  setLevel: (l: Level) => set(() => ({ level: l })),
   inventoryNotf: [],
   dialogue: [],
-  modal: "menu",
+  modal: undefined,
+
+  setToken: (s: string) =>
+    set((store) => ({
+      account: { ...store.account, accessToken: s },
+    })),
+  setEmail: (s: string) =>
+    set((store) => ({
+      account: { ...store.account, email: s },
+    })),
+
   restart: () =>
     set(() => ({
       timer: 600,
-      stage: "intro",
+      scene: "intro",
       audio: "",
       inventory: [],
       inventoryNotf: [],
       dialogue: [],
       modal: "menu",
     })),
+
   setDialogue: (d: string[]) => set(() => ({ dialogue: d })),
   nextDialogue: () => {
     set((state) => {
@@ -84,5 +114,5 @@ export const useStore = create<Store>((set, get) => ({
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
   setTimer: (n: number) => set(() => ({ timer: n })),
-  setStage: (n: Scene) => set(() => ({ stage: n })),
+  setScene: (n: Scene) => set(() => ({ scene: n })),
 }));

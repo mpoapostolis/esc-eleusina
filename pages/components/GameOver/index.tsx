@@ -13,7 +13,7 @@ export default function GameOver() {
       })}
     >
       <div className="w-full h-28">
-        <h1 className="m-3 text-white text-5xl font-black">Stage 1</h1>
+        <h1 className="m-3 text-white text-5xl font-black">scene 1</h1>
         <h1 className="m-3 text-white text font-black">Break the boxes</h1>
       </div>
       <hr className="opacity-50" />

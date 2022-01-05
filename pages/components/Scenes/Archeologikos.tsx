@@ -12,22 +12,22 @@ function Archeologikos() {
       {store.invHas("Αγέλαστος πέτρα") && (
         <>
           <Portal
-            onClick={() => store.setStage("karavi")}
+            onClick={() => store.setScene("karavi")}
             src="karavi"
             position={[10, 0, 0]}
           />
           <Portal
-            onClick={() => store.setStage("elaioyrgeio")}
+            onClick={() => store.setScene("elaioyrgeio")}
             src="elaioyrgeio"
             position={[-10, 0, 0]}
           />
           <Portal
-            onClick={() => store.setStage("intro")}
+            onClick={() => store.setScene("intro")}
             src="intro"
             position={[0, 0, 10]}
           />
           <Portal
-            onClick={() => store.setStage("livadi")}
+            onClick={() => store.setScene("livadi")}
             src="livadi"
             position={[0, 0, -10]}
           />

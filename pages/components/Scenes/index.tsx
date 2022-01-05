@@ -25,7 +25,7 @@ const Component = (p: { scene: Scene }) => {
 
 function Scenes() {
   const store = useStore();
-  return <Component scene={store.stage} />;
+  return <Component scene={store.scene} />;
 }
 
 Scenes.getInitialProps = () => {

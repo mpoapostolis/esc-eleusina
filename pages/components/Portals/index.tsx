@@ -1,7 +1,7 @@
 import { Scene, useStore } from "../../../store";
 import Portal from "../Portal";
 
-const stages: Scene[] = [
+const scenes: Scene[] = [
   "archeologikos",
   "intro",
   "elaioyrgeio",
@@ -12,8 +12,8 @@ function Portals() {
   const store = useStore();
   return (
     <group>
-      {stages
-        .filter((s) => s !== store.stage)
+      {scenes
+        .filter((s) => s !== store.scene)
         .map((s, idx) => (
           <Portal
             key={s}
@@ -22,7 +22,7 @@ function Portals() {
             }}
             onClick={() => {
               store.setDialogue([]);
-              store.setStage(s);
+              store.setScene(s);
             }}
             src={s}
             position={[-20 + idx * 10, 0, -20]}

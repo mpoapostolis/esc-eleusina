@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Img from "../Img";
 
 import Portals from "../Portals";
+import { loadSound } from "../../../utils";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
 και συ τ’ ουρανού κλέος,
@@ -13,10 +14,20 @@ const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνη�
 function Intro() {
   const store = useStore();
   const [openPortals, setOpenPortals] = useState(false);
+
+  let start = loadSound("/sounds/start.ogg");
+
   useEffect(() => {
     if (store.timer === 586 && !openPortals)
       store.setDialogue(["Ψάξε στο έδαφος για μία πέτρινη πλάκα"]);
   }, [store.timer, openPortals]);
+
+  useEffect(() => {
+    if (store.timer === 599 && start.play) {
+      store.setTimer(600);
+      start.play();
+    }
+  }, [start]);
 
   useEffect(() => {
     if (store.invHas(`Όρκο του Μύστη`)) setOpenPortals(true);

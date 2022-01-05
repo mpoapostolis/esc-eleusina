@@ -35,35 +35,35 @@ export default function Ui() {
       </div>
       <div
         className={clsx(
-          { hidden: store.stage === "intro" },
+          { hidden: store.scene === "intro" },
           "fixed pointer-events-auto top-5 right-5 grid grid-cols-2 w-60 h-60 "
         )}
       >
         <div
-          onClick={() => store.setStage("archeologikos")}
+          onClick={() => store.setScene("archeologikos")}
           className={clsx(
-            { "bg-green-400": store.stage === "archeologikos" },
+            { "bg-green-400": store.scene === "archeologikos" },
             "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
-          onClick={() => store.setStage("elaioyrgeio")}
+          onClick={() => store.setScene("elaioyrgeio")}
           className={clsx(
-            { "bg-green-400": store.stage === "elaioyrgeio" },
+            { "bg-green-400": store.scene === "elaioyrgeio" },
             "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
-          onClick={() => store.setStage("karavi")}
+          onClick={() => store.setScene("karavi")}
           className={clsx(
-            { "bg-green-400": store.stage === "karavi" },
+            { "bg-green-400": store.scene === "karavi" },
             "m-1 rounded-3xl cursor-pointer"
           )}
         />
         <div
-          onClick={() => store.setStage("livadi")}
+          onClick={() => store.setScene("livadi")}
           className={clsx(
-            { "bg-green-400": store.stage === "livadi" },
+            { "bg-green-400": store.scene === "livadi" },
             "m-1 rounded-3xl cursor-pointer"
           )}
         />
