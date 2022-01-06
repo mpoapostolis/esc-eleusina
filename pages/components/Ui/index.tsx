@@ -4,15 +4,17 @@ import { useStore } from "../../../store";
 import { useTimer } from "use-timer";
 import clsx from "clsx";
 import useKeyPress from "../../../Hooks/useKeyPress";
+import { useRouter } from "next/dist/client/router";
 
 export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
   const store = useStore();
   const iPressed = useKeyPress("i");
   const escPressed = useKeyPress("Escape");
+  const router = useRouter();
   useEffect(() => {
-    if (iPressed) store.setOpenModal("inventory");
-    if (escPressed) store.setOpenModal("menu");
+    if (iPressed) router.push("/?type=inventory");
+    if (escPressed) router.push("/");
   }, [iPressed, escPressed]);
 
   const { time, start, pause } = useTimer({
@@ -81,7 +83,7 @@ export default function Ui() {
         <button
           onClick={() => {
             if (dap.play) dap.play();
-            store.setOpenModal("inventory");
+            router.push("/?type=inventory");
             pause();
           }}
           className=" relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
@@ -102,7 +104,7 @@ export default function Ui() {
         <button
           onClick={() => {
             if (dap.play) dap.play();
-            store.setOpenModal("menu");
+            router.push("/?type=menu");
             pause();
           }}
           className="border-4 mr-2 ml-5 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"

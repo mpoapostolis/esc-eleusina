@@ -113,9 +113,4 @@ function Archeologikos() {
   );
 }
 
-Archeologikos.getInitialProps = () => {
-  const statusCode = 404;
-  return { statusCode };
-};
-
 export default Archeologikos;

@@ -2,13 +2,14 @@ import { Canvas } from "@react-three/fiber";
 import React, { Suspense } from "react";
 import { Environment, OrbitControls, Plane } from "@react-three/drei";
 import { DoubleSide } from "three";
+import Loading from "./components/Loading";
 
 function ReOrder() {
   return (
     <div className="canvas">
       <Canvas camera={{ position: [0, 0, 8] }} className="canvas">
         <OrbitControls />
-        <Suspense fallback="loading...">
+        <Suspense fallback={<Loading />}>
           <Environment
             background
             files={[

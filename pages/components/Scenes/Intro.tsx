@@ -70,7 +70,7 @@ function Intro() {
         }}
         position={[-0, -35, -60]}
       />
-      {openPortals && <Portals />}
+      {<Portals />}
     </>
   );
 }

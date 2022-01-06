@@ -55,7 +55,10 @@ export type Store = {
 
 export const useStore = create<Store>((set, get) => ({
   timer: 600,
-  account: {},
+  account: {
+    accessToken: "3",
+    email: "a",
+  },
   scene: "intro",
   audio: "",
   level: "Φως-Σκοτάδι",
@@ -64,7 +67,6 @@ export const useStore = create<Store>((set, get) => ({
   inventoryNotf: [],
   dialogue: [],
   modal: undefined,
-
   setToken: (s: string) =>
     set((store) => ({
       account: { ...store.account, accessToken: s },

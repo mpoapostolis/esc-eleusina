@@ -34,7 +34,7 @@ function Img(
   });
 
   return props.hideWhen ? (
-    <Box />
+    <Box args={[0, 0, 0]} />
   ) : (
     <mesh
       ref={ref}
