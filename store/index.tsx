@@ -55,10 +55,7 @@ export type Store = {
 
 export const useStore = create<Store>((set, get) => ({
   timer: 600,
-  account: {
-    accessToken: "3",
-    email: "a",
-  },
+  account: {},
   scene: "intro",
   audio: "",
   level: "Φως-Σκοτάδι",

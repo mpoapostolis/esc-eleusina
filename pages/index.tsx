@@ -13,14 +13,14 @@ import { TextureLoader } from "three";
 import Menu from "./components/Menu";
 
 const Box = (props: { scene: Scene }) => {
-  const px = useLoader(TextureLoader, `/scenes/${props.scene}/px.png`);
-  const nx = useLoader(TextureLoader, `/scenes/${props.scene}/nx.png`);
-  const py = useLoader(TextureLoader, `/scenes/${props.scene}/py.png`);
-  const ny = useLoader(TextureLoader, `/scenes/${props.scene}/ny.png`);
-  const pz = useLoader(TextureLoader, `/scenes/${props.scene}/pz.png`);
-  const nz = useLoader(TextureLoader, `/scenes/${props.scene}/nz.png`);
+  const px = useLoader(TextureLoader, `/scenes/${props.scene}/px.jpg`);
+  const nx = useLoader(TextureLoader, `/scenes/${props.scene}/nx.jpg`);
+  const py = useLoader(TextureLoader, `/scenes/${props.scene}/py.jpg`);
+  const ny = useLoader(TextureLoader, `/scenes/${props.scene}/ny.jpg`);
+  const pz = useLoader(TextureLoader, `/scenes/${props.scene}/pz.jpg`);
+  const nz = useLoader(TextureLoader, `/scenes/${props.scene}/nz.jpg`);
   return (
-    <mesh position={[0, 0, 0]}>
+    <mesh position={[0, 0, 0]} onPointerMove={console.log}>
       <boxGeometry args={[200, 200, 200]} />
       <meshStandardMaterial
         attachArray="material"
@@ -72,7 +72,12 @@ const Home: NextPage = () => {
       <div className="canvas">
         <Canvas frameloop="demand">
           <ambientLight position={[0, 40, 0]} color="#fff" />
-          <OrbitControls enableRotate makeDefault enablePan={false} />
+          <OrbitControls
+            maxDistance={0.00003}
+            enableRotate
+            makeDefault
+            enablePan={false}
+          />
           <Suspense fallback={<Html>loading...</Html>}>
             {store.scene === "elaioyrgeio" && (
               <Img

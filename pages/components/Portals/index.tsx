@@ -32,4 +32,9 @@ function Portals() {
   );
 }
 
+Portals.getInitialProps = () => {
+  const statusCode = 404;
+  return { statusCode };
+};
+
 export default Portals;

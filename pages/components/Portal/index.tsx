@@ -6,8 +6,9 @@ import { Scene } from "../../../store";
 
 function Portal(p: { src: Scene } & MeshProps) {
   const texture = useLoader(THREE.TextureLoader, `/scenes/${p.src}.jpg`);
+  texture.clone();
   const ref = useRef<Mesh>();
-  useFrame(() => {
+  useFrame((three) => {
     if (ref.current) ref.current.rotation.y += 0.001;
   });
 
@@ -20,5 +21,10 @@ function Portal(p: { src: Scene } & MeshProps) {
     </group>
   );
 }
+
+Portal.getInitialProps = () => {
+  const statusCode = 404;
+  return { statusCode };
+};
 
 export default Portal;

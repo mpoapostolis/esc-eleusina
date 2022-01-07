@@ -1,9 +1,36 @@
 import { useStore } from "../../../store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Img from "../Img";
 
-import Portals from "../Portals";
 import { loadSound } from "../../../utils";
+import { MeshProps } from "@react-three/fiber";
+import { DoubleSide } from "three";
+
+function Pl(p: MeshProps & { dims: [number, number] }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <mesh
+      rotation={p.rotation}
+      position={p.position}
+      onPointerOver={() => {
+        setHover(true);
+        // p.onPointerOver(ref);
+      }}
+      onPointerLeave={() => {
+        setHover(false);
+        // p.onPointerOver(null);
+      }}
+    >
+      <boxGeometry args={[...p.dims, 1]} />
+      <meshPhongMaterial
+        color="#ffff00"
+        side={DoubleSide}
+        opacity={hover ? 0.5 : 0}
+        transparent
+      />
+    </mesh>
+  );
+}
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
 και συ τ’ ουρανού κλέος,
@@ -14,6 +41,8 @@ const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνη�
 function Intro() {
   const store = useStore();
   const [openPortals, setOpenPortals] = useState(false);
+  const [hovered, setHover] = useState<any>(null);
+  const selected = hovered ? [hovered] : undefined;
 
   let start = loadSound("/sounds/start.ogg");
 
@@ -70,7 +99,12 @@ function Intro() {
         }}
         position={[-0, -35, -60]}
       />
-      {<Portals />}
+      <Pl
+        rotation={[0, 0, 0.02]}
+        dims={[7.5, 8.5]}
+        position={[-0.45, 0.5, -14]}
+      />
+      <Pl rotation={[0, 0, -0.02]} dims={[6, 15]} position={[-25.5, 0, 35]} />
     </>
   );
 }
