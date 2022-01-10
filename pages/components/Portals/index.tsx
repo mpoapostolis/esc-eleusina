@@ -1,5 +1,5 @@
 import { Scene, useStore } from "../../../store";
-import Portal from "../Portal";
+import Exit from "../Exit";
 
 const scenes: Scene[] = [
   "archeologikos",
@@ -15,18 +15,7 @@ function Portals() {
       {scenes
         .filter((s) => s !== store.scene)
         .map((s, idx) => (
-          <Portal
-            key={s}
-            onPointerLeave={() => {
-              store.setDialogue([]);
-            }}
-            onClick={() => {
-              store.setDialogue([]);
-              store.setScene(s);
-            }}
-            src={s}
-            position={[-20 + idx * 10, 0, -20]}
-          />
+          <Exit key={s} scene={s} position={[-20 + idx * 10, 0, -50]} />
         ))}
     </group>
   );
