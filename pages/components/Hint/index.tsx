@@ -58,7 +58,7 @@ export default function Hint() {
           >
             {hint &&
               hint.split("\n").map((i, idx) => (
-                <tspan x={0} dx={idx && -5} dy={idx && `0.9em`}>
+                <tspan key={i} x={0} dx={idx && -5} dy={idx && `0.9em`}>
                   {i}
                 </tspan>
               ))}
