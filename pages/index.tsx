@@ -68,7 +68,6 @@ const Home: NextPage = () => {
       {!type && <Ui />}
       <MiniGameOrder />
       <Menu />
-
       <div className="canvas">
         <Canvas frameloop="demand">
           <ambientLight position={[0, 40, 0]} color="#fff" />

@@ -40,6 +40,7 @@ function Img(
       ref={ref}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
+      scale={hovered ? 1.05 : 1}
       onClick={(evt) => {
         if (dap.play) dap.play();
         if (props.onClick) props.onClick(evt);
@@ -47,7 +48,12 @@ function Img(
       {...props}
     >
       <planeGeometry attach="geometry" args={[10, 10]} />
-      <meshBasicMaterial transparent attach="material" map={texture} />
+      <meshBasicMaterial
+        opacity={hovered ? 1 : 0.8}
+        transparent
+        attach="material"
+        map={texture}
+      />
     </mesh>
   );
 }
