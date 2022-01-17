@@ -24,8 +24,8 @@ function Intro() {
   let start = loadSound("/sounds/start.ogg");
 
   useEffect(() => {
-    if (store.timer === 586 && !openPortals)
-      store.setDialogue(["Ψάξε στο έδαφος για μία πέτρινη πλάκα"]);
+    if (store.timer === 596 && !openPortals)
+      store.setHint("Ψάξε στο έδαφος για μία πέτρινη πλάκα");
   }, [store.timer, openPortals]);
 
   useEffect(() => {

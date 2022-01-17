@@ -28,6 +28,8 @@ export type Item = {
 
 export type Store = {
   account: Account;
+  hint?: string;
+  setHint: (s: string) => void;
   level: Level;
   timer: number;
   modal: Modal;
@@ -55,11 +57,15 @@ export type Store = {
 
 export const useStore = create<Store>((set, get) => ({
   timer: 600,
-  account: {},
+  account: {
+    accessToken: "2",
+  },
   scene: "intro",
   audio: "",
   level: "Φως-Σκοτάδι",
   inventory: [],
+  hint: undefined,
+  setHint: (hint: string) => set(() => ({ hint })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   inventoryNotf: [],
   dialogue: [],

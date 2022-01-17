@@ -5,6 +5,7 @@ import { useTimer } from "use-timer";
 import clsx from "clsx";
 import useKeyPress from "../../../Hooks/useKeyPress";
 import { useRouter } from "next/dist/client/router";
+import Hint from "../Hint";
 
 export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
@@ -37,42 +38,14 @@ export default function Ui() {
       </div>
       <div
         className={clsx(
-          { hidden: store.scene === "intro" },
-          "fixed pointer-events-auto top-5 right-5 grid grid-cols-2 w-60 h-60 "
+          "fixed w-full max-w-xl  right-0 mt-8 mr-4   pointer-events-auto",
+          {
+            "opacity-100": store.hint,
+            "w-0 opacity-0": !store.hint,
+          }
         )}
       >
-        <div
-          onClick={() => store.setScene("archeologikos")}
-          className={clsx(
-            { "bg-green-400": store.scene === "archeologikos" },
-            "m-1 rounded-3xl cursor-pointer"
-          )}
-        />
-        <div
-          onClick={() => store.setScene("elaioyrgeio")}
-          className={clsx(
-            { "bg-green-400": store.scene === "elaioyrgeio" },
-            "m-1 rounded-3xl cursor-pointer"
-          )}
-        />
-        <div
-          onClick={() => store.setScene("karavi")}
-          className={clsx(
-            { "bg-green-400": store.scene === "karavi" },
-            "m-1 rounded-3xl cursor-pointer"
-          )}
-        />
-        <div
-          onClick={() => store.setScene("livadi")}
-          className={clsx(
-            { "bg-green-400": store.scene === "livadi" },
-            "m-1 rounded-3xl cursor-pointer"
-          )}
-        />
-        <img
-          className="absolute w-full pointer-events-none z-0 h-full "
-          src="/map.png"
-        />
+        <Hint hint="Ψάξε στο  έδαφος για μία πέτρινη πλάκα" />
       </div>
 
       <div
@@ -80,48 +53,71 @@ export default function Ui() {
           hidden: store.dialogue.length > 0,
         })}
       >
-        <button
-          onClick={() => {
-            if (dap.play) dap.play();
-            router.push("/?type=inventory");
-            pause();
-          }}
-          className=" relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
-        >
-          {store.inventoryNotf.length > 0 && (
-            <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
-              {store.inventoryNotf.length}
-            </div>
-          )}
-
-          <img
-            src="https://s2.svgbox.net/illlustrations.svg?ic=travel-bag&color=000"
-            width={48}
-            height={48}
-          />
-        </button>
-
-        <button
-          onClick={() => {
-            if (dap.play) dap.play();
-            router.push("/?type=menu");
-            pause();
-          }}
-          className="border-4 mr-2 ml-5 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
-        >
-          <svg
-            width="48"
-            height="48"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            stroke="#000"
-            fill="currentColor"
-            color="#ccc"
+        <div className="grid grid-cols-3 gap-x-3">
+          <button
+            onClick={() => {
+              if (dap.play) dap.play();
+              router.push("/?type=inventory");
+              pause();
+            }}
+            className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
           >
-            <path d="M0 0h24v24H0V0z" fill="none"></path>
-            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path>
-          </svg>
-        </button>
+            {store.inventoryNotf.length > 0 && (
+              <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
+                {store.inventoryNotf.length}
+              </div>
+            )}
+
+            <img
+              src="https://s2.svgbox.net/materialui.svg?ic=help_outline&color=ddd"
+              width={48}
+              height={48}
+            />
+          </button>
+
+          <button
+            onClick={() => {
+              if (dap.play) dap.play();
+              router.push("/?type=inventory");
+              pause();
+            }}
+            className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          >
+            {store.inventoryNotf.length > 0 && (
+              <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
+                {store.inventoryNotf.length}
+              </div>
+            )}
+
+            <img
+              src="https://s2.svgbox.net/illlustrations.svg?ic=travel-bag&color=000"
+              width={48}
+              height={48}
+            />
+          </button>
+
+          <button
+            onClick={() => {
+              if (dap.play) dap.play();
+              router.push("/?type=menu");
+              pause();
+            }}
+            className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          >
+            <svg
+              width="48"
+              height="48"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              stroke="#000"
+              fill="currentColor"
+              color="#ccc"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none"></path>
+              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div
