@@ -4,13 +4,14 @@ function add(accumulator: number, a: number) {
   return accumulator + a;
 }
 
-export default function Hint(p: { hint: string }) {
+export default function Hint() {
   const store = useStore();
 
-  const hint = p.hint.replace(/[\s\S]{1,30}(?!\S)/g, "$&\n");
+  const hint = store.hint?.replace(/[\s\S]{1,30}(?!\S)/g, "$&\n") ?? "";
 
   return (
     <svg
+      className="cursor-pointer"
       width="100%"
       onClick={() => store.setHint("")}
       viewBox="0 0 376.9122 90.464378"
@@ -55,11 +56,12 @@ export default function Hint(p: { hint: string }) {
             strokeWidth={0.5}
             fill="#fff"
           >
-            {hint.split("\n").map((i, idx) => (
-              <tspan x={0} dx={idx && -5} dy={idx && `0.9em`}>
-                {i}
-              </tspan>
-            ))}
+            {hint &&
+              hint.split("\n").map((i, idx) => (
+                <tspan x={0} dx={idx && -5} dy={idx && `0.9em`}>
+                  {i}
+                </tspan>
+              ))}
           </text>
         </g>
 

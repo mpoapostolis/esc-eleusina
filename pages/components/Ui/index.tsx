@@ -6,6 +6,7 @@ import clsx from "clsx";
 import useKeyPress from "../../../Hooks/useKeyPress";
 import { useRouter } from "next/dist/client/router";
 import Hint from "../Hint";
+import HelpUiIcon from "../HelpUiIcon";
 
 export default function Ui() {
   const dap = loadSound("/sounds/dap.ogg");
@@ -45,7 +46,7 @@ export default function Ui() {
           }
         )}
       >
-        <Hint hint="Ψάξε στο  έδαφος για μία πέτρινη πλάκα" />
+        <Hint />
       </div>
 
       <div
@@ -54,27 +55,7 @@ export default function Ui() {
         })}
       >
         <div className="grid grid-cols-3 gap-x-3">
-          <button
-            onClick={() => {
-              if (dap.play) dap.play();
-              router.push("/?type=inventory");
-              pause();
-            }}
-            className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
-          >
-            {store.inventoryNotf.length > 0 && (
-              <div className="bg-red-500 rounded-full w-8 h-8 -right-4 absolute -top-4 text-white flex justify-center items-center border-yellow-400 border">
-                {store.inventoryNotf.length}
-              </div>
-            )}
-
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=help_outline&color=ddd"
-              width={48}
-              height={48}
-            />
-          </button>
-
+          <HelpUiIcon />
           <button
             onClick={() => {
               if (dap.play) dap.play();

@@ -8,6 +8,7 @@ import { DoubleSide } from "three";
 import Exit from "../Exit";
 import Portal from "../Portal";
 import Portals from "../Portals";
+import { helps } from "../HelpUiIcon";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
 και συ τ’ ουρανού κλέος,
@@ -24,8 +25,7 @@ function Intro() {
   let start = loadSound("/sounds/start.ogg");
 
   useEffect(() => {
-    if (store.timer === 596 && !openPortals)
-      store.setHint("Ψάξε στο έδαφος για μία πέτρινη πλάκα");
+    if (store.timer === 596 && !openPortals) store.setHint(helps.intro);
   }, [store.timer, openPortals]);
 
   useEffect(() => {
