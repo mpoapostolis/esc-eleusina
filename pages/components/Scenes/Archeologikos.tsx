@@ -39,7 +39,7 @@ function Archeologikos() {
         src={`/images/stone.png`}
         onClick={() => {
           store.setInventoryNotf("stone");
-          store.setIntentory({
+          store.setInventory({
             name: "stone",
             src: "/images/stone.png",
             description: ``,
@@ -72,7 +72,7 @@ function Archeologikos() {
         src={`/images/alpha.png`}
         onClick={() => {
           store.setInventoryNotf("alpha");
-          store.setIntentory({
+          store.setInventory({
             name: "alpha",
             src: "/images/alpha.png",
             description: ``,
@@ -86,7 +86,7 @@ function Archeologikos() {
         src={`/images/emoji.png`}
         onClick={() => {
           store.setInventoryNotf("emoji");
-          store.setIntentory({
+          store.setInventory({
             name: "emoji",
             src: "/images/emoji.png",
             description: ``,
@@ -101,7 +101,7 @@ function Archeologikos() {
         src={`/images/istos.png`}
         onClick={() => {
           store.setInventoryNotf("istos");
-          store.setIntentory({
+          store.setInventory({
             name: "istos",
             src: "/images/istos.png",
             description: ``,

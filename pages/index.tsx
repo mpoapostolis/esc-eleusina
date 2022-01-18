@@ -12,6 +12,7 @@ import Img from "./components/Img";
 import { TextureLoader } from "three";
 import Menu from "./components/Menu";
 import DescriptiveText from "./components/DescriptiveText";
+import AncientText from "./components/AncientText";
 
 const Box = (props: { scene: Scene }) => {
   const px = useLoader(TextureLoader, `/scenes/${props.scene}/px.jpg`);
@@ -70,6 +71,7 @@ const Home: NextPage = () => {
       <MiniGameOrder />
       <Menu />
       <DescriptiveText />
+      <AncientText />
 
       <div className="canvas">
         <Canvas frameloop="demand">

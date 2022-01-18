@@ -6,12 +6,7 @@ import { loadSound } from "../../../utils";
 import Portals from "../Portals";
 import { helps } from "../HelpUiIcon";
 import { descriptiveText } from "../DescriptiveText";
-
-const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
-και συ τ’ ουρανού κλέος,
-γιατί μ’ αφήσατε; Τί σας έκανε
-να τραβηχτείτε από πάνω μου,
-για να παραδοθώ στου σκοταδιού την αφή;`;
+import { ancientText } from "../AncientText";
 
 function Intro() {
   const store = useStore();
@@ -38,7 +33,7 @@ function Intro() {
   }, [start]);
 
   useEffect(() => {
-    if (store.invHas(`Όρκο του Μύστη`)) setOpenPortals(true);
+    if (store.invHas(`stone`)) setOpenPortals(true);
   }, []);
 
   return (
@@ -48,11 +43,13 @@ function Intro() {
           openPortals || store.invHas("stone") || store.invHas("Όρκο του Μύστη")
         }
         src={`/images/stone.png`}
-        onClick={() => store.setInventoryNotf("stone")}
+        onClick={() => {
+          store.setAncientText(ancientText.intro1);
+        }}
         position={[-0, -35, -60]}
       />
 
-      <Portals />
+      {store.invHas("stone") && <Portals />}
     </>
   );
 }

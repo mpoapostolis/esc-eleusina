@@ -13,7 +13,6 @@ export default function Hint() {
   return (
     <div className="flex justify-center items-start cursor-pointer">
       <svg
-        className="border"
         width="100%"
         height={500}
         onClick={() => store.setHint("")}

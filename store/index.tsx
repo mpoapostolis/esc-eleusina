@@ -20,6 +20,11 @@ export type Account = {
   data?: Record<string, any>;
 };
 
+export type AncientText = {
+  text: string;
+  keys: string[];
+};
+
 export type Item = {
   name: string;
   src: string;
@@ -29,7 +34,9 @@ export type Item = {
 export type Store = {
   account: Account;
   hint?: string;
+  ancientText?: AncientText;
   setHint: (s: string) => void;
+  setAncientText: (s?: AncientText) => void;
   level: Level;
   descriptiveText?: string;
   timer: number;
@@ -46,7 +53,7 @@ export type Store = {
   setDialogue: (s: string[]) => void;
   nextDialogue: () => void;
   invHas: (e: string) => boolean;
-  setIntentory: (i: Item) => void;
+  setInventory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
   setInventoryNotf: (n: string) => void;
   removeInventoryNotf: (n: string) => void;
@@ -70,6 +77,8 @@ export const useStore = create<Store>((set, get) => ({
   setHint: (hint: string) => set(() => ({ hint })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
+  setAncientText: (ancientText?: AncientText) => set(() => ({ ancientText })),
+
   inventoryNotf: [],
   dialogue: [],
   modal: undefined,
@@ -105,7 +114,7 @@ export const useStore = create<Store>((set, get) => ({
       .inventory.map((i) => i.name)
       .includes(e),
 
-  setIntentory: (i: Item) =>
+  setInventory: (i: Item) =>
     set((state) => ({ inventory: [...state.inventory, i] })),
   setInventoryNotf: (n: string) =>
     set((state) => {

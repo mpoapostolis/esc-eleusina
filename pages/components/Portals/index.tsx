@@ -7,6 +7,8 @@ const scenes: Scene[] = [
   "elaioyrgeio",
   "karavi",
   "livadi",
+  "livadi",
+  "livadi",
 ];
 function Portals() {
   const store = useStore();

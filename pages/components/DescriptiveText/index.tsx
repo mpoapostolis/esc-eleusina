@@ -14,7 +14,7 @@ export default function DescriptiveText() {
         store.setDescriptiveText(undefined);
       }}
       className={clsx(
-        "fixed  bg-black bg-opacity-90 h-screen w-screen flex  pointer-events-none  justify-center z-50",
+        "fixed  bg-black bg-opacity-90 h-screen w-screen flex  pointer-events-auto  justify-center z-50",
         {
           hidden: !store.descriptiveText,
         }
