@@ -14,7 +14,7 @@ export default function DescriptiveText() {
         store.setDescriptiveText(undefined);
       }}
       className={clsx(
-        "fixed  bg-black bg-opacity-90 h-screen w-screen flex  pointer-events-auto  justify-center z-50",
+        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
           hidden: !store.descriptiveText,
         }
@@ -22,17 +22,17 @@ export default function DescriptiveText() {
     >
       <div
         className={clsx(
-          "w-full  max-w-xl m-auto px-20 py-10 text-4xl font-bold bg-opacity-70 text-white text-center"
+          "w-full bg-black relative   max-w-xl border border-opacity-20 border-red-100 m-auto px-20 py-10 text-4xl font-bold bg-opacity-70 text-white text-center"
         )}
       >
+        <img
+          src="https://s2.svgbox.net/materialui.svg?ic=close&color=ddd"
+          role="button"
+          className=" w-10 m-3 h-10 z-50 pointer-events-auto absolute right-0 top-0"
+          alt=""
+        />
         {descriptiveText.intro1}
       </div>
-      <img
-        src="https://s2.svgbox.net/materialui.svg?ic=close&color=ddd"
-        role="button"
-        className=" w-20 h-20 z-50 pointer-events-auto fixed right-5 top-5"
-        alt=""
-      />
     </div>
   );
 }

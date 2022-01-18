@@ -15,7 +15,7 @@ function Intro() {
   let start = loadSound("/sounds/start.ogg");
 
   useEffect(() => {
-    if (store.timer === 596 && !openPortals) store.setHint(helps.intro);
+    if (store.timer === 540 && !openPortals) store.setHint(helps.intro);
   }, [store.timer, openPortals]);
 
   useEffect(() => {

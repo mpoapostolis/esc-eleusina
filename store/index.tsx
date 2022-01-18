@@ -35,7 +35,7 @@ export type Store = {
   account: Account;
   hint?: string;
   ancientText?: AncientText;
-  setHint: (s: string) => void;
+  setHint: (s?: string) => void;
   setAncientText: (s?: AncientText) => void;
   level: Level;
   descriptiveText?: string;
@@ -74,7 +74,7 @@ export const useStore = create<Store>((set, get) => ({
   level: "Φως-Σκοτάδι",
   inventory: [],
   hint: undefined,
-  setHint: (hint: string) => set(() => ({ hint })),
+  setHint: (hint?: string) => set(() => ({ hint })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
   setAncientText: (ancientText?: AncientText) => set(() => ({ ancientText })),
