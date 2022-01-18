@@ -5,6 +5,7 @@ import Img from "../Img";
 import { loadSound } from "../../../utils";
 import Portals from "../Portals";
 import { helps } from "../HelpUiIcon";
+import { descriptiveText } from "../DescriptiveText";
 
 const OrkosMisti = `Φως που σε λάτρεψα, όπως κάθε θνητός
 και συ τ’ ουρανού κλέος,
@@ -23,9 +24,16 @@ function Intro() {
   }, [store.timer, openPortals]);
 
   useEffect(() => {
+    if (store.timer === 598 && !store.descriptiveText)
+      store.setDescriptiveText(descriptiveText.intro1);
+  }, [store.timer, store.descriptiveText]);
+
+  useEffect(() => {
     if (store.timer === 599 && start.play) {
       store.setTimer(600);
       start.play();
+    }
+    if (store.timer === 598) {
     }
   }, [start]);
 

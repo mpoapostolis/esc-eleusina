@@ -11,6 +11,7 @@ import { useRouter } from "next/dist/client/router";
 import Img from "./components/Img";
 import { TextureLoader } from "three";
 import Menu from "./components/Menu";
+import DescriptiveText from "./components/DescriptiveText";
 
 const Box = (props: { scene: Scene }) => {
   const px = useLoader(TextureLoader, `/scenes/${props.scene}/px.jpg`);
@@ -68,6 +69,8 @@ const Home: NextPage = () => {
       {!type && <Ui />}
       <MiniGameOrder />
       <Menu />
+      <DescriptiveText />
+
       <div className="canvas">
         <Canvas frameloop="demand">
           <ambientLight position={[0, 40, 0]} color="#fff" />

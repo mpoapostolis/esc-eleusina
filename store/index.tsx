@@ -31,6 +31,7 @@ export type Store = {
   hint?: string;
   setHint: (s: string) => void;
   level: Level;
+  descriptiveText?: string;
   timer: number;
   modal: Modal;
   inventory: Item[];
@@ -39,6 +40,7 @@ export type Store = {
   audio: string;
   dialogue: string[];
   setEmail: (s: string) => void;
+  setDescriptiveText: (s?: string) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
   setDialogue: (s: string[]) => void;
@@ -67,6 +69,7 @@ export const useStore = create<Store>((set, get) => ({
   hint: undefined,
   setHint: (hint: string) => set(() => ({ hint })),
   setLevel: (l: Level) => set(() => ({ level: l })),
+  setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
   inventoryNotf: [],
   dialogue: [],
   modal: undefined,
