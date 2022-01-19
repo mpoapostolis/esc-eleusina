@@ -39,7 +39,7 @@ export default function Ui() {
       </div>
       <div
         className={clsx(
-          "fixed w-full max-w-xl  right-0 mt-8 mr-4   pointer-events-auto",
+          "fixed w-full max-w-xl  right-0  mr-4   pointer-events-auto",
           {
             "opacity-100": store.hint,
             "w-0 opacity-0": !store.hint,

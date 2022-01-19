@@ -14,7 +14,8 @@ export default function HelpUiIcon() {
     <button
       onClick={() => {
         if (dap.play) dap.play();
-        if (store.scene) store.setHint(helps[store.scene]);
+        if (store.scene)
+          store.setHint(store.hint ? undefined : helps[store.scene]);
       }}
       className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
     >

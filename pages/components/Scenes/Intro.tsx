@@ -19,16 +19,16 @@ function Intro() {
   }, [store.timer, openPortals]);
 
   useEffect(() => {
-    if (store.timer === 598 && !store.descriptiveText)
+    if (store.timer === 598) {
       store.setDescriptiveText(descriptiveText.intro1);
+      store.setTimer(597);
+    }
   }, [store.timer, store.descriptiveText]);
 
   useEffect(() => {
     if (store.timer === 599 && start.play) {
       store.setTimer(600);
       start.play();
-    }
-    if (store.timer === 598) {
     }
   }, [start]);
 

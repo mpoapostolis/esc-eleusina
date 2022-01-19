@@ -67,7 +67,7 @@ const Home: NextPage = () => {
   }, []);
   return (
     <div className="relative">
-      {!type && <Ui />}
+      {!type && !store.descriptiveText && !store.ancientText && <Ui />}
       <MiniGameOrder />
       <Menu />
       <DescriptiveText />
@@ -94,7 +94,7 @@ const Home: NextPage = () => {
               />
             )}
             <Box scene={store.scene} />
-            <Scenes />
+            {!store.descriptiveText && <Scenes />}
           </Suspense>
         </Canvas>
       </div>
