@@ -188,7 +188,7 @@ function JigSaw() {
   const [hovered, setHover] = useState<Mesh | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const selected = hovered ? [hovered] : undefined;
-  const dap = loadSound("/sounds/dap.ogg");
+  const dap = loadSound("/sounds/hint.wav");
   const [positions, setPositions] = useState<number[][]>(getRandomPos());
   const [winingArr, setWinningArr] = useState<number[]>([]);
   const selectOpacity = (idx: number) => {

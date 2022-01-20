@@ -18,7 +18,7 @@ function Img(
     hightlightAfter?: number;
   }
 ) {
-  const dap = loadSound("/sounds/dap.ogg");
+  const dap = loadSound("/sounds/hint.wav");
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [hovered, setHovered] = useState(false);
 

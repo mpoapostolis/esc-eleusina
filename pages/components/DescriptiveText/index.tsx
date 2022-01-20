@@ -1,5 +1,7 @@
 import clsx from "clsx";
+import { useEffect } from "react";
 import { useStore } from "../../../store";
+import { loadSound } from "../../../utils";
 
 export const descriptiveText = {
   intro1: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
@@ -11,6 +13,10 @@ const shadow = {
 };
 
 export default function DescriptiveText() {
+  const sound = loadSound("/sounds/modal.wav");
+  useEffect(() => {
+    if (sound.play) sound.play();
+  }, []);
   const store = useStore();
   return (
     <div

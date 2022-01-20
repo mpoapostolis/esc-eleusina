@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useStore } from "../../../store";
+import { loadSound } from "../../../utils";
 
 export const ancientText = {
   intro1: {
@@ -18,10 +19,15 @@ export const ancientText = {
 export default function AncientText() {
   const store = useStore();
   const [words, setWords] = useState<string[]>([]);
+  const sound = loadSound("/sounds/modal.wav");
 
   useEffect(() => {
-    console.log(words.join(""), store.ancientText?.keys.join(""));
-    if (words.sort().join("") === store.ancientText?.keys.sort().join("")) {
+    if (store.ancientText?.text && sound.play) sound.play();
+  }, [store.ancientText]);
+
+  useEffect(() => {
+    const set = new Set(words);
+    if (store.ancientText?.keys.every((a) => set.has(a))) {
       store.setAncientText(undefined);
       store.setInventory({
         name: "stone",
@@ -50,7 +56,14 @@ export default function AncientText() {
                 <br key={idx} />
               ) : (
                 <span
-                  onClick={() => setWords((s) => [...s, k])}
+                  onClick={() =>
+                    store.ancientText?.keys.includes(k) &&
+                    setWords(() => {
+                      const set = new Set(words);
+                      set.add(k);
+                      return Array.from(set);
+                    })
+                  }
                   key={idx}
                   className={clsx({
                     "font-bold cursor-pointer hover:text-yellow-200":

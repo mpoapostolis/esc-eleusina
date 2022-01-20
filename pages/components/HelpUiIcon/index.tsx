@@ -7,13 +7,13 @@ export const helps: Record<string, string> = {
 };
 
 export default function HelpUiIcon() {
-  const dap = loadSound("/sounds/dap.ogg");
+  const hint = loadSound("/sounds/hint.wav");
   const store = useStore();
 
   return (
     <button
       onClick={() => {
-        if (dap.play) dap.play();
+        if (hint.play && store.hint) hint.play();
         if (store.scene)
           store.setHint(store.hint ? undefined : helps[store.scene]);
       }}

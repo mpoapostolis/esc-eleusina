@@ -9,7 +9,7 @@ import Hint from "../Hint";
 import HelpUiIcon from "../HelpUiIcon";
 
 export default function Ui() {
-  const dap = loadSound("/sounds/dap.ogg");
+  const dap = loadSound("/sounds/hint.wav");
   const store = useStore();
   const iPressed = useKeyPress("i");
   const escPressed = useKeyPress("Escape");
@@ -31,6 +31,7 @@ export default function Ui() {
   });
 
   useEffect(start, []);
+  const transform = { transform: "skewX(-20deg)" };
 
   return (
     <div className="fixed flex flex-col justify-between  pointer-events-none z-50 h-screen w-screen">
@@ -109,11 +110,24 @@ export default function Ui() {
           }
         )}
       >
-        <div className="border-dashed w-full rounded-lg p-3 ">
-          <div className="grid  pointer-events-auto grid-cols-3">
+        <div className="relative flex  tracking-wider italic  text-3xl font-bold text-white mb-2 justify-end w-full ">
+          <div
+            style={transform}
+            className="from-transparent absolute -right-2 w-full opacity-90 text-5xl to-gray-500 bg-gradient-to-r h-6  font-normal bottom-0"
+          />
+          <h1
+            style={{
+              textShadow: "-1px -1px 2px #000, 1px 1px 1px #000",
+            }}
+            className="z-50 text-white font-bold text-4xl"
+          >
+            Inventory
+          </h1>
+        </div>
+        <div className="border-2 p-2 rounded-2xl  border-gray-400  border-dashed">
+          <div className="grid rounded-xl  pointer-events-auto grid-cols-3">
             {[...Array(9)].map((_, i) => (
               <div
-                style={{ background: "#000a" }}
                 key={i}
                 onClick={() => {
                   const item = store.inventory[i];
@@ -122,7 +136,13 @@ export default function Ui() {
                     store.removeInventoryNotf(item.name);
                 }}
                 className={clsx(
-                  "border flex flex-col w-20 h-20 items-center justify-center  text-white border-white p-3 z-50"
+                  "flex bg-black bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
+                  {
+                    "rounded-tl-2xl": i === 0,
+                    "rounded-tr-2xl": i === 2,
+                    "rounded-bl-2xl": i === 6,
+                    "rounded-br-2xl": i === 8,
+                  }
                 )}
               >
                 {store.inventory[i] && (
