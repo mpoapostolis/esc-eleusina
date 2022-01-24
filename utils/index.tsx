@@ -2,7 +2,7 @@ export function loadSound(src: string) {
   return typeof window !== "undefined"
     ? new Audio(src)
     : {
-        play: void 0,
+        play: () => 0,
         cancel: void 0,
         commitStyles: void 0,
         finish: void 0,

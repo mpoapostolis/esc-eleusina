@@ -18,7 +18,7 @@ function Img(
     hightlightAfter?: number;
   }
 ) {
-  const dap = loadSound("/sounds/hint.wav");
+  const dap = loadSound("/sounds/modal.wav");
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [hovered, setHovered] = useState(false);
 
@@ -41,11 +41,13 @@ function Img(
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       scale={hovered ? 1.05 : 1}
-      onClick={(evt) => {
-        if (dap.play) dap.play();
-        if (props.onClick) props.onClick(evt);
-      }}
       {...props}
+      onClick={(evt) => {
+        dap.play();
+        if (props.onClick) {
+          props.onClick(evt);
+        }
+      }}
     >
       <planeGeometry attach="geometry" args={[10, 10]} />
       <meshBasicMaterial

@@ -1,21 +1,16 @@
-import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
-
-export const helps: Record<string, string> = {
-  intro:
-    "Ψάξε και βρες την πέτρινη πλάκα με τον Όρκο του Μύστη. Στο κείμενο, δείξε το ζευγάρι των αντίθετων λέξεων που θα φωτίσει τις πύλες μύησης στο σκοτεινό δωμάτιο.",
-};
+import Link from "next/link";
+import { useRouter } from "next/dist/client/router";
+import { useStore } from "../../../store";
 
 export default function HelpUiIcon() {
   const hint = loadSound("/sounds/hint.wav");
   const store = useStore();
-
   return (
     <button
       onClick={() => {
-        if (hint.play && store.hint) hint.play();
-        if (store.scene)
-          store.setHint(store.hint ? undefined : helps[store.scene]);
+        hint?.play();
+        store.setIsHintVisible(!store.isHintVisible);
       }}
       className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
     >

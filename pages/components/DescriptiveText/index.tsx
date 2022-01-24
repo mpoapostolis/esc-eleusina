@@ -1,15 +1,8 @@
 import clsx from "clsx";
 import { useEffect } from "react";
 import { useTime } from "../..";
-import { Scene, Store, useStore } from "../../../store";
+import { Scene, useStore } from "../../../store";
 import { loadSound } from "../../../utils";
-
-// @ts-ignore
-export const descriptiveText: Record<Scene, string> = {
-  intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
-    Για να δούμε.... Θα αντέξουν τα μάτια σου το φως; Θα προσαρμοστούν στο σκοτάδι; Θα καταφέρεις να ξεκλειδώσεις το δωμάτιο; `,
-  archeologikos: `Αναζήτησε το κρυμμένο κείμενο. Βρες το "Ρολόι των γραμμάτων" και σχημάτισε σε αυτό τις 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων «ομιλία και σιωπή». Ποιο είναι το μυστικό που είναι φυλακισμένο μέσα στον χρόνο;`,
-};
 
 const shadow = {
   WebkitTextStroke: "1px black",

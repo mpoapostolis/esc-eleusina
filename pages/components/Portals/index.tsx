@@ -1,37 +1,33 @@
-import { Scene, useStore } from "../../../store";
+import { HelpKey, Scene } from "../../../store";
 import Exit from "../Exit";
 
-const scenes = [
+const scenes: {
+  scene: string;
+  key: HelpKey;
+}[] = [
   {
-    scene: "archeologikos",
-    text: `Και συ, από κει αναδύθηκες, σκοτεινέ σύζυγε,
-  με τη σιωπή γραμμένη στο πρόσωπο…`,
+    scene: "teletourgeio",
+    key: "archPortalHover",
   },
-
   {
     scene: "elaioyrgeio",
-    text: `Κει πέρα
-    τίποτα δεν ταράζει τη σιωπή. Μονάχα ένας σκύλος (κι αυτός δε γαβγίζει),
-    άσκημος σκύλος…`,
+    key: "elaiourgeioPortalHover",
   },
   {
     scene: "karavi",
-    text: `Γίνεται τότε μια μεγάλη ησυχία, μαλακή, ευγενική, νοτισμένη,
-    ως πέρα απ’ τον κήπο, ως την άκρη της θύμησης, σα να ’χει μεμιάς φθινοπωριάσει.`,
+    key: "kampinaPloiouPortalHover",
   },
   {
     scene: "livadi",
-    text: `Ακούς και τ’ άλογα στο στάβλο, και το νερό που πέφτει
-    καθώς υψώνουν οι προσκυνητές δυο πήλινα δοχεία…`,
+    key: "telestirioPortalHover",
   },
 ];
 function Portals() {
-  const store = useStore();
   return (
     <group>
       {scenes.map((s, idx) => (
         <Exit
-          hover={s.text}
+          hover={s.key}
           key={idx}
           scene={s.scene as Scene}
           position={[-20 + idx * 10, 0, -50]}

@@ -1,9 +1,9 @@
 import { MeshProps } from "@react-three/fiber";
 import { useState } from "react";
 import { DoubleSide } from "three";
-import { Scene, useStore } from "../../../store";
+import { HelpKey, Scene, useStore } from "../../../store";
 
-export default function Exit(p: MeshProps & { scene: Scene; hover: string }) {
+export default function Exit(p: MeshProps & { scene: Scene; hover: HelpKey }) {
   const store = useStore();
   const [hover, setHover] = useState(false);
   return (
@@ -12,12 +12,13 @@ export default function Exit(p: MeshProps & { scene: Scene; hover: string }) {
       rotation={p.rotation}
       position={p.position}
       onPointerOver={() => {
-        store.setHint(p.hover);
+        store.setTmpHint(p.hover);
         setHover(true);
         // p.onPointerOver(ref);
       }}
       onPointerLeave={() => {
-        store.setHint(undefined);
+        store.setTmpHint(undefined);
+        store.setIsHintVisible(false);
         setHover(false);
         // p.onPointerOver(null);
       }}

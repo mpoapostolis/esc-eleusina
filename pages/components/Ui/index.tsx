@@ -15,6 +15,8 @@ export default function Ui() {
   const iPressed = useKeyPress("i");
   const escPressed = useKeyPress("Escape");
   const router = useRouter();
+  const sound = loadSound("/sounds/modal.wav");
+
   useEffect(() => {
     if (iPressed) router.push("/?type=inventory");
     if (escPressed) router.push("/");
@@ -122,13 +124,17 @@ export default function Ui() {
                 key={i}
                 onClick={() => {
                   const item = store.inventory[i];
-                  if (item.action) item.action();
+                  if (item.action) {
+                    sound?.play();
+                    item.action();
+                  }
                   if (store.inventoryNotf.length > 0)
                     store.removeInventoryNotf(item.name);
                 }}
                 className={clsx(
                   "flex bg-black bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
                   {
+                    "cursor-pointer": store.inventory[i]?.action,
                     "rounded-tl-2xl": i === 0,
                     "rounded-tr-2xl": i === 2,
                     "rounded-bl-2xl": i === 6,

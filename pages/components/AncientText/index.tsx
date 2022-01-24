@@ -33,6 +33,10 @@ export default function AncientText() {
   }, [store.descriptiveText]);
 
   useEffect(() => {
+    store.setDescriptiveText(undefined);
+  }, []);
+
+  useEffect(() => {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
       store.setAncientText(undefined);
@@ -42,7 +46,6 @@ export default function AncientText() {
         description: ``,
       });
       setWords([]);
-      store.setHint("Διάλεξε τη σφαίρα που θα σε οδηγήσει στο δωμάτιο.");
     }
   }, [words]);
 

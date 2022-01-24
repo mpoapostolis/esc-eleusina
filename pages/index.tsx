@@ -6,7 +6,6 @@ import React, { createContext, Suspense, useContext, useEffect } from "react";
 import { Html, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
-import MiniGameOrder from "./components/MiniGameOrder";
 import { useRouter } from "next/dist/client/router";
 import Img from "./components/Img";
 import { TextureLoader } from "three";
@@ -84,10 +83,8 @@ const Home: NextPage = () => {
     step: 1,
   });
 
-  useEffect(() => {}, [timer]);
-
   useEffect(() => {
-    router.push("/?type=menu");
+    router.replace("/?type=menu");
   }, []);
 
   useEffect(() => {
@@ -99,7 +96,6 @@ const Home: NextPage = () => {
     <div className="relative">
       <Time.Provider value={timer}>
         {!type && !store.descriptiveText && !store.ancientText && <Ui />}
-        <MiniGameOrder />
         <Menu />
         {!type && <DescriptiveText />}
         {!type && <AncientText />}

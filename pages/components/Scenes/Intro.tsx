@@ -1,42 +1,29 @@
-import { useStore } from "../../../store";
-import { useEffect, useRef, useState } from "react";
+import { descriptiveText, helps, useStore } from "../../../store";
+import { useEffect, useState } from "react";
 import Img from "../Img";
 
-import { loadSound } from "../../../utils";
 import Portals from "../Portals";
-import { helps } from "../HelpUiIcon";
-import { descriptiveText } from "../DescriptiveText";
 import { ancientText } from "../AncientText";
-import { useTime } from "../..";
-import { ReturnValue } from "use-timer/lib/types";
+import { useRouter } from "next/dist/client/router";
 
 function Intro() {
   const store = useStore();
-  const timer = useTime();
+
   const [openPortals, setOpenPortals] = useState(false);
 
-  let start = loadSound("/sounds/start.ogg");
-
   useEffect(() => {
+    store.setHint("intro1");
     setTimeout(() => {
       store.setDescriptiveText(descriptiveText.intro);
     }, 2000);
   }, []);
 
   useEffect(() => {
-    if (timer.time === 540 && !openPortals) store.setHint(helps.intro);
-  }, [timer, openPortals]);
-
-  useEffect(() => {
-    if (timer.time === 599 && timer.status === "RUNNING" && start.play) {
-      start.play();
+    if (store.invHas(`stone`)) {
+      setOpenPortals(true);
+      store.setHint("intro2");
     }
-  }, [start]);
-
-  useEffect(() => {
-    if (store.invHas(`stone`)) setOpenPortals(true);
-  }, []);
-
+  }, [store.inventory]);
   return (
     <>
       <Img

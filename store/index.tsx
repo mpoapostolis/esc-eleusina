@@ -9,6 +9,7 @@ export type Level =
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
 export type Scene =
+  | "teletourgeio"
   | "archeologikos"
   | "elaioyrgeio"
   | "intro"
@@ -31,13 +32,73 @@ export type Item = {
   name: string;
   src: string;
   description: string;
+  action?: () => void;
 } & Record<string, any>;
+
+// @ts-ignore
+export const descriptiveText: Record<string | Scene, string> = {
+  intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
+    Για να δούμε.... Θα αντέξουν τα μάτια σου το φως; Θα προσαρμοστούν στο σκοτάδι; Θα καταφέρεις να ξεκλειδώσεις το δωμάτιο; `,
+  archeologikos: `Αναζήτησε το κρυμμένο κείμενο. Βρες το "Ρολόι των γραμμάτων" και σχημάτισε σε αυτό τις 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων «ομιλία και σιωπή». Ποιο είναι το μυστικό που είναι φυλακισμένο μέσα στον χρόνο;`,
+  teletourgeio: `Διάβασε το κρυμμένο  κείμενο και βρες τα αντικείμενα που θα σε βοηθήσουν να τελέσεις το μυστήριο. Ποιο είναι το μυστικό που κρύβεται στις δάφνες; `,
+  teletourgeioLogotexnikoKeimeno: `Ακούς και τ’ άλογα στο στάβλο, και το νερό που πέφτει
+  καθώς υψώνουν οι προσκυνητές δυο πήλινα δοχεία,
+  το ’να προς την ανατολή και τ’ άλλο προς τη δύση, χύνοντας υδρομέλι
+  ή κριθαρόνερο ανακατεμένο με άγρια μέντα
+  πάνω στο λάκκο με τις δάφνες, ενώ μουρμουρίζουν
+  διφορούμενα λόγια, παρακλήσεις και ξόρκια.
+  Περσεφόνη, Γ. Ρίτσος`,
+};
+
+export const helps: Record<string, string> = {
+  intro1:
+    "Ψάξε και βρες την πέτρινη πλάκα με τον Όρκο του Μύστη. Στο κείμενο, δείξε το ζευγάρι των αντίθετων λέξεων που θα φωτίσει τις πύλες μύησης στο σκοτεινό δωμάτιο.",
+  intro2: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο δωμάτιο.`,
+  archPortalHover: `Και συ, από κει αναδύθηκες, σκοτεινέ σύζυγε,
+  με τη σιωπή γραμμένη στο πρόσωπο…`,
+  elaiourgeioPortalHover: `Κει πέρα
+  τίποτα δεν ταράζει τη σιωπή. Μονάχα ένας σκύλος (κι αυτός δε γαβγίζει),
+  άσκημος σκύλος…`,
+  planoEleusPortalHover: `Γίνεται τότε μια μεγάλη ησυχία, μαλακή, ευγενική, νοτισμένη,
+  ως πέρα απ’ τον κήπο, ως την άκρη της θύμησης, σα να ’χει μεμιάς φθινοπωριάσει.`,
+  telestirioPortalHover: `Ακούς και τ’ άλογα στο στάβλο, και το νερό που πέφτει
+  καθώς υψώνουν οι προσκυνητές δυο πήλινα δοχεία…`,
+  kampinaPloiouPortalHover: `Έχει γυρίσει, όπως κάθε καλοκαίρι, απ’ την ξένη σκοτεινή χώρα, στο μεγάλο, εξοχικό, πατρικό της σπίτι…`,
+  karnagioPortalHover: `μια ατέλειωτη, κουραστική μετακίνηση·
+  σπάζουν τα γυαλικά στη μετακόμιση, μένουν στο δρόμο, αστράφτουν·
+  άλλοι πηδούν στη στεριά, άλλοι ανεβαίνουν στα πλοία·`,
+  archeologikos1: `Σχημάτισε τις λέξεις ενώνοντας τα γράμματα με συνεχόμενη γραμμή`,
+  teletourgeio1: `Πρέπει να βρεις το εργαλείο για να κόψεις τις δάφνες.`,
+  teletourgeio2: `Μπορείς να το χρησιμοποιήσεις για να κόψεις το φυτό που αναφέρεται στο κείμενο`,
+  teletourgeio3: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο επόμενο δωμάτιο`,
+  teletourgeio4: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στο αποθετήριο`,
+};
+
+export type HelpKey =
+  | "intro1"
+  | "intro2"
+  | "archPortalHover"
+  | "elaiourgeioPortalHover"
+  | "planoEleusPortalHover"
+  | "telestirioPortalHover"
+  | "kampinaPloiouPortalHover"
+  | "karnagioPortalHover"
+  | "archeologikos1"
+  | "teletourgeio1"
+  | "teletourgeio2"
+  | "teletourgeio3"
+  | "teletourgeio4"
+  | undefined;
 
 export type Store = {
   account: Account;
-  hint?: string;
+  hint?: HelpKey;
+  isHintVisible: boolean;
   ancientText?: AncientText;
-  setHint: (s?: string) => void;
+  setHint: (s?: HelpKey) => void;
+  tmpHint?: string;
+  setTmpHint: (s?: string) => void;
+  setIsHintVisible: (b: boolean) => void;
   setAncientText: (s?: AncientText) => void;
   level: Level;
   descriptiveText?: string;
@@ -70,13 +131,16 @@ export const useStore = create<Store>((set, get) => ({
   account: {
     accessToken: "2",
   },
-  scene: "archeologikos",
+  scene: "teletourgeio",
   audio: "",
   level: "Φως-Σκοτάδι",
   inventory: [],
   hint: undefined,
+  isHintVisible: false,
   setTimer: (timer: ReturnValue) => set(() => ({ timer })),
-  setHint: (hint?: string) => set(() => ({ hint })),
+  setHint: (hint?: HelpKey) => set(() => ({ hint })),
+  setTmpHint: (hint?: string) => set(() => ({ tmpHint: hint })),
+  setIsHintVisible: (isHintVisible) => set(() => ({ isHintVisible })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
   setAncientText: (ancientText?: AncientText) => set(() => ({ ancientText })),
@@ -106,7 +170,10 @@ export const useStore = create<Store>((set, get) => ({
       .includes(e),
 
   setInventory: (i: Item) =>
-    set((state) => ({ inventory: [...state.inventory, i] })),
+    set((state) => ({
+      inventory: [...state.inventory, i],
+      isHintVisible: false,
+    })),
   setInventoryNotf: (n: string) =>
     set((state) => {
       return { inventoryNotf: [...state.inventoryNotf, n] };
@@ -121,5 +188,5 @@ export const useStore = create<Store>((set, get) => ({
     })),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
-  setScene: (n: Scene) => set(() => ({ scene: n })),
+  setScene: (n: Scene) => set(() => ({ isHintVisible: false, scene: n })),
 }));
