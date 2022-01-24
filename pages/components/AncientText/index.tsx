@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
+import { useTime } from "../..";
 import { useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 
@@ -24,6 +25,12 @@ export default function AncientText() {
   useEffect(() => {
     if (store.ancientText?.text && sound.play) sound.play();
   }, [store.ancientText]);
+
+  const t = useTime();
+  useEffect(() => {
+    if (store.descriptiveText) t.pause();
+    else t.start();
+  }, [store.descriptiveText]);
 
   useEffect(() => {
     const set = new Set(words);

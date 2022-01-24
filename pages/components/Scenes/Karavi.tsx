@@ -1,3 +1,4 @@
+import { ReturnValue } from "use-timer/lib/types";
 import Portals from "../Portals";
 
 function Karavi() {

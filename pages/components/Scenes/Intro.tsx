@@ -7,27 +7,28 @@ import Portals from "../Portals";
 import { helps } from "../HelpUiIcon";
 import { descriptiveText } from "../DescriptiveText";
 import { ancientText } from "../AncientText";
+import { useTime } from "../..";
+import { ReturnValue } from "use-timer/lib/types";
 
 function Intro() {
   const store = useStore();
+  const timer = useTime();
   const [openPortals, setOpenPortals] = useState(false);
 
   let start = loadSound("/sounds/start.ogg");
 
   useEffect(() => {
-    if (store.timer === 540 && !openPortals) store.setHint(helps.intro);
-  }, [store.timer, openPortals]);
+    setTimeout(() => {
+      store.setDescriptiveText(descriptiveText.intro);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
-    if (store.timer === 598) {
-      store.setDescriptiveText(descriptiveText.intro1);
-      store.setTimer(597);
-    }
-  }, [store.timer, store.descriptiveText]);
+    if (timer.time === 540 && !openPortals) store.setHint(helps.intro);
+  }, [timer, openPortals]);
 
   useEffect(() => {
-    if (store.timer === 599 && start.play) {
-      store.setTimer(600);
+    if (timer.time === 599 && timer.status === "RUNNING" && start.play) {
       start.play();
     }
   }, [start]);

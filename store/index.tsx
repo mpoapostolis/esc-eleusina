@@ -1,4 +1,6 @@
+import { ReturnValue } from "use-timer/lib/types";
 import create from "zustand";
+
 export type Level =
   | "Φως-Σκοτάδι"
   | "Υπόγειο-Επίγειο"
@@ -39,7 +41,6 @@ export type Store = {
   setAncientText: (s?: AncientText) => void;
   level: Level;
   descriptiveText?: string;
-  timer: number;
   modal: Modal;
   inventory: Item[];
   inventoryNotf: string[];
@@ -58,22 +59,23 @@ export type Store = {
   setInventoryNotf: (n: string) => void;
   removeInventoryNotf: (n: string) => void;
   setAudio: (s: string) => void;
-  setTimer: (n: number) => void;
   setScene: (n: Scene) => void;
   removeInvItem: (s: string) => void;
-  restart: () => void;
+
+  timer?: ReturnValue;
+  setTimer: (timer: ReturnValue) => void;
 };
 
 export const useStore = create<Store>((set, get) => ({
-  timer: 600,
   account: {
     accessToken: "2",
   },
-  scene: "intro",
+  scene: "archeologikos",
   audio: "",
   level: "Φως-Σκοτάδι",
   inventory: [],
   hint: undefined,
+  setTimer: (timer: ReturnValue) => set(() => ({ timer })),
   setHint: (hint?: string) => set(() => ({ hint })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
@@ -89,17 +91,6 @@ export const useStore = create<Store>((set, get) => ({
   setEmail: (s: string) =>
     set((store) => ({
       account: { ...store.account, email: s },
-    })),
-
-  restart: () =>
-    set(() => ({
-      timer: 600,
-      scene: "intro",
-      audio: "",
-      inventory: [],
-      inventoryNotf: [],
-      dialogue: [],
-      modal: "menu",
     })),
 
   setDialogue: (d: string[]) => set(() => ({ dialogue: d })),
@@ -130,6 +121,5 @@ export const useStore = create<Store>((set, get) => ({
     })),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
-  setTimer: (n: number) => set(() => ({ timer: n })),
   setScene: (n: Scene) => set(() => ({ scene: n })),
 }));

@@ -1,3 +1,4 @@
+import { ReturnValue } from "use-timer/lib/types";
 import { Scene, useStore } from "../../../store";
 import Archeologikos from "./Archeologikos";
 import Elaioyrgeio from "./Elaioyrgeio";

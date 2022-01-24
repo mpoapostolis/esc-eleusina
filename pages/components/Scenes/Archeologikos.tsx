@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ReturnValue } from "use-timer/lib/types";
+import { useTime } from "../..";
 import { useStore } from "../../../store";
+import { descriptiveText } from "../DescriptiveText";
 import Img from "../Img";
 import Portal from "../Portal";
 
 function Archeologikos() {
   const store = useStore();
   const [showText, setShowText] = useState(false);
-
+  useEffect(() => {
+    setTimeout(() => {
+      store.setDescriptiveText(descriptiveText.archeologikos);
+    }, 2000);
+  }, []);
   return (
     <group>
       {store.invHas("Αγέλαστος πέτρα") && (

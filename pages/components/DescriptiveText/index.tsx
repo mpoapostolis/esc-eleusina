@@ -1,11 +1,14 @@
 import clsx from "clsx";
 import { useEffect } from "react";
-import { useStore } from "../../../store";
+import { useTime } from "../..";
+import { Scene, Store, useStore } from "../../../store";
 import { loadSound } from "../../../utils";
 
-export const descriptiveText = {
-  intro1: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
+// @ts-ignore
+export const descriptiveText: Record<Scene, string> = {
+  intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
     Για να δούμε.... Θα αντέξουν τα μάτια σου το φως; Θα προσαρμοστούν στο σκοτάδι; Θα καταφέρεις να ξεκλειδώσεις το δωμάτιο; `,
+  archeologikos: `Αναζήτησε το κρυμμένο κείμενο. Βρες το "Ρολόι των γραμμάτων" και σχημάτισε σε αυτό τις 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων «ομιλία και σιωπή». Ποιο είναι το μυστικό που είναι φυλακισμένο μέσα στον χρόνο;`,
 };
 
 const shadow = {
@@ -14,14 +17,20 @@ const shadow = {
 
 export default function DescriptiveText() {
   const sound = loadSound("/sounds/modal.wav");
+  const store = useStore();
   useEffect(() => {
     if (sound.play) sound.play();
   }, []);
-  const store = useStore();
+  const t = useTime();
+  useEffect(() => {
+    if (store.descriptiveText) t.pause();
+  }, [store.descriptiveText]);
+
   return (
     <div
       onClick={() => {
         store.setDescriptiveText(undefined);
+        t.start();
       }}
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
@@ -38,7 +47,7 @@ export default function DescriptiveText() {
             className=" w-10 m-3 h-10 z-50 pointer-events-auto absolute right-0 top-0"
             alt=""
           />
-          <div style={shadow}>{descriptiveText.intro1}</div>
+          <div style={shadow}>{store.descriptiveText}</div>
         </div>
       </div>
     </div>

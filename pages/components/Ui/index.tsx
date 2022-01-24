@@ -7,6 +7,7 @@ import useKeyPress from "../../../Hooks/useKeyPress";
 import { useRouter } from "next/dist/client/router";
 import Hint from "../Hint";
 import HelpUiIcon from "../HelpUiIcon";
+import { useTime } from "../..";
 
 export default function Ui() {
   const dap = loadSound("/sounds/hint.wav");
@@ -19,24 +20,14 @@ export default function Ui() {
     if (escPressed) router.push("/");
   }, [iPressed, escPressed]);
 
-  const { time, start, pause } = useTimer({
-    initialTime: store.timer,
-    timerType: "DECREMENTAL",
-    onTimeUpdate: (t) => store.setTimer(t),
-    step: 1,
-    endTime: 0,
-    onTimeOver: () => {
-      store.setOpenModal("gameOver");
-    },
-  });
+  const t = useTime();
 
-  useEffect(start, []);
   const transform = { transform: "skewX(-20deg)" };
 
   return (
     <div className="fixed flex flex-col justify-between  pointer-events-none z-50 h-screen w-screen">
       <div className="stroke text-white drop-shadow-2xl text-5xl p-3">
-        <div className="">Time: {time}</div>
+        <div className="">Time: {t.time}</div>
       </div>
       <div
         className={clsx(
@@ -61,7 +52,7 @@ export default function Ui() {
             onClick={() => {
               if (dap.play) dap.play();
               router.push("/?type=inventory");
-              pause();
+              t.pause();
             }}
             className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
           >
@@ -82,7 +73,7 @@ export default function Ui() {
             onClick={() => {
               if (dap.play) dap.play();
               router.push("/?type=menu");
-              pause();
+              t.pause();
             }}
             className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
           >
