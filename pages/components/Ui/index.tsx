@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { loadSound } from "../../../utils";
 import { useStore } from "../../../store";
-import { useTimer } from "use-timer";
 import clsx from "clsx";
 import useKeyPress from "../../../Hooks/useKeyPress";
 import { useRouter } from "next/dist/client/router";

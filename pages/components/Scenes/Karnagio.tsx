@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { descriptiveText, helps, Item, useStore } from "../../../store";
+import { descriptiveText, useStore } from "../../../store";
 import Img from "../Img";
 import Portals from "../Portals";
 

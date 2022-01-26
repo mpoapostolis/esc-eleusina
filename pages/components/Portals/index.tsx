@@ -10,16 +10,8 @@ const scenes: {
     key: "archPortalHover",
   },
   {
-    scene: "elaioyrgeio",
-    key: "elaiourgeioPortalHover",
-  },
-  {
-    scene: "karavi",
-    key: "kampinaPloiouPortalHover",
-  },
-  {
-    scene: "livadi",
-    key: "telestirioPortalHover",
+    scene: "karnagio",
+    key: "karnagioPortalHover",
   },
 ];
 function Portals() {

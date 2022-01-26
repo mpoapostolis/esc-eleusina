@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Mesh, TextureLoader, Vector3 } from "three";
 import { useStore } from "../../../store";
 
-export default function Hand() {
+export function Hand() {
   const store = useStore();
 
   const getHandItemSrc = () => {
@@ -31,3 +31,10 @@ export default function Hand() {
     </mesh>
   );
 }
+
+Hand.getInitialProps = () => {
+  const statusCode = 404;
+  return { statusCode };
+};
+
+export default Hand;

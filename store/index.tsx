@@ -13,6 +13,7 @@ export type Scene =
   | "archeologikos"
   | "elaioyrgeio"
   | "intro"
+  | "karnagio"
   | "karavi"
   | "jigSaw"
   | "livadi";
@@ -53,7 +54,7 @@ export const descriptiveText: Record<string | Scene, string> = {
 export const helps: Record<string, string> = {
   intro1:
     "Ψάξε και βρες την πέτρινη πλάκα με τον Όρκο του Μύστη. Στο κείμενο, δείξε το ζευγάρι των αντίθετων λέξεων που θα φωτίσει τις πύλες μύησης στο σκοτεινό δωμάτιο.",
-  intro2: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο δωμάτιο.`,
+  portals: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο δωμάτιο.`,
   archPortalHover: `Και συ, από κει αναδύθηκες, σκοτεινέ σύζυγε,
   με τη σιωπή γραμμένη στο πρόσωπο…`,
   elaiourgeioPortalHover: `Κει πέρα
@@ -70,13 +71,14 @@ export const helps: Record<string, string> = {
   archeologikos1: `Σχημάτισε τις λέξεις ενώνοντας τα γράμματα με συνεχόμενη γραμμή`,
   teletourgeio1: `Πρέπει να βρεις το εργαλείο για να κόψεις τις δάφνες.`,
   teletourgeio2: `Μπορείς να το χρησιμοποιήσεις για να κόψεις το φυτό που αναφέρεται στο κείμενο`,
-  teletourgeio3: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο επόμενο δωμάτιο`,
   teletourgeio4: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στο αποθετήριο`,
+  teletourgeioGrifos: `Βάλε τη δάφνη και τα δοχεία στο κουτί`,
+  teletourgeioGrifosErr1: `Πρώτα πρέπει να μπουν οι δάφνες`,
 };
 
 export type HelpKey =
   | "intro1"
-  | "intro2"
+  | "portals"
   | "archPortalHover"
   | "elaiourgeioPortalHover"
   | "planoEleusPortalHover"
@@ -88,6 +90,8 @@ export type HelpKey =
   | "teletourgeio2"
   | "teletourgeio3"
   | "teletourgeio4"
+  | "teletourgeioGrifos"
+  | "teletourgeioGrifosErr1"
   | undefined;
 
 export type Store = {
@@ -132,7 +136,7 @@ export const useStore = create<Store>((set, get) => ({
   account: {
     accessToken: "2",
   },
-  scene: "teletourgeio",
+  scene: "intro",
   audio: "",
   level: "Φως-Σκοτάδι",
   inventory: [],
@@ -145,7 +149,8 @@ export const useStore = create<Store>((set, get) => ({
     }),
   setTimer: (timer: ReturnValue) => set(() => ({ timer })),
   setHint: (hint?: HelpKey) => set(() => ({ hint })),
-  setTmpHint: (hint?: string) => set(() => ({ tmpHint: hint })),
+  setTmpHint: (hint?: string) =>
+    set(() => ({ isHintVisible: true, tmpHint: hint })),
   setIsHintVisible: (isHintVisible) => set(() => ({ isHintVisible })),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),

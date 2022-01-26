@@ -21,7 +21,7 @@ function Intro() {
   useEffect(() => {
     if (store.invHas(`stone`)) {
       setOpenPortals(true);
-      store.setHint("intro2");
+      store.setHint("portals");
     }
   }, [store.inventory]);
   return (

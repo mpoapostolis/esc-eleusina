@@ -1,6 +1,4 @@
 import { loadSound } from "../../../utils";
-import Link from "next/link";
-import { useRouter } from "next/dist/client/router";
 import { useStore } from "../../../store";
 
 export default function HelpUiIcon() {
@@ -10,6 +8,7 @@ export default function HelpUiIcon() {
     <button
       onClick={() => {
         hint?.play();
+        store.setTmpHint(undefined);
         store.setIsHintVisible(!store.isHintVisible);
       }}
       className="relative border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"

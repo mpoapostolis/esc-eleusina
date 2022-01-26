@@ -10,6 +10,7 @@ function Img(
     hideWhen?: boolean;
     src: string;
     rotY?: number;
+    opacity?: number;
     position: [number, number, number];
     rotate?: boolean;
     offsetScale?: number;
@@ -40,7 +41,7 @@ function Img(
       ref={ref}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      scale={hovered ? 1.05 : 1}
+      scale={props.opacity ? 1 : hovered ? 1.05 : 1}
       {...props}
       onClick={(evt) => {
         dap.play();
@@ -51,7 +52,7 @@ function Img(
     >
       <planeGeometry attach="geometry" args={[10, 10]} />
       <meshBasicMaterial
-        opacity={hovered ? 1 : 0.8}
+        opacity={props.opacity ?? hovered ? 1 : 0.8}
         transparent
         attach="material"
         map={texture}
