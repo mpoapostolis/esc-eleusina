@@ -1,23 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { descriptiveText, useStore } from "../../../store";
-import Img from "../Img";
+import { randomNum } from "../../../utils";
+import Item, { ImgName } from "../Item";
 import Portals from "../Portals";
 
+const ranPos = [...Array(9)].map(() => [
+  randomNum(-50, 50),
+  randomNum(-40, 10),
+  randomNum(-90, -50),
+]);
 function Karnagio() {
   const store = useStore();
   const [box, setBox] = useState<string[]>([]);
-  console.log("----");
   useEffect(() => {
     store.setHint("teletourgeio1");
     setTimeout(() => {
       store.setDescriptiveText(descriptiveText.karnagio);
     }, 2000);
   }, []);
-  const items = ["doxeio1", "doxeio2", "dafni", "book"];
+  const items: ImgName[] = [
+    "case",
+    "flower",
+    "garbage",
+    "key",
+    "lingerie",
+    "rock1",
+    "rock",
+    "wing1",
+    "wing",
+  ];
   const doIHaveAllItems = items.every(store.invHas);
 
   const openPortals = items
-    .filter((e) => e !== "book")
+    .filter((e) => e !== "wing1")
     .every((e) => box.includes(e));
 
   useEffect(() => {
@@ -33,123 +48,41 @@ function Karnagio() {
   }, [openPortals]);
 
   const hideItem = (s: string) => store.invHas(s) || box.length > 0;
+  const ref = useRef();
   return (
     <group>
-      <Img
-        hideWhen={["scythe", "dafni"].some(store.invHas)}
-        onClick={() => {
-          store.setHint("teletourgeio2");
-          store.setInventory({
-            selectable: true,
-            name: "scythe",
-            src: "/images/scythe.png",
-            description: ``,
-          });
-        }}
-        position={[20, -5, 0]}
-        src="/images/scythe.png"
-      />
+      {items.map((name, idx) => (
+        <Item
+          name={name}
+          key={name}
+          collectable
+          selectable
+          hideWhen={hideItem(name)}
+          // @ts-ignore
+          position={ranPos[idx]}
+        />
+      ))}
 
-      <Img
-        hideWhen={hideItem("doxeio1")}
-        onClick={() => {
-          store.setHint("teletourgeio2");
-
-          store.setInventory({
-            selectable: true,
-            name: "doxeio1",
-            src: "https://img.icons8.com/ios/50/000000/wine-glass.png",
-            description: ``,
-          });
-        }}
-        position={[-50, -50, 90]}
-        src="https://img.icons8.com/ios/50/000000/wine-glass.png"
-      />
-
-      <Img
+      <Item
+        name="box"
         opacity={1}
         hideWhen={!doIHaveAllItems && box.length < 1}
         onClick={() => {
-          store.setIsHintVisible(false);
           if (!store.hand) return;
           const { hand } = store;
-          if (hand !== "dafni" && !box.includes("dafni")) {
-            store.setTmpHint("teletourgeioGrifosErr1");
-            setBox((s) => [...s, hand]);
+          store.setIsHintVisible(false);
+          if (hand === "wing1") {
+            store.setTmpHint("karnagioXerouli1");
+            store.setHand(undefined);
           } else {
             setBox((s) => [...s, hand]);
             store.removeInvItem(hand);
+            store.setHand(undefined);
           }
         }}
-        position={[-15, -5, 10]}
-        src="/images/woodenBox.png"
+        position={[-10, -10, -15]}
       />
 
-      <Img
-        hideWhen={hideItem("doxeio2")}
-        onClick={() => {
-          store.setInventory({
-            selectable: true,
-            name: "doxeio2",
-            src: "https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png",
-            description: ``,
-          });
-        }}
-        position={[50, -50, -90]}
-        src="https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png"
-      />
-
-      <Img
-        onClick={() => {
-          store.setTmpHint("teletourgeio4");
-        }}
-        position={[0, -50, -90]}
-        src="/images/emoji.png"
-      />
-
-      <Img
-        hideWhen={hideItem("dafni")}
-        onClick={() => {
-          if (!store.invHas("scythe") || store.hand !== "scythe") {
-            store.setTmpHint("teletourgeio1");
-          } else {
-            store.removeInvItem("scythe");
-            store.setInventory({
-              selectable: true,
-              name: "dafni",
-              src: "https://img.icons8.com/office/40/000000/spa-flower.png",
-              description: ``,
-            });
-          }
-        }}
-        position={[0, -20, -90]}
-        src="https://img.icons8.com/office/40/000000/spa-flower.png"
-      />
-
-      <Img
-        collectable
-        name="book"
-        selectable
-        hideWhen={hideItem("book")}
-        onClick={() => {
-          store.setHint("teletourgeio2");
-          store.setDescriptiveText(
-            descriptiveText["teletourgeioLogotexnikoKeimeno"]
-          );
-          store.setInventory({
-            selectable: true,
-            name: "book",
-            src: "https://img.icons8.com/ios/50/000000/open-book.png",
-            action: () =>
-              store.setDescriptiveText(
-                descriptiveText["teletourgeioLogotexnikoKeimeno"]
-              ),
-            description: ``,
-          });
-        }}
-        position={[0, -20, 80]}
-        src="https://img.icons8.com/ios/50/000000/open-book.png"
-      />
       {openPortals && <Portals />}
     </group>
   );

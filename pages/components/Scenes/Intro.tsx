@@ -1,10 +1,9 @@
 import { descriptiveText, helps, useStore } from "../../../store";
 import { useEffect, useState } from "react";
-import Img from "../Img";
+import Item from "../Item";
 
 import Portals from "../Portals";
 import { ancientText } from "../AncientText";
-import { useRouter } from "next/dist/client/router";
 
 function Intro() {
   const store = useStore();
@@ -26,14 +25,13 @@ function Intro() {
   }, [store.inventory]);
   return (
     <>
-      <Img
+      <Item
+        name="stone"
         hideWhen={
           openPortals || store.invHas("stone") || store.invHas("Όρκο του Μύστη")
         }
-        src={`/images/stone.png`}
-        onClick={() => {
-          store.setAncientText(ancientText.intro1);
-        }}
+        collectable
+        onCollectSucccess={() => store.setAncientText(ancientText.intro1)}
         position={[-0, -35, -60]}
       />
 

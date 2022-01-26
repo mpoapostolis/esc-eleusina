@@ -1,8 +1,5 @@
 import clsx from "clsx";
-import { useRouter } from "next/dist/client/router";
-import { useEffect } from "react";
 import { helps, useStore } from "../../../store";
-import { loadSound } from "../../../utils";
 
 export default function Hint() {
   const transform = { transform: "skewX(-20deg)" };
@@ -10,10 +7,7 @@ export default function Hint() {
     WebkitTextStroke: "1px black",
   };
   const store = useStore();
-  const hint = loadSound("/sounds/hint.wav");
-  useEffect(() => {
-    if (hint.play && store.hint) hint.play();
-  }, [store.hint]);
+
   const visible = store.isHintVisible && (store.hint || store.tmpHint);
   const getHelp = () => {
     if (visible && store.tmpHint) return helps[store.tmpHint];

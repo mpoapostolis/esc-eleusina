@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useTime } from "../..";
 import { useStore } from "../../../store";
-import { loadSound } from "../../../utils";
 
 export const ancientText = {
   intro1: {
@@ -20,11 +19,6 @@ export const ancientText = {
 export default function AncientText() {
   const store = useStore();
   const [words, setWords] = useState<string[]>([]);
-  const sound = loadSound("/sounds/modal.wav");
-
-  useEffect(() => {
-    if (store.ancientText?.text && sound.play) sound.play();
-  }, [store.ancientText]);
 
   const t = useTime();
   useEffect(() => {

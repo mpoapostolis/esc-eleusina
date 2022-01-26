@@ -1,6 +1,6 @@
 import { ReturnValue } from "use-timer/lib/types";
 import { useStore } from "../../../store";
-import Img from "../Img";
+import Item from "../Item";
 import Portals from "../Portals";
 
 function Livadi() {

@@ -2,18 +2,13 @@ import clsx from "clsx";
 import { useEffect } from "react";
 import { useTime } from "../..";
 import { Scene, useStore } from "../../../store";
-import { loadSound } from "../../../utils";
 
 const shadow = {
   WebkitTextStroke: "1px black",
 };
 
 export default function DescriptiveText() {
-  const sound = loadSound("/sounds/modal.wav");
   const store = useStore();
-  useEffect(() => {
-    if (sound.play) sound.play();
-  }, []);
   const t = useTime();
   useEffect(() => {
     if (store.descriptiveText) t.pause();

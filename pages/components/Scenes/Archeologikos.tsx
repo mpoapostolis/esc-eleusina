@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { descriptiveText, helps, useStore } from "../../../store";
-import Img from "../Img";
+import Item from "../Item";
 
 function Archeologikos() {
   const store = useStore();

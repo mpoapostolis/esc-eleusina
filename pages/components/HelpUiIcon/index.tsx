@@ -1,13 +1,10 @@
-import { loadSound } from "../../../utils";
 import { useStore } from "../../../store";
 
 export default function HelpUiIcon() {
-  const hint = loadSound("/sounds/hint.wav");
   const store = useStore();
   return (
     <button
       onClick={() => {
-        hint?.play();
         store.setTmpHint(undefined);
         store.setIsHintVisible(!store.isHintVisible);
       }}

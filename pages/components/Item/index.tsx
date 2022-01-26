@@ -1,4 +1,3 @@
-import { loadSound } from "../../../utils";
 import * as THREE from "three";
 import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
@@ -6,34 +5,92 @@ import { Box } from "@react-three/drei";
 import { Mesh } from "three";
 import { useStore } from "../../../store";
 
-const img: Record<string, any> = {
+export type ImgName =
+  | "scythe"
+  | "doxeio1"
+  | "doxeio2"
+  | "emoji"
+  | "dafni"
+  | "book"
+  | "stone"
+  | "box"
+  | "case"
+  | "flower"
+  | "garbage"
+  | "key"
+  | "lingerie"
+  | "rock1"
+  | "rock"
+  | "wing1"
+  | "wing";
+
+const img: Record<ImgName, any> = {
+  scythe: {
+    src: "/images/scythe.png",
+  },
+  case: {
+    src: "/images/test/6/case.png",
+  },
+  flower: {
+    src: "/images/test/6/flower.png",
+  },
+  garbage: {
+    src: "/images/test/6/garbage.png",
+  },
+  key: {
+    src: "/images/test/6/key.png",
+  },
+  lingerie: {
+    src: "/images/test/6/lingerie.png",
+  },
+  rock1: {
+    src: "/images/test/6/rock1.png",
+  },
+  rock: {
+    src: "/images/test/6/rock.png",
+  },
+  wing1: {
+    src: "/images/test/6/wing1.png",
+  },
+  wing: {
+    src: "/images/test/6/wing.png",
+  },
+  stone: {
+    src: `/images/stone.png`,
+  },
+  doxeio1: {
+    src: "https://img.icons8.com/ios/50/000000/wine-glass.png",
+  },
+  doxeio2: {
+    src: "https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png",
+  },
+  emoji: {
+    src: "/images/emoji.png",
+  },
+  dafni: {
+    src: "https://img.icons8.com/office/40/000000/spa-flower.png",
+  },
   book: {
     src: "https://img.icons8.com/ios/50/000000/open-book.png",
   },
+  box: {
+    src: "/images/woodenBox.png",
+  },
 };
 
-function Img(
+function Item(
   props: MeshProps & {
-    selectable: boolean;
-    name?: string;
+    selectable?: boolean;
+    name: ImgName;
     collectable?: boolean;
     onCollectError?: () => void;
     onCollectSucccess?: () => void;
     hideWhen?: boolean;
-    addToInventory?: boolean;
-    src: string;
-    rotY?: number;
     opacity?: number;
-    position: [number, number, number];
-    rotate?: boolean;
-    offsetScale?: number;
-    forceScale?: number;
-    args?: [number, number, number];
-    hightlightAfter?: number;
   }
 ) {
-  const dap = loadSound("/sounds/modal.wav");
-  const texture = useLoader(THREE.TextureLoader, props.src);
+  const src = img[props.name].src as string;
+  const texture = useLoader(THREE.TextureLoader, src);
   const [hovered, setHovered] = useState(false);
   const store = useStore();
   useEffect(() => {
@@ -58,12 +115,15 @@ function Img(
       {...props}
       onClick={(evt) => {
         if (props.collectable && props.name && props.name in img) {
-          dap?.play();
           const item = img[props.name];
           item.name = props.name;
           item.selectable = props.selectable;
           store.setInventory(item);
+          if (props.onCollectSucccess) props.onCollectSucccess();
+        } else {
+          if (props.onCollectError) props.onCollectError();
         }
+        if (props.onClick) props?.onClick(evt);
       }}
     >
       <planeGeometry attach="geometry" args={[10, 10]} />
@@ -76,9 +136,9 @@ function Img(
     </mesh>
   );
 }
-Img.getInitialProps = () => {
+Item.getInitialProps = () => {
   const statusCode = 404;
   return { statusCode };
 };
 
-export default Img;
+export default Item;

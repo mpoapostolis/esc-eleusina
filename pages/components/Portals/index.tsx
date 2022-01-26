@@ -1,4 +1,4 @@
-import { HelpKey, Scene } from "../../../store";
+import { HelpKey, Scene, useStore } from "../../../store";
 import Exit from "../Exit";
 
 const scenes: {
@@ -15,16 +15,19 @@ const scenes: {
   },
 ];
 function Portals() {
+  const store = useStore();
   return (
     <group>
-      {scenes.map((s, idx) => (
-        <Exit
-          hover={s.key}
-          key={idx}
-          scene={s.scene as Scene}
-          position={[-20 + idx * 10, 0, -50]}
-        />
-      ))}
+      {scenes
+        .filter((e) => e.scene !== store.scene)
+        .map((s, idx) => (
+          <Exit
+            hover={s.key}
+            key={idx}
+            scene={s.scene as Scene}
+            position={[-20 + idx * 10, 0, -50]}
+          />
+        ))}
     </group>
   );
 }

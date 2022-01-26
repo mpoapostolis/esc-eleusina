@@ -1,5 +1,6 @@
 import { ReturnValue } from "use-timer/lib/types";
 import create from "zustand";
+import { loadSound } from "../utils";
 
 export type Level =
   | "Φως-Σκοτάδι"
@@ -74,13 +75,17 @@ export const helps: Record<string, string> = {
   archeologikos1: `Σχημάτισε τις λέξεις ενώνοντας τα γράμματα με συνεχόμενη γραμμή`,
   teletourgeio1: `Πρέπει να βρεις το εργαλείο για να κόψεις τις δάφνες.`,
   teletourgeio2: `Μπορείς να το χρησιμοποιήσεις για να κόψεις το φυτό που αναφέρεται στο κείμενο`,
-  teletourgeio4: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στο αποθετήριο`,
+  notCollectable: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στο αποθετήριο`,
+  karnagioXerouli1: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στη βαλίτσα`,
+  metaforaValitsas: `Πρέπει να βρεις κάποιο τρόπο για να μεταφέρεις τη βαλίτσα`,
+  search: `ψαξε τα υπόλοιπα αντικειμενα`,
   teletourgeioGrifos: `Βάλε τη δάφνη και τα δοχεία στο κουτί`,
   teletourgeioGrifosErr1: `Πρώτα πρέπει να μπουν οι δάφνες`,
 };
 
 export type HelpKey =
   | "intro1"
+  | "search"
   | "portals"
   | "archPortalHover"
   | "elaiourgeioPortalHover"
@@ -92,7 +97,7 @@ export type HelpKey =
   | "teletourgeio1"
   | "teletourgeio2"
   | "teletourgeio3"
-  | "teletourgeio4"
+  | "notCollectable"
   | "teletourgeioGrifos"
   | "teletourgeioGrifosErr1"
   | undefined;
@@ -134,6 +139,8 @@ export type Store = {
   timer?: ReturnValue;
   setTimer: (timer: ReturnValue) => void;
 };
+const dap = loadSound("/sounds/modal.wav");
+const hint = loadSound("/sounds/hint.wav");
 
 export const useStore = create<Store>((set, get) => ({
   account: {
@@ -151,14 +158,31 @@ export const useStore = create<Store>((set, get) => ({
       return { hand };
     }),
   setTimer: (timer: ReturnValue) => set(() => ({ timer })),
-  setHint: (hint?: HelpKey) => set(() => ({ hint })),
-  setTmpHint: (hint?: string) =>
-    set(() => ({ isHintVisible: true, tmpHint: hint })),
-  setIsHintVisible: (isHintVisible) => set(() => ({ isHintVisible })),
+  setHint: (hint?: HelpKey) =>
+    set(() => ({
+      hint: hint,
+    })),
+  setTmpHint: (tmpHint?: string) =>
+    set(() => {
+      hint?.play();
+      return { isHintVisible: true, tmpHint };
+    }),
+  setIsHintVisible: (isHintVisible) =>
+    set(() => {
+      hint.play();
+      return { isHintVisible };
+    }),
   setLevel: (l: Level) => set(() => ({ level: l })),
-  setDescriptiveText: (l?: string) => set(() => ({ descriptiveText: l })),
-  setAncientText: (ancientText?: AncientText) => set(() => ({ ancientText })),
-
+  setDescriptiveText: (l?: string) =>
+    set(() => {
+      dap?.play();
+      return { descriptiveText: l };
+    }),
+  setAncientText: (ancientText?: AncientText) =>
+    set(() => {
+      dap?.play();
+      return { ancientText };
+    }),
   inventoryNotf: [],
   dialogue: [],
   modal: undefined,
@@ -183,11 +207,13 @@ export const useStore = create<Store>((set, get) => ({
       .inventory.map((i) => i.name)
       .includes(e),
 
-  setInventory: (i: Item) =>
+  setInventory: (i: Item) => {
+    dap?.play();
     set((state) => ({
       inventory: [...state.inventory, i],
       isHintVisible: false,
-    })),
+    }));
+  },
   setInventoryNotf: (n: string) =>
     set((state) => {
       return { inventoryNotf: [...state.inventoryNotf, n] };

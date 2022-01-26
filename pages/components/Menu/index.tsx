@@ -6,6 +6,8 @@ import clsx from "clsx";
 import axios, { AxiosError } from "axios";
 import { Level, Scene, useStore } from "../../../store";
 import { useRouter } from "next/dist/client/router";
+import { loadSound } from "../../../utils";
+const hint = loadSound("/sounds/hint.wav");
 
 // @ts-ignore
 const stages: Record<Level, { label: string; key: Scene }[]> = {
@@ -44,6 +46,7 @@ function Register(props: { type: "login" | "register" }) {
   const [err, setErr] = useState<Err>({});
 
   const goBack = () => {
+    hint?.play();
     setErr({});
     router.back();
   };
@@ -195,6 +198,7 @@ function Select() {
                 <h1 className="text-white text-2xl text-center">{l.label}</h1>
                 <img
                   onClick={() => {
+                    hint?.play();
                     store.setScene(l.key);
                     router.push("/");
                   }}
@@ -223,6 +227,7 @@ function Select() {
                   }
                 )}
                 onClick={() => {
+                  hint?.play();
                   store.setLevel(lvl);
                   router.push({
                     query: {
@@ -291,12 +296,18 @@ const Main = () => {
       {store.account.accessToken && (
         <>
           <MenuItem
-            onClick={() => setType("selectLevel")}
+            onClick={() => {
+              hint?.play();
+              setType("selectLevel");
+            }}
             src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
             title="Select level"
           />
           <MenuItem
-            onClick={() => setType("inventory")}
+            onClick={() => {
+              hint?.play();
+              setType("inventory");
+            }}
             src="https://s2.svgbox.net/materialui.svg?ic=inventory&color=fff9"
             title="Inventory"
           />
@@ -306,13 +317,19 @@ const Main = () => {
       {!store.account.accessToken && (
         <>
           <MenuItem
-            onClick={() => setType("login")}
+            onClick={() => {
+              hint?.play();
+              setType("login");
+            }}
             src="https://s2.svgbox.net/materialui.svg?ic=login&color=fff9"
             title="Login"
           />
 
           <MenuItem
-            onClick={() => setType("register")}
+            onClick={() => {
+              hint?.play();
+              setType("register");
+            }}
             src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
             title="Register"
           />
@@ -363,7 +380,10 @@ const Menu: NextPage = () => {
 
       {type !== "menu" && (
         <img
-          onClick={router.back}
+          onClick={() => {
+            hint?.play();
+            router.back();
+          }}
           role="button"
           src="https://s2.svgbox.net/materialui.svg?ic=arrow_back&color=fff9"
           className="fixed cursor-pointer top-0 left-0 p-3 w-20"

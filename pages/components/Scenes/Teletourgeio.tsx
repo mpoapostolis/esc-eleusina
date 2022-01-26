@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { descriptiveText, helps, Item, useStore } from "../../../store";
-import Img from "../Img";
+import { descriptiveText, helps, useStore } from "../../../store";
+import Item from "../Item";
 import Portals from "../Portals";
 
 function Teletourgeio() {
@@ -35,119 +35,82 @@ function Teletourgeio() {
   const hideItem = (s: string) => store.invHas(s) || box.length > 0;
   return (
     <group>
-      <Img
+      <Item
         hideWhen={["scythe", "dafni"].some(store.invHas)}
-        onClick={() => {
-          store.setHint("teletourgeio2");
-          store.setInventory({
-            name: "scythe",
-            action: () => {
-              store.setHand("scythe");
-            },
-            src: "/images/scythe.png",
-            description: ``,
-          });
-        }}
+        name="scythe"
+        collectable
+        selectable
+        onCollectSucccess={() => store.setHint("teletourgeio2")}
         position={[20, -5, 0]}
-        src="/images/scythe.png"
       />
 
-      <Img
+      <Item
+        name="doxeio1"
         hideWhen={hideItem("doxeio1")}
-        onClick={() => {
-          store.setHint("teletourgeio2");
-
-          store.setInventory({
-            name: "doxeio1",
-            action: () => store.setHand("doxeio1"),
-            src: "https://img.icons8.com/ios/50/000000/wine-glass.png",
-            description: ``,
-          });
-        }}
+        selectable
+        collectable
         position={[-50, -50, 90]}
-        src="https://img.icons8.com/ios/50/000000/wine-glass.png"
       />
 
-      <Img
+      <Item
+        name="box"
         opacity={1}
         hideWhen={!doIHaveAllItems && box.length < 1}
         onClick={() => {
           store.setIsHintVisible(false);
           if (!store.hand) return;
           const { hand } = store;
-          store.setHand(undefined);
           if (hand !== "dafni" && !box.includes("dafni")) {
             store.setTmpHint("teletourgeioGrifosErr1");
             setBox((s) => [...s, hand]);
+            store.setHand(undefined);
           } else {
             setBox((s) => [...s, hand]);
             store.removeInvItem(hand);
           }
         }}
         position={[-15, -5, 10]}
-        src="/images/woodenBox.png"
       />
 
-      <Img
+      <Item
+        name="doxeio2"
         hideWhen={hideItem("doxeio2")}
-        onClick={() => {
-          store.setInventory({
-            name: "doxeio2",
-            action: () => store.setHand("doxeio2"),
-            src: "https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png",
-            description: ``,
-          });
-        }}
+        collectable
+        selectable
         position={[50, -50, -90]}
-        src="https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png"
       />
 
-      <Img
+      <Item
+        name="emoji"
         onClick={() => {
-          store.setTmpHint("teletourgeio4");
+          store.setTmpHint("notCollectable");
         }}
         position={[0, -50, -90]}
-        src="/images/emoji.png"
       />
 
-      <Img
+      <Item
+        name="dafni"
         hideWhen={hideItem("dafni")}
-        onClick={() => {
-          if (!store.invHas("scythe") || store.hand !== "scythe") {
-            store.setTmpHint("teletourgeio1");
-          } else {
-            store.removeInvItem("scythe");
-            store.setInventory({
-              name: "dafni",
-              action: () => store.setHand("dafni"),
-              src: "https://img.icons8.com/office/40/000000/spa-flower.png",
-              description: ``,
-            });
-          }
+        selectable
+        collectable={store.invHas("scythe") && store.hand === "scythe"}
+        onCollectError={() => store.setTmpHint("teletourgeio1")}
+        onCollectSucccess={() => {
+          store.setHint("search");
+          store.removeInvItem("scythe");
         }}
         position={[0, -20, -90]}
-        src="https://img.icons8.com/office/40/000000/spa-flower.png"
       />
 
-      <Img
-        hideWhen={hideItem("book")}
-        onClick={() => {
-          store.setHint("teletourgeio2");
+      <Item
+        collectable
+        name="book"
+        onCollectSucccess={() => {
           store.setDescriptiveText(
             descriptiveText["teletourgeioLogotexnikoKeimeno"]
           );
-          store.setInventory({
-            name: "book",
-            src: "https://img.icons8.com/ios/50/000000/open-book.png",
-            action: () =>
-              store.setDescriptiveText(
-                descriptiveText["teletourgeioLogotexnikoKeimeno"]
-              ),
-            description: ``,
-          });
         }}
+        hideWhen={hideItem("book")}
         position={[0, -20, 80]}
-        src="https://img.icons8.com/ios/50/000000/open-book.png"
       />
       {openPortals && <Portals />}
     </group>

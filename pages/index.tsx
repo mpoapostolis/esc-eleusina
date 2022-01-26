@@ -7,7 +7,7 @@ import { Html, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import Scenes from "./components/Scenes";
 import { useRouter } from "next/dist/client/router";
-import Img from "./components/Img";
+import Item from "./components/Item";
 import { TextureLoader } from "three";
 import Menu from "./components/Menu";
 import DescriptiveText from "./components/DescriptiveText";
@@ -113,16 +113,6 @@ const Home: NextPage = () => {
           />
           {store.hand && <Hand />}{" "}
           <Suspense fallback={<Html>loading...</Html>}>
-            {store.scene === "elaioyrgeio" && (
-              <Img
-                onPointerDown={() => {
-                  router.push("/jigSaw");
-                }}
-                scale={0.5}
-                position={[-20, -5, -5]}
-                src="/images/jigSaw.png"
-              />
-            )}
             <Box scene={store.scene} />
             <Scenes />
           </Suspense>

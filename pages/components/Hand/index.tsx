@@ -6,12 +6,14 @@ import { useStore } from "../../../store";
 export function Hand() {
   const store = useStore();
 
-  const getHandItemSrc = () => {
+  const getTexture = () => {
     const obj = store.inventory.find((s) => store.hand === s.name);
-    return obj?.src ?? "/images/emoji.png";
+    if (obj) {
+      const texture = useLoader(TextureLoader, obj.src);
+      return texture;
+    } else return undefined;
   };
   const { viewport } = useThree();
-
   useFrame(({ mouse, camera, viewport: { height, width } }) => {
     if (ref.current) {
       ref.current.position.copy(camera.position);
@@ -22,12 +24,11 @@ export function Hand() {
       ref.current?.lookAt(camera.position);
     }
   });
-  const texture = useLoader(TextureLoader, getHandItemSrc());
   const ref = useRef<Mesh>();
   return (
     <mesh ref={ref} position={[20, -5, 0]}>
       <planeGeometry attach="geometry" args={[10, 10]} />
-      <meshBasicMaterial transparent attach="material" map={texture} />
+      <meshBasicMaterial transparent attach="material" map={getTexture()} />
     </mesh>
   );
 }
