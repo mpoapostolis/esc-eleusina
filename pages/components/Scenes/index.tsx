@@ -5,11 +5,15 @@ import Elaioyrgeio from "./Elaioyrgeio";
 import Intro from "./Intro";
 import Karavi from "./Karavi";
 import Livadi from "./Livadi";
+import Karnagio from "./Karnagio";
 
 const Component = (p: { scene: Scene }) => {
   switch (p.scene) {
     case "intro":
       return <Intro />;
+    case "karnagio":
+      return <Karnagio />;
+
     case "teletourgeio":
       return <Teletourgeio />;
 

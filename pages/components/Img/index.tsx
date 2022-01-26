@@ -4,10 +4,23 @@ import { MeshProps, useFrame, useLoader } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import { Box } from "@react-three/drei";
 import { Mesh } from "three";
+import { useStore } from "../../../store";
+
+const img: Record<string, any> = {
+  book: {
+    src: "https://img.icons8.com/ios/50/000000/open-book.png",
+  },
+};
 
 function Img(
   props: MeshProps & {
+    selectable: boolean;
+    name?: string;
+    collectable?: boolean;
+    onCollectError?: () => void;
+    onCollectSucccess?: () => void;
     hideWhen?: boolean;
+    addToInventory?: boolean;
     src: string;
     rotY?: number;
     opacity?: number;
@@ -22,7 +35,7 @@ function Img(
   const dap = loadSound("/sounds/modal.wav");
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [hovered, setHovered] = useState(false);
-
+  const store = useStore();
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
@@ -44,9 +57,12 @@ function Img(
       scale={props.opacity ? 1 : hovered ? 1.05 : 1}
       {...props}
       onClick={(evt) => {
-        dap.play();
-        if (props.onClick) {
-          props.onClick(evt);
+        if (props.collectable && props.name && props.name in img) {
+          dap?.play();
+          const item = img[props.name];
+          item.name = props.name;
+          item.selectable = props.selectable;
+          store.setInventory(item);
         }
       }}
     >

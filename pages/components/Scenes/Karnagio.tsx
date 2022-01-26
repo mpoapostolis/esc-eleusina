@@ -3,14 +3,14 @@ import { descriptiveText, useStore } from "../../../store";
 import Img from "../Img";
 import Portals from "../Portals";
 
-function Archeologikos() {
+function Karnagio() {
   const store = useStore();
   const [box, setBox] = useState<string[]>([]);
-
+  console.log("----");
   useEffect(() => {
     store.setHint("teletourgeio1");
     setTimeout(() => {
-      store.setDescriptiveText(descriptiveText.teletourgeio);
+      store.setDescriptiveText(descriptiveText.karnagio);
     }, 2000);
   }, []);
   const items = ["doxeio1", "doxeio2", "dafni", "book"];
@@ -40,10 +40,8 @@ function Archeologikos() {
         onClick={() => {
           store.setHint("teletourgeio2");
           store.setInventory({
+            selectable: true,
             name: "scythe",
-            action: () => {
-              store.setHand("scythe");
-            },
             src: "/images/scythe.png",
             description: ``,
           });
@@ -58,8 +56,8 @@ function Archeologikos() {
           store.setHint("teletourgeio2");
 
           store.setInventory({
+            selectable: true,
             name: "doxeio1",
-            action: () => store.setHand("doxeio1"),
             src: "https://img.icons8.com/ios/50/000000/wine-glass.png",
             description: ``,
           });
@@ -75,7 +73,6 @@ function Archeologikos() {
           store.setIsHintVisible(false);
           if (!store.hand) return;
           const { hand } = store;
-          store.setHand(undefined);
           if (hand !== "dafni" && !box.includes("dafni")) {
             store.setTmpHint("teletourgeioGrifosErr1");
             setBox((s) => [...s, hand]);
@@ -92,8 +89,8 @@ function Archeologikos() {
         hideWhen={hideItem("doxeio2")}
         onClick={() => {
           store.setInventory({
+            selectable: true,
             name: "doxeio2",
-            action: () => store.setHand("doxeio2"),
             src: "https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png",
             description: ``,
           });
@@ -118,8 +115,8 @@ function Archeologikos() {
           } else {
             store.removeInvItem("scythe");
             store.setInventory({
+              selectable: true,
               name: "dafni",
-              action: () => store.setHand("dafni"),
               src: "https://img.icons8.com/office/40/000000/spa-flower.png",
               description: ``,
             });
@@ -130,6 +127,9 @@ function Archeologikos() {
       />
 
       <Img
+        collectable
+        name="book"
+        selectable
         hideWhen={hideItem("book")}
         onClick={() => {
           store.setHint("teletourgeio2");
@@ -137,6 +137,7 @@ function Archeologikos() {
             descriptiveText["teletourgeioLogotexnikoKeimeno"]
           );
           store.setInventory({
+            selectable: true,
             name: "book",
             src: "https://img.icons8.com/ios/50/000000/open-book.png",
             action: () =>
@@ -154,9 +155,9 @@ function Archeologikos() {
   );
 }
 
-Archeologikos.getInitialProps = () => {
+Karnagio.getInitialProps = () => {
   const statusCode = 404;
   return { statusCode };
 };
 
-export default Archeologikos;
+export default Karnagio;

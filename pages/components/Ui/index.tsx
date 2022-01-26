@@ -123,6 +123,7 @@ export default function Ui() {
                 key={i}
                 onClick={() => {
                   const item = store.inventory[i];
+                  if (item?.selectable) store.setHand(item.name);
                   if (item?.action) {
                     sound?.play();
                     item?.action();

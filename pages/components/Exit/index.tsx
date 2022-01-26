@@ -8,7 +8,9 @@ export default function Exit(p: MeshProps & { scene: Scene; hover: HelpKey }) {
   const [hover, setHover] = useState(false);
   return (
     <mesh
-      onClick={() => store.setScene(p.scene)}
+      onClick={() => {
+        store.setScene(p.scene);
+      }}
       rotation={p.rotation}
       position={p.position}
       onPointerOver={() => {

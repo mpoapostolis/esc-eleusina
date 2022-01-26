@@ -3,7 +3,7 @@ import { descriptiveText, helps, Item, useStore } from "../../../store";
 import Img from "../Img";
 import Portals from "../Portals";
 
-function Archeologikos() {
+function Teletourgeio() {
   const store = useStore();
   const [box, setBox] = useState<string[]>([]);
 
@@ -154,9 +154,9 @@ function Archeologikos() {
   );
 }
 
-Archeologikos.getInitialProps = () => {
+Teletourgeio.getInitialProps = () => {
   const statusCode = 404;
   return { statusCode };
 };
 
-export default Archeologikos;
+export default Teletourgeio;
