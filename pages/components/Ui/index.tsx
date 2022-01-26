@@ -124,9 +124,9 @@ export default function Ui() {
                 key={i}
                 onClick={() => {
                   const item = store.inventory[i];
-                  if (item.action) {
+                  if (item?.action) {
                     sound?.play();
-                    item.action();
+                    item?.action();
                   }
                   if (store.inventoryNotf.length > 0)
                     store.removeInventoryNotf(item.name);
@@ -134,6 +134,8 @@ export default function Ui() {
                 className={clsx(
                   "flex bg-black bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
                   {
+                    "bg-green-900 cursor-pointer":
+                      store.hand && store.hand === store.inventory[i]?.name,
                     "cursor-pointer": store.inventory[i]?.action,
                     "rounded-tl-2xl": i === 0,
                     "rounded-tr-2xl": i === 2,

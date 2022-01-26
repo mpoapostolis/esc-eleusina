@@ -20,8 +20,6 @@ export default function Hint() {
     if (visible && store.hint) return helps[store.hint];
   };
 
-  console.log(visible);
-
   return (
     <div
       className={clsx(

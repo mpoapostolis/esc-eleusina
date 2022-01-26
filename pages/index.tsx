@@ -1,4 +1,4 @@
-import { Canvas, useLoader } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import type { NextPage } from "next";
 import { Scene, useStore } from "../store";
 import Ui from "./components/Ui";
@@ -14,6 +14,7 @@ import DescriptiveText from "./components/DescriptiveText";
 import AncientText from "./components/AncientText";
 import { useTimer } from "use-timer";
 import { Status } from "use-timer/lib/types";
+import Hand from "./components/Hand";
 
 const Box = (props: { scene: Scene }) => {
   const px = useLoader(TextureLoader, `/scenes/${props.scene}/px.jpg`);
@@ -102,7 +103,7 @@ const Home: NextPage = () => {
       </Time.Provider>
 
       <div className="canvas">
-        <Canvas frameloop="demand">
+        <Canvas>
           <ambientLight position={[0, 40, 0]} color="#fff" />
           <OrbitControls
             maxDistance={0.00003}
@@ -110,6 +111,7 @@ const Home: NextPage = () => {
             makeDefault
             enablePan={false}
           />
+          {store.hand && <Hand />}{" "}
           <Suspense fallback={<Html>loading...</Html>}>
             {store.scene === "elaioyrgeio" && (
               <Img

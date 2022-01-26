@@ -16,12 +16,14 @@ function Archeologikos() {
   return (
     <group>
       <Img
-        hideWhen={store.invHas("scythe")}
+        hideWhen={["scythe", "dafni"].some(store.invHas)}
         onClick={() => {
           store.setHint("teletourgeio2");
-
           store.setInventory({
             name: "scythe",
+            action: () => {
+              store.setHand("scythe");
+            },
             src: "/images/scythe.png",
             description: ``,
           });
@@ -37,6 +39,7 @@ function Archeologikos() {
 
           store.setInventory({
             name: "doxeio1",
+            action: () => store.setHand("doxeio1"),
             src: "https://img.icons8.com/ios/50/000000/wine-glass.png",
             description: ``,
           });
@@ -50,6 +53,7 @@ function Archeologikos() {
         onClick={() => {
           store.setInventory({
             name: "doxeio2",
+            action: () => store.setHand("doxeio2"),
             src: "https://img.icons8.com/ios-glyphs/30/000000/vodka-shot.png",
             description: ``,
           });
@@ -71,14 +75,18 @@ function Archeologikos() {
         hideWhen={store.invHas("dafni")}
         onClick={() => {
           store.setHint("teletourgeio1");
-          if (!store.invHas("scythe")) {
+          if (!store.invHas("scythe") || store.hand !== "scythe") {
             store.setIsHintVisible(true);
-          } else
+          } else {
+            store.removeInvItem("scythe");
+
             store.setInventory({
               name: "dafni",
+              action: () => store.setHand("dafni"),
               src: "https://img.icons8.com/office/40/000000/spa-flower.png",
               description: ``,
             });
+          }
         }}
         position={[0, -20, -90]}
         src="https://img.icons8.com/office/40/000000/spa-flower.png"

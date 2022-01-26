@@ -107,7 +107,9 @@ export type Store = {
   inventoryNotf: string[];
   scene: Scene;
   audio: string;
+  hand?: string;
   dialogue: string[];
+  setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setDescriptiveText: (s?: string) => void;
   setToken: (s: string) => void;
@@ -122,7 +124,6 @@ export type Store = {
   setAudio: (s: string) => void;
   setScene: (n: Scene) => void;
   removeInvItem: (s: string) => void;
-
   timer?: ReturnValue;
   setTimer: (timer: ReturnValue) => void;
 };
@@ -137,6 +138,11 @@ export const useStore = create<Store>((set, get) => ({
   inventory: [],
   hint: undefined,
   isHintVisible: false,
+  setHand: (h?: string) =>
+    set((s) => {
+      const hand = s.hand === h ? undefined : h;
+      return { hand };
+    }),
   setTimer: (timer: ReturnValue) => set(() => ({ timer })),
   setHint: (hint?: HelpKey) => set(() => ({ hint })),
   setTmpHint: (hint?: string) => set(() => ({ tmpHint: hint })),
@@ -183,9 +189,13 @@ export const useStore = create<Store>((set, get) => ({
       return { inventoryNotf: state.inventoryNotf.filter((i) => i !== n) };
     }),
   removeInvItem: (s: string) =>
-    set((state) => ({
-      inventory: state.inventory.filter((item) => item.name !== s),
-    })),
+    set((state) => {
+      const hand = s === state.hand ? undefined : state.hand;
+      return {
+        hand,
+        inventory: state.inventory.filter((item) => item.name !== s),
+      };
+    }),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setAudio: (s: string) => set(() => ({ audio: s })),
   setScene: (n: Scene) => set(() => ({ isHintVisible: false, scene: n })),
