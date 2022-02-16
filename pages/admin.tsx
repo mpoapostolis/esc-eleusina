@@ -20,6 +20,7 @@ import {
 import { Suspense, useRef, useState } from "react";
 import { useGesture, useWheel } from "@use-gesture/react";
 import { MathUtils, Raycaster, Sprite as SpriteType } from "three";
+import AdminSettings from "../components/AdminSettings";
 
 extend({ OrbitControls });
 
@@ -46,21 +47,51 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(props: { pos: Pos }) {
-  const [move, setMove] = useState(true);
+function Sprite() {
+  const [move, setMove] = useState(false);
   const texture = useLoader(THREE.TextureLoader, `/images/stone.png`);
+  const [drag, setDrag] = useState(false);
+  const [fov, setFov] = useState(1);
+
   const ref = useRef<SpriteType>();
-  const raycaster = new Raycaster();
+  const bind = useGesture({
+    onDrag: (w) => {
+      if (typeof window !== "undefined")
+        window.document.body.style.cursor = "grab";
+      setDrag(true);
+    },
+    onDragEnd: () => {
+      if (typeof window !== "undefined")
+        window.document.body.style.cursor = "auto";
+      setDrag(false);
+    },
+    onWheel: (w) =>
+      setFov((s) => {
+        const n = Math.min(2, s + w.velocity[1] * w.direction[1]);
+        if (n > 2) return 2;
+        if (n < 0.5) return 0.5;
+        return n;
+      }),
+  });
+
   useFrame((t) => {
-    if (!ref.current || !move) return;
+    if (!ref.current) return;
+    ref.current.scale.set(fov, fov, fov);
+    if (!drag) return;
     ref.current.position.copy(t.camera.position);
     ref.current.rotation.copy(t.camera.rotation);
     ref.current.translateZ(-10);
     ref.current.translateX(t.viewport.width * t.mouse.x);
     ref.current.translateY(t.viewport.height * t.mouse.y);
+    console.log(ref.current.position);
   });
   return (
-    <sprite onClick={() => setMove(false)} ref={ref}>
+    <sprite
+      {...bind()}
+      position={[0, 0, -10]}
+      onClick={() => setMove(!move)}
+      ref={ref}
+    >
       <spriteMaterial attach="material" map={texture} />
     </sprite>
   );
@@ -92,46 +123,15 @@ type Pos = {
 
 const Home: NextPage = () => {
   const [pos, setPos] = useState<Pos[]>([]);
-  const bind = useGesture({
-    onDrag: (w) => {
-      if (typeof window !== "undefined")
-        window.document.body.style.cursor = "grab";
-    },
-    onDoubleClick: (evt) => {
-      if (typeof window === "undefined") return;
-      const pos = {
-        clientX: evt.event.clientX,
-        clientY: evt.event.clientY,
-      };
-      setPos((s) => [...s, pos]);
-    },
-    onDragEnd: () => {
-      if (typeof window !== "undefined")
-        window.document.body.style.cursor = "auto";
-    },
-    onWheel: (w) =>
-      setFov((s) => {
-        const n = Math.min(75, s + w.velocity[1] * w.direction[1]);
-        if (n > 75) return 75;
-        if (n < 40) return 40;
-        return n;
-      }),
-  });
 
-  console.log(pos);
-
-  const [fov, setFov] = useState(75);
   return (
-    <div {...bind()}>
-      <Ui time={30} />
-      <Menu />
+    <div>
       <div className="canvas">
+        <AdminSettings />
         <Canvas flat={true} linear={true} mode="concurrent">
-          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
+          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
           <Suspense fallback={<CustomLoader />}>
-            {pos.map((p, idx) => (
-              <Sprite key={idx} pos={p} />
-            ))}
+            <Sprite />
           </Suspense>
 
           <Suspense fallback={<CustomLoader />}>
