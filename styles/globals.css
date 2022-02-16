@@ -23,3 +23,13 @@ a {
   width: 100vw;
   height: 100vh;
 }
+
+*::-webkit-scrollbar {
+  width: 9px;
+  background: #000a;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: lightgray;
+}

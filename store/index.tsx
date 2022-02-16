@@ -1,7 +1,5 @@
-import { Viewer, ViewerProps } from "photo-sphere-viewer";
-import { MarkersPlugin } from "photo-sphere-viewer/dist/plugins/markers";
+import { Vector3 } from "three";
 import create from "zustand";
-import { MyMarker } from "../components/Viewer";
 import { loadSound } from "../utils";
 
 export type Level =
@@ -11,12 +9,7 @@ export type Level =
   | "ΕΙΝΑΙ-ΦΑΙΝΕΣΘΑΙ";
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
-export type Scene =
-  | "teletourgeio"
-  | "intro"
-  | "karnagio"
-  | "elaiourgeio"
-  | "jigSaw";
+export type Scene = "teletourgeio" | "intro" | "karnagio" | "elaiourgeio";
 
 export type Account = {
   accessToken?: string;
@@ -30,6 +23,7 @@ export type AncientText = {
 };
 
 export type Item = {
+  position?: Vector3;
   selectable?: boolean;
   name: string;
   src: string;
@@ -146,11 +140,7 @@ export type Store = {
   scene: Scene;
   hand?: string;
   dialogue: string[];
-  myMarkers?: MyMarker[];
   status: Status;
-  viewer?: Viewer;
-  setViewer: (s?: Viewer) => void;
-  setMyMarkers: (s?: MyMarker[]) => void;
   setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setDescriptiveText: (s?: string) => void;
@@ -184,8 +174,6 @@ export const useStore = create<Store>((set, get) => ({
   epicInventory: [],
   hint: undefined,
   isHintVisible: false,
-  setMyMarkers: (myMarkers?: MyMarker[]) => set(() => ({ myMarkers })),
-  setViewer: (viewer?: Viewer) => set(() => ({ viewer })),
 
   setStatus: (status) => set(() => ({ status })),
   setHand: (h?: string) =>

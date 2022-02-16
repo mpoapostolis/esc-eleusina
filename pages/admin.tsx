@@ -8,7 +8,7 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { useStore } from "../store";
+import { Item, Scene, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {
@@ -47,9 +47,9 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite() {
+function Sprite(props: Item) {
   const [move, setMove] = useState(false);
-  const texture = useLoader(THREE.TextureLoader, `/images/stone.png`);
+  const texture = useLoader(THREE.TextureLoader, props.src);
   const [drag, setDrag] = useState(false);
   const [fov, setFov] = useState(1);
 
@@ -116,29 +116,41 @@ function CustomLoader() {
   );
 }
 
-type Pos = {
-  clientX: number;
-  clientY: number;
+export type Conf = Record<Scene, Item[]>;
+const _conf: Conf = {
+  intro: [],
+  elaiourgeio: [],
+  teletourgeio: [],
+  karnagio: [],
 };
 
 const Home: NextPage = () => {
-  const [pos, setPos] = useState<Pos[]>([]);
-
+  const [conf, _setConf] = useState(_conf);
+  const store = useStore();
+  const setConf = (item: Item[]) => {
+    _setConf((s) => ({ ...s, [store.scene]: item }));
+  };
+  const setScene = (s: Scene) => store.setScene(s);
   return (
-    <div>
-      <div className="canvas">
-        <AdminSettings />
-        <Canvas flat={true} linear={true} mode="concurrent">
-          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
-          <Suspense fallback={<CustomLoader />}>
-            <Sprite />
-          </Suspense>
+    <div className="canvas">
+      <AdminSettings
+        conf={conf}
+        setConf={setConf}
+        setScene={setScene}
+        scene={store.scene}
+      />
+      <Canvas flat={true} linear={true} mode="concurrent">
+        <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
+        <Suspense fallback={<CustomLoader />}>
+          {conf[store.scene].map((o) => (
+            <Sprite key={o.name} {...o} />
+          ))}
+        </Suspense>
 
-          <Suspense fallback={<CustomLoader />}>
-            <Environment />
-          </Suspense>
-        </Canvas>
-      </div>
+        <Suspense fallback={<CustomLoader />}>
+          <Environment />
+        </Suspense>
+      </Canvas>
     </div>
   );
 };
