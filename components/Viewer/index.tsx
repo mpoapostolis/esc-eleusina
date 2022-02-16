@@ -1,64 +1,71 @@
-import { Viewer as V, Viewer as VType } from "photo-sphere-viewer";
-import { MarkersPlugin } from "photo-sphere-viewer/dist/plugins/markers";
+import {
+  MarkerProperties,
+  MarkersPlugin,
+} from "photo-sphere-viewer/dist/plugins/markers";
 import "photo-sphere-viewer/dist/plugins/markers.css";
 import "photo-sphere-viewer/dist/photo-sphere-viewer.css";
 import React, { useEffect, useRef, useState } from "react";
+import { useStore } from "../../store";
+import { ImgName } from "../../utils/items";
+import useConstant from "../../Hooks/useConstant";
+import { Viewer } from "photo-sphere-viewer";
 
-export default function Viewer(props: { scene: string; markers: any[] }) {
-  const [viewer, setViewer] = useState<VType>();
+export type MyMarker = {
+  selectable?: boolean;
+  collectable?: boolean;
+  name?: ImgName;
+  onCollectError?: () => void;
+  onCollectSucccess?: () => void;
+  color?: string;
+  hide?: boolean;
+  opacity?: number;
+  onClick?: () => void;
+} & MarkerProperties;
+
+export default function V() {
   const ref = useRef(null);
+  const viewerRef = useRef<Viewer>(null);
+  const store = useStore();
+  const markersPlugin = viewerRef.current?.getPlugin(MarkersPlugin);
+
   useEffect(() => {
     if (!ref.current) return;
-    const v = new V({
+    const v = new Viewer({
       container: ref.current,
-      panorama: `/scenes/${props.scene}.jpg`,
       defaultZoomLvl: 0,
-
-      plugins: [
-        [
-          MarkersPlugin,
-          {
-            markers: props.markers,
-          },
-        ],
-      ],
+      navbar: undefined,
+      plugins: [[MarkersPlugin, { markers: [] }]],
     });
-    setViewer(v);
+    viewerRef.current = v;
+  }, []);
 
-    v.on("click", (e, d) => {
-      console.log(d.latitude, d.longitude);
-    });
+  useEffect(() => {
+    if (!viewerRef.current) return;
+    viewerRef.current?.setPanorama("/scenes/intro.jpg");
+  }, [viewerRef.current]);
+  useEffect(() => {
+    if (!viewerRef.current) return;
 
-    const markersPlugin = v.getPlugin(MarkersPlugin);
+    const markersPlugin = viewerRef.current?.getPlugin(MarkersPlugin);
     markersPlugin?.on("select-marker", (e, marker, data) => {
-      console.log(marker.config);
-      // @ts-ignore
-      if ("onclick" in marker?.config) marker?.config.onclick();
+      if (marker?.config && "onClick" in marker?.config)
+        // @ts-ignore
+        marker?.config?.onClick();
     });
-    return () => {
-      v.destroy();
-    };
-
-    // setViewer(v);
-    // return () => {
-    //   markersPlugin?.clearMarkers();
-    //   v.destroy();
-    // };
   }, []);
   useEffect(() => {
-    if (!viewer) return;
-    viewer.setPanorama(`/scenes/${props.scene}.jpg`, {});
-    const markersPlugin = viewer.getPlugin(MarkersPlugin);
-    markersPlugin?.clearMarkers();
-    props.markers.map((m) => {
+    if (!viewerRef.current) return;
+    console.log("---");
+    store.myMarkers?.map((m) => {
       markersPlugin?.addMarker(m);
     });
-    markersPlugin?.on("select-marker", (e, marker, data) => {
-      console.log(marker.config);
-      // @ts-ignore
-      if ("onclick" in marker?.config) marker?.config.onclick();
-    });
-  }, [props.scene, props.markers]);
+  }, [store.myMarkers]);
+
+  useEffect(() => {
+    if (!viewerRef.current) return;
+    markersPlugin?.clearMarkers();
+    viewerRef.current?.setPanorama(`/scenes/${store.scene}.jpg`);
+  }, [viewerRef.current, store.scene]);
 
   return <div ref={ref} className="w-screen h-screen" />;
 }
