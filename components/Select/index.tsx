@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { ReactNode, useEffect, useState } from "react";
+import { images } from "../../utils";
 import Popover from "../Popover";
 
 type Option = { value: string | number | undefined; label: string };
@@ -13,6 +14,14 @@ type Props = {
   value?: string | undefined;
   error?: string;
 };
+
+const arr = images.map((o) => [
+  `${o.name}: on hand`,
+  `${o.name}: in inventory`,
+]);
+
+console.log(arr.flat(1));
+
 export default function Select(props: Props) {
   const [internalError, setInternalError] = useState<string>();
   const onSelect = (opt: Option) => {
@@ -35,7 +44,7 @@ export default function Select(props: Props) {
       label={
         <div className={props.className}>
           {!props.placeholder && (
-            <label className="block text-left text-sm font-medium text-gray-200">
+            <label className="block text-left text-xs font-medium text-gray-200">
               {props.label}
             </label>
           )}
@@ -108,7 +117,7 @@ export default function Select(props: Props) {
               tabIndex={0}
               key={opt.label}
               onClick={() => onSelect(opt)}
-              className="text-gray-200 m-0 border-gray-500 bg-black bg-opacity-90 hover:bg-slate-900  focus:outline-none  cursor-default select-none relative py-2 pl-3"
+              className="text-gray-200 m-0 border-gray-500 bg-black  hover:bg-slate-900  focus:outline-none  cursor-default select-none relative py-2 pl-3"
             >
               <span className="block font-normal truncate">{opt.label}</span>
             </li>
@@ -116,7 +125,7 @@ export default function Select(props: Props) {
         ) : (
           <li
             tabIndex={0}
-            className="text-gray-400 focus:outline-none focus:bg-gray-100 cursor-default select-none relative py-2 pl-3"
+            className="text-gray-400 focus:outline-none bg-black focus:bg-gray-100 cursor-default select-none relative py-2 pl-3"
           >
             <div className="flex items-center">
               <span className="block font-normal truncate">

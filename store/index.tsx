@@ -23,9 +23,11 @@ export type AncientText = {
 };
 
 export type Item = {
+  id: string;
   position?: Vector3;
   selectable?: boolean;
   name: string;
+  scale: number;
   src: string;
   description?: string;
   action?: () => void;
@@ -136,11 +138,13 @@ export type Store = {
   inventory: Item[];
   epicInventory: Item[];
   inventoryNotf: string[];
+  selectItem?: Item;
   epicItem?: string;
   scene: Scene;
   hand?: string;
   dialogue: string[];
   status: Status;
+  setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setDescriptiveText: (s?: string) => void;
@@ -181,6 +185,7 @@ export const useStore = create<Store>((set, get) => ({
       const hand = s.hand === h ? undefined : h;
       return { hand };
     }),
+  setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
 
   setEpicItem: (epicItem?: Item) =>
     set((s) => {

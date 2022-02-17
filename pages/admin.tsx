@@ -15,9 +15,10 @@ import {
   Html,
   OrbitControlsProps,
   TransformControls,
+  useCamera,
   useProgress,
 } from "@react-three/drei";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture, useWheel } from "@use-gesture/react";
 import { MathUtils, Raycaster, Sprite as SpriteType } from "three";
 import AdminSettings from "../components/AdminSettings";
@@ -25,6 +26,7 @@ import AdminSettings from "../components/AdminSettings";
 extend({ OrbitControls });
 
 function Controls(props: { fov: number } & OrbitControlsProps) {
+  const store = useStore();
   const { camera, gl } = useThree();
   const ref = useRef<OrbitControlsProps>();
   useFrame((t) => {
@@ -33,6 +35,7 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
     t.camera.updateProjectionMatrix();
     ref.current?.update && ref?.current?.update();
   });
+
   return (
     // @ts-ignore
     <orbitControls
@@ -51,7 +54,6 @@ function Sprite(props: Item) {
   const [move, setMove] = useState(false);
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [drag, setDrag] = useState(false);
-  const [fov, setFov] = useState(1);
 
   const ref = useRef<SpriteType>();
   const bind = useGesture({
@@ -65,18 +67,18 @@ function Sprite(props: Item) {
         window.document.body.style.cursor = "auto";
       setDrag(false);
     },
-    onWheel: (w) =>
-      setFov((s) => {
-        const n = Math.min(2, s + w.velocity[1] * w.direction[1]);
-        if (n > 2) return 2;
-        if (n < 0.5) return 0.5;
-        return n;
-      }),
   });
+  const t = useThree();
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.position.copy(t.camera.position);
+    ref.current.rotation.copy(t.camera.rotation);
+    ref.current.translateZ(-7);
+  }, [ref.current]);
 
   useFrame((t) => {
     if (!ref.current) return;
-    ref.current.scale.set(fov, fov, fov);
+    ref.current.scale.set(props.scale, props.scale, props.scale);
     if (!drag) return;
     ref.current.position.copy(t.camera.position);
     ref.current.rotation.copy(t.camera.rotation);
@@ -86,12 +88,7 @@ function Sprite(props: Item) {
     console.log(ref.current.position);
   });
   return (
-    <sprite
-      {...bind()}
-      position={[0, 0, -10]}
-      onClick={() => setMove(!move)}
-      ref={ref}
-    >
+    <sprite {...bind()} onClick={() => setMove(!move)} ref={ref}>
       <spriteMaterial attach="material" map={texture} />
     </sprite>
   );
@@ -127,8 +124,8 @@ const _conf: Conf = {
 const Home: NextPage = () => {
   const [conf, _setConf] = useState(_conf);
   const store = useStore();
-  const setConf = (item: Item[]) => {
-    _setConf((s) => ({ ...s, [store.scene]: item }));
+  const setConf = (items: Item[]) => {
+    _setConf((s) => ({ ...s, [store.scene]: items }));
   };
   const setScene = (s: Scene) => store.setScene(s);
   return (
@@ -142,8 +139,8 @@ const Home: NextPage = () => {
       <Canvas flat={true} linear={true} mode="concurrent">
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
         <Suspense fallback={<CustomLoader />}>
-          {conf[store.scene].map((o) => (
-            <Sprite key={o.name} {...o} />
+          {conf[store.scene].map((o, idx) => (
+            <Sprite key={o.id} {...o} />
           ))}
         </Suspense>
 
