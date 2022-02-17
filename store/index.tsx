@@ -24,8 +24,10 @@ export type AncientText = {
 
 export type Item = {
   id: string;
+  collectableIfHandHas?: string;
   position?: Vector3;
   selectable?: boolean;
+  collectable?: boolean;
   name: string;
   scale: number;
   src: string;

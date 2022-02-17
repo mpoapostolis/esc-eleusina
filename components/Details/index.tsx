@@ -12,7 +12,7 @@ export default function Details(props: Props) {
     <div>
       <button
         onClick={toggleOpen}
-        className="w-full cursor-pointer text-base items-center flex mb-4 focus:outline-none  text-gray-400 font-medium"
+        className="w-full cursor-pointer text-xs items-center flex mb-4 focus:outline-none  text-gray-200 font-medium"
       >
         <span>{props.summary}</span> &nbsp;
         {open ? (

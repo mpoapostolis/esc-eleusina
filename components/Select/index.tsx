@@ -3,12 +3,16 @@ import { ReactNode, useEffect, useState } from "react";
 import { images } from "../../utils";
 import Popover from "../Popover";
 
-type Option = { value: string | number | undefined; label: string };
+type Option = {
+  src?: string;
+  value: string | number | undefined;
+  label: string;
+};
 type Props = {
   className?: string;
   placeholder?: string;
   options: Option[];
-  label: string;
+  label: ReactNode;
   icon?: ReactNode;
   onChange?: (o: Option) => void;
   value?: string | undefined;
@@ -109,7 +113,7 @@ export default function Select(props: Props) {
         role="listbox"
         aria-labelledby="listbox-label"
         aria-activedescendant="listbox-item-3"
-        className=" py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+        className=" py-1 max-h-96 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
       >
         {props?.options?.length ? (
           props?.options?.map((opt) => (
@@ -117,8 +121,11 @@ export default function Select(props: Props) {
               tabIndex={0}
               key={opt.label}
               onClick={() => onSelect(opt)}
-              className="text-gray-200 m-0 border-gray-500 bg-black  hover:bg-slate-900  focus:outline-none  cursor-default select-none relative py-2 pl-3"
+              className="text-gray-200 flex items-center m-0 border-gray-500 bg-black  hover:bg-slate-900  focus:outline-none  cursor-default select-none relative py-2 pl-3"
             >
+              {opt.src && (
+                <img alt="" className="w-10 p-1 mr-4 h-10" src={opt.src} />
+              )}
               <span className="block font-normal truncate">{opt.label}</span>
             </li>
           ))
