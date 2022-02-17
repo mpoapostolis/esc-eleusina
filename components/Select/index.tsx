@@ -24,8 +24,6 @@ const arr = images.map((o) => [
   `${o.name}: in inventory`,
 ]);
 
-console.log(arr.flat(1));
-
 export default function Select(props: Props) {
   const [internalError, setInternalError] = useState<string>();
   const onSelect = (opt: Option) => {

@@ -9,7 +9,6 @@ export const sceneItems: Record<Scene, string[]> = {
   karnagio: ["wing", "key", "lingerie", "wing1"],
   teletourgeio: ["scythe", "doxeio1", "doxeio2", "dafni"],
   elaiourgeio: ["mirror1", "mirror2", "dog"],
-  jigSaw: [],
 };
 
 export default function Ui(props: { time: number }) {

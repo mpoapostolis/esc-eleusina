@@ -1,20 +1,35 @@
 import { Conf } from "../../pages/admin";
-import { Item, Scene, useStore } from "../../store";
+import { Item, Scene, scenes, useStore } from "../../store";
 import { images } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { DetailedHTMLProps, InputHTMLAttributes, useState } from "react";
 import Details from "../Details";
 import Range from "../Range";
 
+function Checkbox(
+  props: { label: string } & DetailedHTMLProps<
+    InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >
+) {
+  const id = uuidv4();
+  return (
+    <div className="flex items-center text-sm">
+      <input type="checkbox" name="" className="mr-2" id={id} {...props} />
+      <label htmlFor={id}>{props.label}</label>
+    </div>
+  );
+}
+
 export default function AdminSettings(props: {
   conf: Conf;
+  addPortal: () => void;
   setConf: (i: Item[]) => void;
   setScene: (s: Scene) => void;
   scene: Scene;
 }) {
-  const store = useStore();
   const items = props.conf[props.scene];
 
   const update = (p: Item) => {
@@ -25,9 +40,6 @@ export default function AdminSettings(props: {
 
   const [id, setId] = useState<string>();
   const selectedItem = items.find((i) => i.id === id);
-  const item = items.find(
-    (i) => i.collectableIfHandHas === selectedItem?.collectableIfHandHas
-  );
 
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
@@ -49,9 +61,9 @@ export default function AdminSettings(props: {
 
               <div className="w-full px-4">
                 <Range
-                  min={0.2}
-                  max={5}
-                  step={0.5}
+                  min={0.05}
+                  max={1}
+                  step={0.01}
                   onChange={(evt) => {
                     const value = +evt.target.value;
                     update({ ...selectedItem, scale: value });
@@ -59,46 +71,55 @@ export default function AdminSettings(props: {
                   label="scale"
                 />
 
-                <div className="flex mt-2">
-                  <input
-                    onChange={(evt) => {
-                      update({
-                        ...selectedItem,
-                        collectable: evt.target.checked,
-                      });
-                    }}
-                    type="checkbox"
-                    checked={selectedItem.collectable}
-                    name=""
-                    className="mr-2"
-                    id="slider"
-                  />
-                  <label htmlFor="slider">Collectable</label>
-                </div>
-                <div className="flex">
-                  <input
-                    onChange={(evt) => {
-                      update({
-                        ...selectedItem,
-                        collectable: evt.target.checked
-                          ? true
-                          : selectedItem.collectable,
-                        selectable: evt.target.checked,
-                      });
-                    }}
-                    type="checkbox"
-                    checked={selectedItem.selectable}
-                    name=""
-                    className="mr-2"
-                    id="slider"
-                  />
-                  <label htmlFor="slider">Selectable</label>
-                </div>
+                <Checkbox
+                  label="Collectable"
+                  checked={selectedItem.collectable}
+                  onChange={(evt) => {
+                    update({
+                      ...selectedItem,
+                      selectable: evt.target.checked
+                        ? selectedItem.selectable
+                        : false,
+                      collectable: evt.target.checked,
+                    });
+                  }}
+                />
+                <div className="my-1" />
+                <Checkbox
+                  label="Selectable"
+                  onChange={(evt) => {
+                    update({
+                      ...selectedItem,
+                      collectable: evt.target.checked
+                        ? true
+                        : selectedItem.collectable,
+                      selectable: evt.target.checked,
+                    });
+                  }}
+                  checked={selectedItem.selectable}
+                />
               </div>
             </div>
+            <hr className="my-5 opacity-50" />
+
+            <Select
+              onChange={(v) => {
+                update({
+                  ...selectedItem,
+                  goToScene: v.value as Scene,
+                });
+              }}
+              value={selectedItem.goToScene}
+              label="Portal go to Scene:"
+              options={[undefined, ...scenes].map((o) => ({
+                label: o === undefined ? "-" : o,
+                value: o,
+              }))}
+            ></Select>
+            <br />
+
             {selectedItem.collectable && (
               <>
-                <hr className="my-5 opacity-50" />
                 <Select
                   onChange={(v) => {
                     update({
@@ -115,18 +136,35 @@ export default function AdminSettings(props: {
                   }))}
                 ></Select>
                 <br />
-                <Select label="onCollect setHint" options={[]}></Select>
+                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                  onCollect success hint{" "}
+                </label>
+                <textarea
+                  className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+                  rows={5}
+                ></textarea>
+
+                <br />
+                <br />
+                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                  onCollect fail hint{" "}
+                </label>
+                <textarea
+                  className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+                  rows={5}
+                ></textarea>
               </>
             )}
             <hr className="my-5 opacity-50" />
 
-            <Details summary="hide if inventroy miss">
-              <div className="grid gap-3 grid-cols-2">
-                {images.map((i) => (
-                  <input type="checkbox" />
-                ))}
-              </div>
-            </Details>
+            <label className="block mb-4 text-left text-xs font-medium text-gray-300">
+              Hide if inventory missing:
+            </label>
+            <div className="grid gap-2 grid-cols-2">
+              {images.map((i) => (
+                <Checkbox key={i.name} className=" mr-2" label={i.name} />
+              ))}
+            </div>
           </>
         ) : (
           <>
@@ -163,7 +201,7 @@ export default function AdminSettings(props: {
                       props.setConf([
                         {
                           id: uuidv4(),
-                          scale: 1,
+                          scale: 0.5,
                           name: o.name,
                           src: o.src,
                         },
@@ -191,9 +229,9 @@ export default function AdminSettings(props: {
                     <div className="w-full px-4">
                       <div>
                         <Range
-                          min={0.2}
-                          max={5}
-                          step={0.5}
+                          min={0.05}
+                          max={1}
+                          step={0.01}
                           onChange={(evt) => {
                             const value = +evt.target.value;
                             update({ ...i, scale: value });
@@ -224,6 +262,14 @@ export default function AdminSettings(props: {
                 </div>
               ))}
             </div>
+            <hr className="my-5 opacity-50" />
+
+            <button
+              onClick={() => props.addPortal()}
+              className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
+            >
+              + Add Portal
+            </button>
           </>
         )}{" "}
       </div>

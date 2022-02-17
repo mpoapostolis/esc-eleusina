@@ -2,24 +2,27 @@ import clsx from "clsx";
 import { Item, Scene, useStore } from "../../store";
 import { loremIpsum } from "../../utils";
 
-// @ts-ignore
 export const epicItems: Record<Scene, Item> = {
   karnagio: {
+    scale: 1,
     name: "peiraias",
     src: "/images/peiraias.jpg",
     description: loremIpsum,
   },
   intro: {
+    scale: 1,
     name: "stone",
     src: "/images/stone.png",
     description: loremIpsum,
   },
   teletourgeio: {
+    scale: 1,
     name: "kernos",
     src: "/images/kernos.jpg",
     description: loremIpsum,
   },
   elaiourgeio: {
+    scale: 1,
     name: "cerberous",
     src: "/images/cerberous.jpg",
     description: loremIpsum,

@@ -10,6 +10,7 @@ export type Level =
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
 export type Scene = "teletourgeio" | "intro" | "karnagio" | "elaiourgeio";
+export const scenes = ["teletourgeio", "intro", "karnagio", "elaiourgeio"];
 
 export type Account = {
   accessToken?: string;
@@ -23,7 +24,8 @@ export type AncientText = {
 };
 
 export type Item = {
-  id: string;
+  id?: string;
+  goToScene?: Scene;
   collectableIfHandHas?: string;
   position?: Vector3;
   selectable?: boolean;

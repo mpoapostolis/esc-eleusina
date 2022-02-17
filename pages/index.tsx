@@ -118,8 +118,6 @@ const Home: NextPage = () => {
       }),
   });
 
-  console.log(pos);
-
   const [fov, setFov] = useState(75);
   return (
     <div {...bind()}>
