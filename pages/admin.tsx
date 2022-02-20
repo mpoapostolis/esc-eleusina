@@ -165,14 +165,13 @@ const Svg = (p: { addPortal: boolean }) => {
       <Circle ref={ref} args={[0.025]} />
       {position && rotation && (
         <mesh
-          onPointerMove={(e) => {
+          onClick={(e) => {
             if (!planeRef.current) return;
-            const x = e.point.x - planeRef.current?.position.x;
-            const y = e.point?.y - planeRef.current?.position.y;
-            console.log(
-              planeRef.current.position.x,
-              planeRef.current.rotation.y
-            );
+            const dx = t.viewport.width / 5;
+            const dy = t.viewport.height / 5;
+            const x = (e.spaceX * dx) / 2;
+            const y = (e.spaceY * dy) / 2;
+
             if (x && y)
               setPoints((s) => [
                 ...s,
