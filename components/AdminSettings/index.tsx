@@ -5,8 +5,8 @@ import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
 import { DetailedHTMLProps, InputHTMLAttributes, useState } from "react";
-import Details from "../Details";
 import Range from "../Range";
+import { setConfig } from "next/config";
 
 function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -26,11 +26,12 @@ function Checkbox(
 export default function AdminSettings(props: {
   conf: Conf;
   addPortal: () => void;
+  portal: boolean;
   setConf: (i: Item[]) => void;
   setScene: (s: Scene) => void;
   scene: Scene;
 }) {
-  const items = props.conf[props.scene];
+  const items = props.conf[props.scene] as Item[];
 
   const update = (p: Item) => {
     const idx = items.findIndex((i) => i.id === p.id);
@@ -40,7 +41,7 @@ export default function AdminSettings(props: {
 
   const [id, setId] = useState<string>();
   const selectedItem = items.find((i) => i.id === id);
-
+  const store = useStore();
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
       <div className="text-gray-300 overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
@@ -172,7 +173,6 @@ export default function AdminSettings(props: {
               Save
             </button>
             <hr className="my-5 opacity-50" />
-
             <div className="w-full bg-opacity-20">
               <Select
                 label=""
@@ -185,7 +185,6 @@ export default function AdminSettings(props: {
               />
             </div>
             <hr className="my-5 opacity-50" />
-
             <Popover
               label={
                 <button className="w-full px-3 py-2 text-center bg-white bg-opacity-20">
@@ -263,13 +262,37 @@ export default function AdminSettings(props: {
               ))}
             </div>
             <hr className="my-5 opacity-50" />
+            {props.portal ? (
+              <div className="grid gap-x-3 grid-cols-2">
+                <button
+                  onClick={() => {
+                    store.setPortal(undefined);
+                    props.addPortal();
+                  }}
+                  className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
+                >
+                  Cancel
+                </button>
 
-            <button
-              onClick={() => props.addPortal()}
-              className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
-            >
-              + Add Portal
-            </button>
+                <button
+                  onClick={() => {
+                    props.addPortal();
+                  }}
+                  className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  props.addPortal();
+                }}
+                className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
+              >
+                + Add Portal
+              </button>
+            )}
           </>
         )}{" "}
       </div>

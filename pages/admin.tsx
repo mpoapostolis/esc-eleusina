@@ -8,7 +8,8 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { Item, Scene, useStore } from "../store";
+import { Item, Portal, Scene, useStore } from "../store";
+import { v4 as uuidv4 } from "uuid";
 import { useStore as xx } from "@react-three/fiber";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -110,7 +111,7 @@ function CustomLoader() {
   );
 }
 
-export type Conf = Record<Scene, Item[]>;
+export type Conf = Record<Scene, (Item | Portal)[]>;
 const _conf: Conf = {
   intro: [],
   elaiourgeio: [],
@@ -119,19 +120,10 @@ const _conf: Conf = {
 };
 
 const Svg = (p: { addPortal: boolean }) => {
-  const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
-  // const [position, setPosition] = useState<Vector3>(new Vector3(0, 0, -1));
-  // const [rotation, setRotation] = useState<Euler>(new Euler(0, 0, 0));
-
-  const [position, setPosition] = useState<Vector3>();
-  const [rotation, setRotation] = useState<Euler>();
-
+  // const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
   const shape = new Shape();
-  // shape.moveTo(0, 0);
-  // shape.lineTo(0, 1);
-  // shape.lineTo(1, 1);
-  // shape.lineTo(1, 0);
-  // shape.lineTo(0, 0);
+  const store = useStore();
+  const points = store.portal?.points ?? [];
   points.forEach((p, idx) => {
     if (!p) return;
     if (idx === 0) shape.moveTo(p.x, p.y);
@@ -150,53 +142,65 @@ const Svg = (p: { addPortal: boolean }) => {
     planeRef.current.translateZ(-1);
   });
   const t = useThree();
-  return (
-    <group
-      raycast={meshBounds}
-      onDoubleClick={(e) => {
-        if (!position || !rotation) {
-          const v3 = new Vector3();
-          const e3 = new Euler();
-          setPosition(v3.copy(e.ray.direction));
-          setRotation(e3.copy(e.camera.rotation));
-        }
-      }}
-    >
-      <Circle ref={ref} args={[0.025]} />
-      {position && rotation && (
-        <mesh
-          onClick={(e) => {
-            if (!planeRef.current) return;
-            const dx = t.viewport.width / 5;
-            const dy = t.viewport.height / 5;
-            const x = (e.spaceX * dx) / 2;
-            const y = (e.spaceY * dy) / 2;
 
-            if (x && y)
-              setPoints((s) => [
-                ...s,
+  useEffect(() => {
+    const v3 = new Vector3();
+    const rot = new Euler();
+    if (planeRef.current)
+      store.setPortal({
+        goToScene: "elaiourgeio",
+        position: v3.copy(planeRef.current.position),
+        rotation: rot.copy(planeRef.current.rotation),
+        points: points,
+      });
+  }, [points, planeRef.current]);
+
+  return (
+    <group raycast={meshBounds}>
+      {p.addPortal && (
+        <>
+          <Circle ref={ref} args={[0.025]} />
+          <mesh
+            onClick={(e) => {
+              if (!planeRef.current) return;
+              const dx = t.viewport.width / 5;
+              const dy = t.viewport.height / 5;
+              const x = (e.spaceX * dx) / 2;
+              const y = (e.spaceY * dy) / 2;
+
+              const _p = [
+                ...points,
                 {
                   x,
                   y,
                 },
-              ]);
-          }}
-          ref={planeRef}
-        >
-          <planeGeometry
-            args={[t.viewport.width / 5, t.viewport.height / 5, 10, 10]}
-          />
-          <meshBasicMaterial
-            side={DoubleSide}
-            wireframe
-            attach="material"
-            color="red"
-          />
-          <mesh>
-            <shapeGeometry args={[shape]} />
-            <meshBasicMaterial side={DoubleSide} />
+              ];
+
+              const v3 = new Vector3();
+              const rot = new Euler();
+              if (planeRef.current)
+                store.setPortal({
+                  goToScene: "elaiourgeio",
+                  position: v3.copy(planeRef.current.position),
+                  rotation: rot.copy(planeRef.current.rotation),
+                  points: _p,
+                });
+            }}
+            ref={planeRef}
+          >
+            <planeGeometry
+              args={[t.viewport.width / 5, t.viewport.height / 5, 30, 30]}
+            />
+            <meshBasicMaterial
+              side={DoubleSide}
+              wireframe
+              transparent
+              opacity={0.1}
+              attach="material"
+              color="grey"
+            />
           </mesh>
-        </mesh>
+        </>
       )}
     </group>
   );
@@ -209,26 +213,48 @@ const Home: NextPage = () => {
     _setConf((s) => ({ ...s, [store.scene]: items }));
   };
   const setScene = (s: Scene) => store.setScene(s);
-  const [addPortal, setAddPortal] = useState(false);
-  const _addPorta = () => setAddPortal(!addPortal);
+  const [portal, _addPortal] = useState(false);
+  const addPortal = () => _addPortal(!portal);
+
+  const shape = new Shape();
+  const points = store.portal?.points ?? [];
+  points.forEach((p, idx) => {
+    if (!p) return;
+    if (idx === 0) shape.moveTo(p.x, p.y);
+    else shape.lineTo(p.x, p.y);
+  });
+
   return (
     <div className="canvas">
       <AdminSettings
         conf={conf}
-        addPortal={_addPorta}
+        portal={portal}
+        addPortal={addPortal}
         setConf={setConf}
         setScene={setScene}
         scene={store.scene}
       />
       <Canvas flat={true} linear={true} mode="concurrent">
-        <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
+        {!portal && (
+          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
+        )}
 
         <Suspense fallback={<CustomLoader />}>
-          {conf[store.scene].map((o, idx) => (
-            <Sprite key={o.id} {...o} />
-          ))}
+          {conf[store.scene].map((o, idx) => {
+            const x = o as Item;
+            return <Sprite key={x.id} {...x} />;
+          })}
         </Suspense>
-        <Svg addPortal={addPortal} />
+        {portal && <Svg addPortal={portal} />}
+        {store.portal && (
+          <mesh
+            position={store.portal.position}
+            rotation={store.portal.rotation}
+          >
+            <shapeGeometry args={[shape]} />
+            <meshBasicMaterial color="yellow" opacity={0.25} transparent />
+          </mesh>
+        )}
         <Suspense fallback={<CustomLoader />}>
           <Environment />
         </Suspense>

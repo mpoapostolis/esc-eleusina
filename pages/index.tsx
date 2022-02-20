@@ -17,9 +17,10 @@ import {
   TransformControls,
   useProgress,
 } from "@react-three/drei";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture, useWheel } from "@use-gesture/react";
 import { MathUtils, Raycaster, Sprite as SpriteType } from "three";
+import { useRouter } from "next/router";
 
 extend({ OrbitControls });
 
@@ -92,6 +93,11 @@ type Pos = {
 
 const Home: NextPage = () => {
   const [pos, setPos] = useState<Pos[]>([]);
+
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/admin");
+  }, []);
   const bind = useGesture({
     onDrag: (w) => {
       if (typeof window !== "undefined")
