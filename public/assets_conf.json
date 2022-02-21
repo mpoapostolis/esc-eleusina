@@ -1,4 +1,10 @@
 {
     "assets":[],
-    "scenes":[]
+    "scenes":[],
+    "items":{
+        "intro": [],
+        "elaiourgeio": [],
+        "teletourgeio": [],
+        "karnagio": []
+    }
 }
