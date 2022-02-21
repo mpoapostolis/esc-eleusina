@@ -25,6 +25,7 @@ function Checkbox(
 
 export default function AdminSettings(props: {
   conf: Conf;
+  setLibrary: () => void;
   addPortal: () => void;
   portal: boolean;
   setConf: (i: Item[]) => void;
@@ -44,7 +45,7 @@ export default function AdminSettings(props: {
   const store = useStore();
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
-      <div className="text-gray-300 overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
+      <div className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
         {selectedItem ? (
           <>
             <button
@@ -293,8 +294,15 @@ export default function AdminSettings(props: {
                 + Add Portal
               </button>
             )}
+            <br />
+            <button
+              onClick={() => props.setLibrary()}
+              className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"
+            >
+              library
+            </button>
           </>
-        )}{" "}
+        )}
       </div>
     </div>
   );

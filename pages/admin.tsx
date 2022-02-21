@@ -47,6 +47,7 @@ import {
 import AdminSettings from "../components/AdminSettings";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import Library from "../components/Library";
 
 extend({ OrbitControls });
 
@@ -214,7 +215,9 @@ const Home: NextPage = () => {
   };
   const setScene = (s: Scene) => store.setScene(s);
   const [portal, _addPortal] = useState(false);
+  const [library, _setLibrary] = useState(false);
   const addPortal = () => _addPortal(!portal);
+  const setLibrary = () => _setLibrary(!library);
 
   const shape = new Shape();
   const points = store.portal?.points ?? [];
@@ -226,14 +229,19 @@ const Home: NextPage = () => {
 
   return (
     <div className="canvas">
-      <AdminSettings
-        conf={conf}
-        portal={portal}
-        addPortal={addPortal}
-        setConf={setConf}
-        setScene={setScene}
-        scene={store.scene}
-      />
+      {!library ? (
+        <AdminSettings
+          conf={conf}
+          portal={portal}
+          setLibrary={setLibrary}
+          addPortal={addPortal}
+          setConf={setConf}
+          setScene={setScene}
+          scene={store.scene}
+        />
+      ) : (
+        <Library setLibrary={setLibrary} />
+      )}
       <Canvas flat={true} linear={true} mode="concurrent">
         {!portal && (
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
