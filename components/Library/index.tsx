@@ -3,7 +3,15 @@ import { useEffect, useState } from "react";
 
 export default function Library(p: { setLibrary: () => void }) {
   const [f, setF] = useState<File>();
+  const [imgs, setImgs] = useState<string[]>();
 
+  useEffect(() => {
+    axios
+      .get(
+        "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/assets_conf.json"
+      )
+      .then((d) => setImgs(d.data.assets));
+  }, []);
   const toBase64 = (file: File) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -14,14 +22,22 @@ export default function Library(p: { setLibrary: () => void }) {
 
   useEffect(() => {
     if (!f) return;
+    const [_, type] = f.type.split("/");
     toBase64(f).then((d) => {
       const [_, data] = `${d}`.split("base64,");
-      axios.post("/api/upload", { data });
+      axios.post("/api/upload", { data, type });
     });
   }, [f]);
   return (
-    <div className="w-screen h-screen flex flex-row-reverse  bg-black fixed z-50 bg-opacity-90">
-      <div className="">a</div>
+    <div className="w-screen h-screen flex   bg-black fixed z-50 bg-opacity-90">
+      <div className="container grid grid-cols-3 gap-3 py-4 px-10">
+        {imgs?.map((str) => (
+          <img
+            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/${str}`}
+            key={str}
+          />
+        ))}
+      </div>
       <div className=" text-gray-300 mt-auto flex flex-col overflow-auto pointer-events-auto border-l px-10 py-5 border-gray-600 w-96 h-screen">
         <label
           role="button"
@@ -32,6 +48,7 @@ export default function Library(p: { setLibrary: () => void }) {
         </label>
 
         <input
+          accept="jpg, .jpeg, .png"
           id="files"
           type="file"
           onChange={(f) => {
@@ -58,7 +75,14 @@ export default function Library(p: { setLibrary: () => void }) {
 
           <button
             onClick={() => {
-              axios.post("/api/upload", {});
+              if (!f) return;
+              const [_, type] = f.type.split("/");
+              toBase64(f).then((d) => {
+                const [_, data] = `${d}`.split("base64,");
+                axios.post("/api/upload", { data, type }).then((d) => {
+                  console.log(d.data);
+                });
+              });
             }}
             className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"
           >

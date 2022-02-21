@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios, { AxiosError } from 'axios'
-
+import { randomUUID } from 'crypto';
 
 
 export const config = {
@@ -11,24 +11,46 @@ export const config = {
   },
 }
 
+
+const atob = (a: string) => Buffer.from(a, 'base64').toString('binary')
+const btoa = (x: any) => (Buffer.from(JSON.stringify(x)).toString("base64"));
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const x = JSON.stringify({ a: 1 })
-  let objJsonB64 = Buffer.from(x).toString("base64");
-
-
-  console.log(objJsonB64)
-  await axios.put("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/" + Math.random() + ".json",
-    // JSON.stringify({ "message": "new image from api" + Math.random(), "content": req.body.data }),
-    JSON.stringify('eyJhIjozfQ=='),
+  const random = randomUUID()
+  const type = req.body.type
+  await (await axios.put(`https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/images/${random}.${type}`,
+    JSON.stringify({
+      "message": `upload image ${random}`, "content": req.body.data,
+    }),
     {
       headers: {
         Accept: "application/vnd.github.v3+json",
-        "Authorization": "token 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"
+        "Authorization": `token ${process.env["gh_token"]}`
       }
-    }).then(d => res.status(200).json(d.data)).catch(
+    })).data
+
+  const confInfo = await (await axios.get("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/assets_conf.json", {
+    headers: {
+      "Authorization": `token ${process.env["gh_token"]}`
+    }
+  })).data
+  const oldConf = JSON.parse(atob(confInfo.content));
+  const newConf = { ...oldConf, assets: [...oldConf.assets, `${random}.${type}`] }
+  const objJsonB64 = btoa(newConf)
+
+  await axios.put("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/assets_conf.json",
+    JSON.stringify({
+      "message": `conf updated`, "content": objJsonB64,
+      "sha": confInfo.sha
+    }),
+    {
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+        "Authorization": `token ${process.env["gh_token"]}`
+      }
+    }).then(d => res.status(200).json(newConf)).catch(
       (d: AxiosError) => res.status(400).json(d.response?.data)
     )
 }
