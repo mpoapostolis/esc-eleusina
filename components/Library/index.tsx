@@ -19,8 +19,8 @@ export default function Library(p: { setLibrary: () => void }) {
 
   return (
     <div className="w-screen h-screen flex   bg-black fixed z-50 bg-opacity-90">
-      <div className="w-full">
-        <div className="grid items-center xl:grid-cols-4 2xl:grid-cols-5 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-2  gap-8 py-4 px-10 ">
+      <div className="w-full overflow-auto">
+        <div className="grid  items-center xl:grid-cols-4 2xl:grid-cols-5 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-2  gap-8 py-4 px-10 ">
           {imgs?.map((str) => (
             <div
               key={str}
@@ -44,7 +44,6 @@ export default function Library(p: { setLibrary: () => void }) {
         </label>
 
         <input
-          accept="jpg, .jpeg, .png"
           id="files"
           type="file"
           onChange={(f) => {

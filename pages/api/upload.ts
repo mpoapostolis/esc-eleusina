@@ -20,7 +20,8 @@ export default async function handler(
 ) {
   const random = randomUUID()
   const type = req.body.type
-  await (await axios.put(`https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/images/${random}.${type}`,
+  const ext = type === 'svg+xml' ? "svg" : type
+  await (await axios.put(`https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/images/${random}.${ext}`,
     JSON.stringify({
       "message": `upload image ${random}`, "content": req.body.data,
     }),
@@ -37,7 +38,7 @@ export default async function handler(
     }
   })).data
   const oldConf = JSON.parse(atob(confInfo.content));
-  const newConf = { ...oldConf, assets: [...oldConf.assets, `${random}.${type}`] }
+  const newConf = { ...oldConf, assets: [...oldConf.assets, `${random}.${ext}`] }
   const objJsonB64 = btoa(newConf)
 
   await axios.put("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/assets_conf.json",
