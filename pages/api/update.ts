@@ -18,18 +18,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const random = randomUUID()
-  const type = req.body.type
-  await (await axios.put(`https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/images/${random}.${type}`,
-    JSON.stringify({
-      "message": `upload image ${random}`, "content": req.body.data,
-    }),
-    {
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-        "Authorization": `token ${process.env["gh_token"]}`
-      }
-    })).data
 
   const confInfo = await (await axios.get("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/assets_conf.json", {
     headers: {
@@ -37,7 +25,7 @@ export default async function handler(
     }
   })).data
   const oldConf = JSON.parse(atob(confInfo.content));
-  const newConf = { ...oldConf, assets: [...oldConf.assets, `${random}.${type}`] }
+  const newConf = { ...oldConf, items: req.body.items }
   const objJsonB64 = btoa(newConf)
 
   await axios.put("https://api.github.com/repos/mpoapostolis/escape-vr/contents/public/assets_conf.json",

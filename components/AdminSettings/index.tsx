@@ -4,14 +4,9 @@ import { images } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
-import {
-  DetailedHTMLProps,
-  InputHTMLAttributes,
-  useEffect,
-  useState,
-} from "react";
+import { DetailedHTMLProps, InputHTMLAttributes, useState } from "react";
 import Range from "../Range";
-import { setConfig } from "next/config";
+import clsx from "clsx";
 import axios from "axios";
 
 function Checkbox(
@@ -29,8 +24,30 @@ function Checkbox(
   );
 }
 
+function AllImage(props: { imgs?: string[]; onClick: (e?: any) => void }) {
+  return (
+    <div className="max-h-96 grid p-4 gap-4 bg-black grid-cols-2 items-center overflow-auto">
+      {props.imgs?.map((id, idx) => (
+        <div
+          key={id}
+          onClick={() => props.onClick(id)}
+          className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
+        >
+          <img
+            className="cursor-pointer w-full"
+            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminSettings(props: {
   conf: Conf;
+  imgs: string[];
+  hide: string[];
+  setHide: (s: string) => void;
   setLibrary: () => void;
   addPortal: () => void;
   portal: boolean;
@@ -39,10 +56,17 @@ export default function AdminSettings(props: {
   scene: Scene;
 }) {
   const items = props.conf[props.scene] as Item[];
-  const [imgs, setImgs] = useState<string[]>();
-  useEffect(() => {
-    axios.get("/api/getConf", {}).then((d) => setImgs(d.data.assets));
-  }, []);
+
+  const updateRequired = (id: string) => {
+    if (!selectedItem) return;
+    const requiredItems = selectedItem?.requiredItems ?? [];
+    const found = requiredItems.includes(id);
+    const tmp = found
+      ? requiredItems?.filter((e) => e !== id)
+      : [...requiredItems, id];
+    tmp;
+    update({ ...selectedItem, requiredItems: tmp });
+  };
 
   const update = (p: Item) => {
     const idx = items.findIndex((i) => i.id === p.id);
@@ -52,7 +76,6 @@ export default function AdminSettings(props: {
 
   const [id, setId] = useState<string>();
   const selectedItem = items.find((i) => i.id === id);
-  const store = useStore();
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
       <div className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
@@ -68,6 +91,7 @@ export default function AdminSettings(props: {
             <div className="flex  items-start my-2 text-xs">
               <div className=" flex cursor-pointer w-32 justify-center flex-col items-center bg-white bg-opacity-5 text-center p-2">
                 <img className="w-20 p-1  h-20" src={selectedItem.src} />
+                {selectedItem.name}
               </div>
 
               <div className="w-full px-4">
@@ -136,7 +160,7 @@ export default function AdminSettings(props: {
                 });
               }}
               value={selectedItem.goToScene}
-              label="Portal go to Scene:"
+              label="onClick go to scene"
               options={[undefined, ...scenes].map((o) => ({
                 label: o === undefined ? "-" : o,
                 value: o,
@@ -146,32 +170,83 @@ export default function AdminSettings(props: {
 
             {selectedItem.collectable && (
               <>
-                <Select
-                  onChange={(v) => {
-                    update({
-                      ...selectedItem,
-                      collectableIfHandHas: v.value as string,
-                    });
-                  }}
-                  value={selectedItem.collectableIfHandHas}
-                  label="Collect if hand keeps:"
-                  options={images.map((img) => ({
-                    label: img.name,
-                    src: img.src,
-                    value: img.name,
-                  }))}
-                ></Select>
+                <Popover
+                  label={
+                    <>
+                      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                        inventory src
+                      </label>
+                      <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                        {selectedItem.inventorySrc ? (
+                          <img
+                            className="w-20 h-auto"
+                            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${selectedItem.inventorySrc}`}
+                          />
+                        ) : (
+                          "➕"
+                        )}
+                      </div>
+                    </>
+                  }
+                >
+                  <AllImage
+                    imgs={props.imgs}
+                    onClick={(id: string) => {
+                      update({
+                        ...selectedItem,
+                        inventorySrc: id,
+                      });
+                    }}
+                  />
+                </Popover>
                 <br />
+                <Popover
+                  label={
+                    <>
+                      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                        Collect if keep
+                      </label>
+                      <div className="border w-full  h-28 p-4 text-2xl  border-gray-700 flex items-center justify-center">
+                        {selectedItem.collectableIfHandHas ? (
+                          <img
+                            className="w-20 h-auto"
+                            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${selectedItem.collectableIfHandHas}`}
+                          />
+                        ) : (
+                          "➕"
+                        )}
+                      </div>
+                    </>
+                  }
+                >
+                  <AllImage
+                    imgs={props.imgs}
+                    onClick={(id: string) => {
+                      update({
+                        ...selectedItem,
+                        collectableIfHandHas: id,
+                      });
+                    }}
+                  />
+                </Popover>
+                <br />
+
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
                   onCollect success hint{" "}
                 </label>
                 <div>
                   <textarea
+                    value={selectedItem.onCollectSuccess}
+                    onChange={(evt) => {
+                      update({
+                        ...selectedItem,
+                        onCollectSuccess: evt.currentTarget.value,
+                      });
+                    }}
                     className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
                     rows={5}
                   ></textarea>
                 </div>
-
                 <br />
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
                   onCollect fail hint{" "}
@@ -180,24 +255,53 @@ export default function AdminSettings(props: {
                   <textarea
                     className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
                     rows={5}
+                    value={selectedItem.onCollectFail}
+                    onChange={(evt) => {
+                      update({
+                        ...selectedItem,
+                        onCollectFail: evt.currentTarget.value,
+                      });
+                    }}
                   ></textarea>
                 </div>
               </>
             )}
             <hr className="my-5 opacity-50" />
 
-            <label className="block mb-4 text-left text-xs font-medium text-gray-300">
-              Hide if inventory missing:
+            <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
+              Required items to appear
             </label>
-            <div className="grid gap-2 grid-cols-2">
-              {images.map((i) => (
-                <Checkbox key={i.name} className=" mr-2" label={i.name} />
-              ))}
+            <div className="grid gap-6 grid-cols-2">
+              {props.conf[props.scene].map((i) => {
+                const item = i as Item;
+                return (
+                  <div
+                    onClick={() => {
+                      updateRequired(`${i.id}`);
+                    }}
+                    className={clsx(
+                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                      {
+                        "bg-green-500": selectedItem.requiredItems?.includes(
+                          `${i.id}`
+                        ),
+                      }
+                    )}
+                  >
+                    <img className="w-full p-4" src={item.src} alt="" />
+                  </div>
+                );
+              })}
             </div>
           </>
         ) : (
           <>
-            <button className="w-full px-3 py-2 text-center bg-white bg-opacity-20">
+            <button
+              onClick={() => {
+                axios.put("/api/update", { items: props.conf });
+              }}
+              className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
+            >
               Save
             </button>
             <hr className="my-5 opacity-50" />
@@ -221,15 +325,15 @@ export default function AdminSettings(props: {
               }
             >
               <div className="max-h-96 grid p-4 gap-4 bg-black grid-cols-2 items-center overflow-auto">
-                {imgs?.map((id, idx) => (
+                {props.imgs?.map((id, idx) => (
                   <div
                     key={id}
                     onClick={() =>
                       props.setConf([
                         {
-                          id: id,
+                          id: uuidv4(),
                           scale: 0.5,
-                          name: id,
+                          name: "",
                           src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
                         },
                         ...items,
@@ -252,6 +356,7 @@ export default function AdminSettings(props: {
                   <div className="flex  items-start my-2 text-xs">
                     <div className=" flex cursor-pointer w-32 justify-center flex-col items-center border border-opacity-20 border-gray-200  text-center p-2">
                       <img className="w-16 p-2  h-1w-16" src={i.src} />
+                      {i.name}
                     </div>
 
                     <div className="w-full px-4">
@@ -267,17 +372,28 @@ export default function AdminSettings(props: {
                           label="scale"
                         />
                       </div>
-                      <button
-                        onClick={() => setId(i.id)}
-                        className="w-full px-3 py-2 text-center bg-white bg-opacity-5 border border-gray-500 border-opacity-5"
-                      >
-                        Edit
-                      </button>
+                      <div className="grid grid-cols-2 gap-x-2">
+                        <button
+                          onClick={() => {
+                            props.setHide(`${i.id}`);
+                          }}
+                          className="w-full px-3 py-2 text-center bg-white bg-opacity-5 border border-gray-500 border-opacity-5"
+                        >
+                          {props.hide.includes(`${i.id}`) ? "Show" : "Hide"}
+                        </button>
+
+                        <button
+                          onClick={() => setId(`${i.id}`)}
+                          className="w-full px-3 py-2 text-center bg-white bg-opacity-5 border border-gray-500 border-opacity-5"
+                        >
+                          Edit
+                        </button>
+                      </div>
                     </div>
 
                     <span
                       onClick={() => {
-                        props.setConf(items.filter((e) => e.name !== i.name));
+                        props.setConf(items.filter((e) => e.id !== i.id));
                       }}
                       role="button"
                       className="ml-auto w-4"
@@ -290,8 +406,8 @@ export default function AdminSettings(props: {
                 </div>
               ))}
             </div>
-            <hr className="my-5 opacity-50" />
-            {props.portal ? (
+            {/* <hr className="my-5 opacity-50" /> */}
+            {/* {props.portal ? (
               <div className="grid gap-x-3 grid-cols-2">
                 <button
                   onClick={() => {
@@ -321,7 +437,7 @@ export default function AdminSettings(props: {
               >
                 + Add Portal
               </button>
-            )}
+            )} */}
             <br />
             <button
               onClick={() => props.setLibrary()}

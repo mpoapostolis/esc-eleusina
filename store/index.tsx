@@ -25,11 +25,15 @@ export type AncientText = {
 
 export type Item = {
   id?: string;
+  inventorySrc?: string;
   goToScene?: Scene;
   collectableIfHandHas?: string;
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
+  onCollectSuccess?: string;
+  onCollectFail?: string;
+  requiredItems?: string[];
   name: string;
   scale: number;
   src: string;

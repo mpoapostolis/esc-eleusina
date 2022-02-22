@@ -48,6 +48,7 @@ import AdminSettings from "../components/AdminSettings";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 import Library from "../components/Library";
+import axios from "axios";
 
 extend({ OrbitControls });
 
@@ -76,19 +77,50 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(props: Item) {
+function Sprite(
+  props: Item & {
+    update: (v3: Vector3) => void;
+  }
+) {
   const texture = useLoader(THREE.TextureLoader, props.src);
-  const [drag, setDrag] = useState(true);
+  const [drag, setDrag] = useState(false);
   const ref = useRef<SpriteType>();
   useFrame((t) => {
     if (!ref.current) return;
-    if (drag) ref.current.position.copy(t.raycaster.ray.direction);
-    ref.current.rotation.copy(t.camera.rotation);
-    ref.current.scale.set(props.scale, props.scale, props.scale);
+    if (drag && !props.hidden) {
+      ref.current.position.copy(t.raycaster.ray.direction);
+      ref.current.scale.set(props.scale, props.scale, props.scale);
+    }
   });
+
+  // useEffect(() => {
+  //   if (!ref.current) return;
+  //   // props.update(ref.current?.position);
+  // }, [ref.current]);
+
+  useEffect(() => {
+    if (!ref.current || !props.position) return;
+    ref.current.position.copy(props.position);
+  }, [props.position, ref.current]);
+
+  const t = useThree();
   return (
-    <sprite onDoubleClick={() => setDrag(!drag)} scale={props.scale} ref={ref}>
-      <spriteMaterial attach="material" map={texture} />
+    <sprite
+      position={props.position ?? t.raycaster.ray.direction}
+      onDoubleClick={() => {
+        if (!ref.current) return;
+        const v3 = new Vector3();
+        props.update(v3.copy(ref.current.position));
+        setDrag(!drag);
+      }}
+      scale={props.scale}
+      ref={ref}
+    >
+      <spriteMaterial
+        attach="material"
+        opacity={props.hidden ? 0 : 1}
+        map={texture}
+      />
     </sprite>
   );
 }
@@ -120,7 +152,7 @@ const _conf: Conf = {
   karnagio: [],
 };
 
-const Svg = (p: { addPortal: boolean }) => {
+const Svg = (p: { addPortal: boolean; setConf: (i: Item[]) => void }) => {
   // const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
   const shape = new Shape();
   const store = useStore();
@@ -209,10 +241,13 @@ const Svg = (p: { addPortal: boolean }) => {
 
 const Home: NextPage = () => {
   const [conf, _setConf] = useState(_conf);
+  const [imgs, setImgs] = useState<string[]>([]);
+
   const store = useStore();
   const setConf = (items: Item[]) => {
     _setConf((s) => ({ ...s, [store.scene]: items }));
   };
+  const [hide, setHide] = useState<string[]>([]);
   const setScene = (s: Scene) => store.setScene(s);
   const [portal, _addPortal] = useState(false);
   const [library, _setLibrary] = useState(false);
@@ -227,10 +262,27 @@ const Home: NextPage = () => {
     else shape.lineTo(p.x, p.y);
   });
 
+  useEffect(() => {
+    axios.get("/api/getConf", {}).then((d) => {
+      _setConf(d.data.items);
+      setImgs(d.data.assets);
+    });
+  }, []);
+  const items = conf[store.scene] as Item[];
+
   return (
     <div className="canvas">
       {!library ? (
         <AdminSettings
+          hide={hide}
+          imgs={imgs}
+          setHide={(idx: string) => {
+            const found = hide.includes(idx);
+            const hiddenObj = found
+              ? hide.filter((e) => e !== idx)
+              : [...hide, idx];
+            setHide(hiddenObj);
+          }}
           conf={conf}
           portal={portal}
           setLibrary={setLibrary}
@@ -248,12 +300,25 @@ const Home: NextPage = () => {
         )}
 
         <Suspense fallback={<CustomLoader />}>
-          {conf[store.scene].map((o, idx) => {
+          {conf[store.scene].map((o) => {
+            const isHidden = hide.includes(`${o.id}`);
             const x = o as Item;
-            return <Sprite key={x.id} {...x} />;
+
+            return (
+              <Sprite
+                update={(v3) => {
+                  const idx = items.findIndex((i) => i.id === o.id);
+                  items[idx].position = v3;
+                  setConf(items);
+                }}
+                hidden={isHidden}
+                key={o.id}
+                {...x}
+              />
+            );
           })}
         </Suspense>
-        {portal && <Svg addPortal={portal} />}
+        {portal && <Svg setConf={setConf} addPortal={portal} />}
         {store.portal && (
           <mesh
             position={store.portal.position}

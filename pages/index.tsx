@@ -27,6 +27,7 @@ extend({ OrbitControls });
 function Controls(props: { fov: number } & OrbitControlsProps) {
   const { camera, gl } = useThree();
   const ref = useRef<OrbitControlsProps>();
+
   useFrame((t) => {
     // @ts-ignore
     t.camera.fov = MathUtils.lerp(t.camera.fov, props.fov, 0.1);
