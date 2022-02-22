@@ -20,13 +20,14 @@ export default function Library(p: { setLibrary: () => void }) {
   return (
     <div className="w-screen h-screen flex   bg-black fixed z-50 bg-opacity-90">
       <div className="w-full">
-        <div className="grid 2xl:grid-cols-4  lg xl:grid-cols-3  gap-8 py-4 px-10 ">
+        <div className="grid items-center xl:grid-cols-4 2xl:grid-cols-5 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-2  gap-8 py-4 px-10 ">
           {imgs?.map((str) => (
-            <img
-              className="w-auto border"
-              src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${str}`}
-              key={str}
-            />
+            <div className="w-full h-full p-4 flex items-center border border-gray-600">
+              <img
+                src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${str}`}
+                key={str}
+              />
+            </div>
           ))}
         </div>
       </div>

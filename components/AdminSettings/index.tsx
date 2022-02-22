@@ -220,7 +220,7 @@ export default function AdminSettings(props: {
                 </button>
               }
             >
-              <div className="max-h-96 grid gap-4 bg-black grid-cols-4 items-center overflow-auto">
+              <div className="max-h-96 grid p-4 gap-4 bg-black grid-cols-2 items-center overflow-auto">
                 {imgs?.map((id, idx) => (
                   <div
                     key={id}
@@ -235,10 +235,10 @@ export default function AdminSettings(props: {
                         ...items,
                       ])
                     }
-                    className="p-1 w-full  border-gray-700 bg-black hover:bg-slate-800 flex"
+                    className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
                   >
                     <img
-                      className="cursor-pointer w-32 p-1 mr-4 h-10"
+                      className="cursor-pointer w-full"
                       src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
                     />
                   </div>
@@ -251,8 +251,7 @@ export default function AdminSettings(props: {
                 <div key={i.id}>
                   <div className="flex  items-start my-2 text-xs">
                     <div className=" flex cursor-pointer w-32 justify-center flex-col items-center border border-opacity-20 border-gray-200  text-center p-2">
-                      <img className="w-14 p-2  h-14" src={i.src} />
-                      <span>{i.name}</span>
+                      <img className="w-16 p-2  h-1w-16" src={i.src} />
                     </div>
 
                     <div className="w-full px-4">
