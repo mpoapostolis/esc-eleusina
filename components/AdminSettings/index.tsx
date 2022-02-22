@@ -276,6 +276,7 @@ export default function AdminSettings(props: {
                 const item = i as Item;
                 return (
                   <div
+                    key={i.id}
                     onClick={() => {
                       updateRequired(`${i.id}`);
                     }}
