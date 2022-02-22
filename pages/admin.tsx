@@ -263,11 +263,12 @@ const Home: NextPage = () => {
   });
 
   useEffect(() => {
-    axios.get("/api/getConf", {}).then((d) => {
-      _setConf(d.data.items);
-      setImgs(d.data.assets);
-    });
-  }, []);
+    if (!library)
+      axios.get("/api/getConf", {}).then((d) => {
+        _setConf(d.data.items);
+        setImgs(d.data.assets);
+      });
+  }, [library]);
   const items = conf[store.scene] as Item[];
 
   return (
