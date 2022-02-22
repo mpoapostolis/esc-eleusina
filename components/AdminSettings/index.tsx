@@ -4,9 +4,15 @@ import { images } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
-import { DetailedHTMLProps, InputHTMLAttributes, useState } from "react";
+import {
+  DetailedHTMLProps,
+  InputHTMLAttributes,
+  useEffect,
+  useState,
+} from "react";
 import Range from "../Range";
 import { setConfig } from "next/config";
+import axios from "axios";
 
 function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -33,6 +39,10 @@ export default function AdminSettings(props: {
   scene: Scene;
 }) {
   const items = props.conf[props.scene] as Item[];
+  const [imgs, setImgs] = useState<string[]>();
+  useEffect(() => {
+    axios.get("/api/getConf", {}).then((d) => setImgs(d.data.assets));
+  }, []);
 
   const update = (p: Item) => {
     const idx = items.findIndex((i) => i.id === p.id);
@@ -57,8 +67,7 @@ export default function AdminSettings(props: {
             <hr className="my-5 opacity-50" />
             <div className="flex  items-start my-2 text-xs">
               <div className=" flex cursor-pointer w-32 justify-center flex-col items-center bg-white bg-opacity-5 text-center p-2">
-                <img className="w-16 p-1  h-16" src={selectedItem.src} />
-                <span>{selectedItem.name}</span>
+                <img className="w-20 p-1  h-20" src={selectedItem.src} />
               </div>
 
               <div className="w-full px-4">
@@ -104,6 +113,21 @@ export default function AdminSettings(props: {
             </div>
             <hr className="my-5 opacity-50" />
 
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              Name
+            </label>
+            <input
+              value={selectedItem.name}
+              onChange={(evt) => {
+                update({
+                  ...selectedItem,
+                  name: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+            <br />
+
             <Select
               onChange={(v) => {
                 update({
@@ -141,20 +165,23 @@ export default function AdminSettings(props: {
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
                   onCollect success hint{" "}
                 </label>
-                <textarea
-                  className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
-                  rows={5}
-                ></textarea>
+                <div>
+                  <textarea
+                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                    rows={5}
+                  ></textarea>
+                </div>
 
-                <br />
                 <br />
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
                   onCollect fail hint{" "}
                 </label>
-                <textarea
-                  className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
-                  rows={5}
-                ></textarea>
+                <div>
+                  <textarea
+                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                    rows={5}
+                  ></textarea>
+                </div>
               </>
             )}
             <hr className="my-5 opacity-50" />
@@ -193,25 +220,27 @@ export default function AdminSettings(props: {
                 </button>
               }
             >
-              <div className="max-h-96 overflow-auto">
-                {images.map((o, idx) => (
+              <div className="max-h-96 grid gap-4 bg-black grid-cols-4 items-center overflow-auto">
+                {imgs?.map((id, idx) => (
                   <div
-                    key={idx}
+                    key={id}
                     onClick={() =>
                       props.setConf([
                         {
-                          id: uuidv4(),
+                          id: id,
                           scale: 0.5,
-                          name: o.name,
-                          src: o.src,
+                          name: id,
+                          src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
                         },
                         ...items,
                       ])
                     }
                     className="p-1 w-full  border-gray-700 bg-black hover:bg-slate-800 flex"
                   >
-                    <img alt="" className="w-10 p-1 mr-4 h-10" src={o.src} />
-                    {o.name}
+                    <img
+                      className="cursor-pointer w-32 p-1 mr-4 h-10"
+                      src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
+                    />
                   </div>
                 ))}
               </div>
