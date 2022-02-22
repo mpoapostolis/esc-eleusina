@@ -22,7 +22,10 @@ export default function Library(p: { setLibrary: () => void }) {
       <div className="w-full">
         <div className="grid items-center xl:grid-cols-4 2xl:grid-cols-5 md:grid-cols-2 lg:grid-cols-3 sm:grid-cols-2  gap-8 py-4 px-10 ">
           {imgs?.map((str) => (
-            <div className="w-full h-full p-4 flex items-center border border-gray-600">
+            <div
+              key={str}
+              className="w-full h-full p-4 flex items-center border border-gray-600"
+            >
               <img
                 src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${str}`}
                 key={str}
