@@ -156,7 +156,7 @@ export default function AdminSettings(props: {
               onClick trigger
             </label>
             <input
-              value={selectedItem.name}
+              value={selectedItem.onClickTrigger}
               onChange={(evt) => {
                 update({
                   ...selectedItem,
