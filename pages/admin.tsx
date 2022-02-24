@@ -6,31 +6,80 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { Item, Portal, Scene, useStore } from "../store";
+import { Item, Scene, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import {
-  Circle,
-  Html,
-  meshBounds,
-  OrbitControlsProps,
-  useProgress,
-} from "@react-three/drei";
+import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
-import {
-  DoubleSide,
-  Euler,
-  MathUtils,
-  Mesh,
-  Shape,
-  Sprite as SpriteType,
-  Vector3,
-} from "three";
+import { MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/Library";
 import axios from "axios";
 
 extend({ OrbitControls });
+
+type Sprite = Item & {
+  update: (v3: Vector3) => void;
+};
+function Portal(props: Sprite) {
+  console.log(props.scale);
+  const countX = 4;
+  const countY = 6;
+  const fps = 25;
+  const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  const [hovered, setHovered] = useState(false);
+  useEffect(() => {
+    if (typeof document !== "undefined")
+      document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
+
+  const ref = useRef<Mesh>();
+  const [drag, setDrag] = useState(false);
+  useFrame((three) => {
+    if (!ref.current) return;
+    const t = three.clock.elapsedTime;
+    const x = Math.floor(t * fps) % countX;
+    const y = Math.floor(((t * fps) % 32) / 4);
+    texture.offset.x = x / countX;
+    texture.offset.y = (5 - y) / countY;
+    texture.minFilter = THREE.LinearFilter;
+    texture.repeat.x = 1 / countX;
+    texture.repeat.y = 1 / countY;
+
+    if (drag) ref.current.position.copy(three.raycaster.ray.direction);
+    ref.current.scale.set(props.scale, props.scale, props.scale);
+  });
+
+  useEffect(() => {
+    if (!ref.current || !props.position) return;
+    ref.current.position.copy(props.position);
+  }, [props.position, ref.current]);
+
+  const t = useThree();
+  return (
+    <sprite
+      position={props.position ?? t.raycaster.ray.direction}
+      onDoubleClick={() => {
+        if (!ref.current) return;
+        if (!ref.current) return;
+        const v3 = new Vector3();
+        props.update(v3.copy(ref.current.position));
+        setDrag(!drag);
+      }}
+      ref={ref}
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+    >
+      <planeGeometry args={[1, 1]} />
+      <spriteMaterial
+        transparent
+        color="white"
+        attach="material"
+        map={texture}
+      />
+    </sprite>
+  );
+}
 
 function Controls(props: { fov: number } & OrbitControlsProps) {
   const { camera, gl } = useThree();
@@ -56,11 +105,7 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(
-  props: Item & {
-    update: (v3: Vector3) => void;
-  }
-) {
+function Sprite(props: Sprite) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [drag, setDrag] = useState(false);
   const ref = useRef<SpriteType>();
@@ -75,6 +120,7 @@ function Sprite(
   useEffect(() => {
     if (!ref.current || !props.position) return;
     ref.current.position.copy(props.position);
+    ref.current.scale.set(props.scale, props.scale, props.scale);
   }, [props.position, ref.current]);
 
   const t = useThree();
@@ -118,7 +164,7 @@ function CustomLoader() {
   );
 }
 
-export type Conf = Record<Scene, (Item | Portal)[]>;
+export type Conf = Record<Scene, Item[]>;
 export const _conf: Conf = {
   intro: [],
   elaiourgeio: [],
@@ -126,92 +172,92 @@ export const _conf: Conf = {
   karnagio: [],
 };
 
-const Svg = (p: { addPortal: boolean; setConf: (i: Item[]) => void }) => {
-  // const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
-  const shape = new Shape();
-  const store = useStore();
-  const points = store.portal?.points ?? [];
-  points.forEach((p, idx) => {
-    if (!p) return;
-    if (idx === 0) shape.moveTo(p.x, p.y);
-    else shape.lineTo(p.x, p.y);
-  });
-  const ref = useRef<Mesh>();
-  const planeRef = useRef<Mesh>();
-  useFrame((t) => {
-    if (!ref.current) return;
-    ref.current.position.copy(t.camera.position);
-    ref.current.rotation.copy(t.camera.rotation);
-    if (!planeRef.current) return;
+// const Svg = (p: { addPortal: boolean; setConf: (i: Item[]) => void }) => {
+//   // const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
+//   const shape = new Shape();
+//   const store = useStore();
+//   const points = store.portal?.points ?? [];
+//   points.forEach((p, idx) => {
+//     if (!p) return;
+//     if (idx === 0) shape.moveTo(p.x, p.y);
+//     else shape.lineTo(p.x, p.y);
+//   });
+//   const ref = useRef<Mesh>();
+//   const planeRef = useRef<Mesh>();
+//   useFrame((t) => {
+//     if (!ref.current) return;
+//     ref.current.position.copy(t.camera.position);
+//     ref.current.rotation.copy(t.camera.rotation);
+//     if (!planeRef.current) return;
 
-    planeRef.current.position.copy(t.camera.position);
-    planeRef.current.rotation.copy(t.camera.rotation);
-    planeRef.current.translateZ(-1);
-  });
-  const t = useThree();
+//     planeRef.current.position.copy(t.camera.position);
+//     planeRef.current.rotation.copy(t.camera.rotation);
+//     planeRef.current.translateZ(-1);
+//   });
+//   const t = useThree();
 
-  useEffect(() => {
-    const v3 = new Vector3();
-    const rot = new Euler();
-    if (planeRef.current)
-      store.setPortal({
-        goToScene: "elaiourgeio",
-        position: v3.copy(planeRef.current.position),
-        rotation: rot.copy(planeRef.current.rotation),
-        points: points,
-      });
-  }, [points, planeRef.current]);
+//   useEffect(() => {
+//     const v3 = new Vector3();
+//     const rot = new Euler();
+//     if (planeRef.current)
+//       store.setPortal({
+//         goToScene: "elaiourgeio",
+//         position: v3.copy(planeRef.current.position),
+//         rotation: rot.copy(planeRef.current.rotation),
+//         points: points,
+//       });
+//   }, [points, planeRef.current]);
 
-  return (
-    <group raycast={meshBounds}>
-      {p.addPortal && (
-        <>
-          <Circle ref={ref} args={[0.025]} />
-          <mesh
-            onClick={(e) => {
-              if (!planeRef.current) return;
-              const dx = t.viewport.width / 5;
-              const dy = t.viewport.height / 5;
-              const x = (e.spaceX * dx) / 2;
-              const y = (e.spaceY * dy) / 2;
+//   return (
+//     <group raycast={meshBounds}>
+//       {p.addPortal && (
+//         <>
+//           <Circle ref={ref} args={[0.025]} />
+//           <mesh
+//             onClick={(e) => {
+//               if (!planeRef.current) return;
+//               const dx = t.viewport.width / 5;
+//               const dy = t.viewport.height / 5;
+//               const x = (e.spaceX * dx) / 2;
+//               const y = (e.spaceY * dy) / 2;
 
-              const _p = [
-                ...points,
-                {
-                  x,
-                  y,
-                },
-              ];
+//               const _p = [
+//                 ...points,
+//                 {
+//                   x,
+//                   y,
+//                 },
+//               ];
 
-              const v3 = new Vector3();
-              const rot = new Euler();
-              if (planeRef.current)
-                store.setPortal({
-                  goToScene: "elaiourgeio",
-                  position: v3.copy(planeRef.current.position),
-                  rotation: rot.copy(planeRef.current.rotation),
-                  points: _p,
-                });
-            }}
-            ref={planeRef}
-          >
-            <planeGeometry
-              args={[t.viewport.width / 5, t.viewport.height / 5, 30, 30]}
-            />
-            <meshBasicMaterial
-              side={DoubleSide}
-              wireframe
-              transparent
-              opacity={0.1}
-              attach="material"
-              color="grey"
-            />
-          </mesh>
-        </>
-      )}
-    </group>
-  );
-};
+//               const v3 = new Vector3();
+//               const rot = new Euler();
+//               if (planeRef.current)
+//                 store.setPortal({
+//                   goToScene: "elaiourgeio",
+//                   position: v3.copy(planeRef.current.position),
+//                   rotation: rot.copy(planeRef.current.rotation),
+//                   points: _p,
+//                 });
+//             }}
+//             ref={planeRef}
+//           >
+//             <planeGeometry
+//               args={[t.viewport.width / 5, t.viewport.height / 5, 30, 30]}
+//             />
+//             <meshBasicMaterial
+//               side={DoubleSide}
+//               wireframe
+//               transparent
+//               opacity={0.1}
+//               attach="material"
+//               color="grey"
+//             />
+//           </mesh>
+//         </>
+//       )}
+//     </group>
+//   );
+// };
 
 const Home: NextPage = () => {
   const [conf, _setConf] = useState(_conf);
@@ -225,16 +271,15 @@ const Home: NextPage = () => {
   const setScene = (s: Scene) => store.setScene(s);
   const [portal, _addPortal] = useState(false);
   const [library, _setLibrary] = useState(false);
-  const addPortal = () => _addPortal(!portal);
   const setLibrary = () => _setLibrary(!library);
 
-  const shape = new Shape();
-  const points = store.portal?.points ?? [];
-  points.forEach((p, idx) => {
-    if (!p) return;
-    if (idx === 0) shape.moveTo(p.x, p.y);
-    else shape.lineTo(p.x, p.y);
-  });
+  // const shape = new Shape();
+  // const points = store.portal?.points ?? [];
+  // points.forEach((p, idx) => {
+  //   if (!p) return;
+  //   if (idx === 0) shape.moveTo(p.x, p.y);
+  //   else shape.lineTo(p.x, p.y);
+  // });
 
   useEffect(() => {
     if (!library)
@@ -250,7 +295,7 @@ const Home: NextPage = () => {
       {!library ? (
         <AdminSettings
           hide={hide}
-          imgs={imgs}
+          imgs={["arrows.png", ...imgs]}
           setHide={(idx: string) => {
             const found = hide.includes(idx);
             const hiddenObj = found
@@ -261,7 +306,6 @@ const Home: NextPage = () => {
           conf={conf}
           portal={portal}
           setLibrary={setLibrary}
-          addPortal={addPortal}
           setConf={setConf}
           setScene={setScene}
           scene={store.scene}
@@ -270,16 +314,23 @@ const Home: NextPage = () => {
         <Library setLibrary={setLibrary} />
       )}
       <Canvas flat={true} linear={true} mode="concurrent">
-        {!portal && (
-          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
-        )}
+        <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
 
         <Suspense fallback={<CustomLoader />}>
           {conf[store.scene].map((o) => {
             const isHidden = hide.includes(`${o.id}`);
             const x = o as Item;
 
-            return (
+            return o.type ? (
+              <Portal
+                {...o}
+                update={(v3) => {
+                  const idx = items.findIndex((i) => i.id === o.id);
+                  items[idx].position = v3;
+                  setConf(items);
+                }}
+              />
+            ) : (
               <Sprite
                 update={(v3) => {
                   const idx = items.findIndex((i) => i.id === o.id);
@@ -293,8 +344,8 @@ const Home: NextPage = () => {
             );
           })}
         </Suspense>
-        {portal && <Svg setConf={setConf} addPortal={portal} />}
-        {store.portal && (
+        {/* {portal && <Svg setConf={setConf} addPortal={portal} />} */}
+        {/* {store.portal && (
           <mesh
             position={store.portal.position}
             rotation={store.portal.rotation}
@@ -302,7 +353,7 @@ const Home: NextPage = () => {
             <shapeGeometry args={[shape]} />
             <meshBasicMaterial color="yellow" opacity={0.25} transparent />
           </mesh>
-        )}
+        )} */}
         <Suspense fallback={<CustomLoader />}>
           <Environment />
         </Suspense>

@@ -37,19 +37,20 @@ export type Item = {
   onCollectFail?: string;
   requiredItems?: string[];
   name: string;
+  type?: string;
   scale: number;
   src: string;
   description?: string;
   action?: () => void;
 } & Record<string, any>;
 
-export type Portal = {
-  id?: string;
-  goToScene: Scene;
-  rotation: Euler;
-  position: Vector3;
-  points: { x: number; y: number }[];
-};
+// export type Portal = {
+//   id?: string;
+//   goToScene: Scene;
+//   rotation: Euler;
+//   position: Vector3;
+//   points: { x: number; y: number }[];
+// };
 
 // @ts-ignore
 export const descriptiveText: Record<string | Scene, string> = {
@@ -159,14 +160,14 @@ export type Store = {
   inventoryNotf: string[];
   selectItem?: Item;
   epicItem?: string;
-  portal?: Portal;
+  // portal?: Portal;
   scene: Scene;
   hand?: string;
   dialogue: string[];
   status: Status;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
-  setPortal: (p?: Portal) => void;
+  // setPortal: (p?: Portal) => void;
   setEmail: (s: string) => void;
   setDescriptiveText: (s?: string) => void;
   setEpicItem: (s?: Item) => void;
@@ -199,7 +200,7 @@ export const useStore = create<Store>((set, get) => ({
   epicInventory: [],
   hint: undefined,
   isHintVisible: false,
-  setPortal: (portal?: Portal) => set(() => ({ portal })),
+  // setPortal: (portal?: Portal) => set(() => ({ portal })),
 
   setStatus: (status) => set(() => ({ status })),
   setHand: (h?: string) =>

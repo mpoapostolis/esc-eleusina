@@ -49,7 +49,6 @@ export default function AdminSettings(props: {
   hide: string[];
   setHide: (s: string) => void;
   setLibrary: () => void;
-  addPortal: () => void;
   portal: boolean;
   setConf: (i: Item[]) => void;
   setScene: (s: Scene) => void;
@@ -349,7 +348,8 @@ export default function AdminSettings(props: {
                         {
                           id: uuidv4(),
                           scale: 0.5,
-                          name: "",
+                          name: id === "arrows.png" ? "portal" : "",
+                          type: id === "arrows.png" ? "portal" : "",
                           src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
                         },
                         ...items,
@@ -422,38 +422,7 @@ export default function AdminSettings(props: {
                 </div>
               ))}
             </div>
-            {/* <hr className="my-5 opacity-50" /> */}
-            {/* {props.portal ? (
-              <div className="grid gap-x-3 grid-cols-2">
-                <button
-                  onClick={() => {
-                    store.setPortal(undefined);
-                    props.addPortal();
-                  }}
-                  className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
-                >
-                  Cancel
-                </button>
 
-                <button
-                  onClick={() => {
-                    props.addPortal();
-                  }}
-                  className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
-                >
-                  Save
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => {
-                  props.addPortal();
-                }}
-                className="w-full px-3 py-2 text-center bg-white bg-opacity-20"
-              >
-                + Add Portal
-              </button>
-            )} */}
             <br />
             <button
               onClick={() => props.setLibrary()}

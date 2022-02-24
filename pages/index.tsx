@@ -3,6 +3,7 @@ import Menu from "../components/Menu";
 import Ui from "../components/Ui";
 import { useSpring, animated, config } from "@react-spring/three";
 import {
+  applyProps,
   Canvas,
   extend,
   useFrame,
@@ -117,7 +118,7 @@ function CustomLoader() {
   );
 }
 
-function Portal() {
+function Portal(props: Item) {
   const countX = 4;
   const countY = 6;
   const fps = 25;
@@ -138,11 +139,24 @@ function Portal() {
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
   });
+
+  const ref = useRef<Mesh>();
+  useEffect(() => {
+    if (!ref.current || !props.position) return;
+    ref.current.position.copy(props.position);
+  }, [props.position, ref.current]);
+  const store = useStore();
+  console.log(props.requiredItems);
   return (
     <mesh
+      onClick={() => {
+        if (props.goToScene) store.setScene(props.goToScene);
+      }}
+      ref={ref}
+      scale={props.scale}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      position={[-1, -1, -5]}
+      position={props.position}
     >
       <planeGeometry />
       <meshBasicMaterial
@@ -202,13 +216,14 @@ const Home: NextPage = () => {
           <Suspense fallback={<CustomLoader />}>
             {items.map((p, idx) => {
               const item = p as Item;
-              return <Sprite key={p.id} {...item} />;
+              return p.type === "portal" ? (
+                <Portal key={p.id} {...p} />
+              ) : (
+                <Sprite key={p.id} {...item} />
+              );
             })}
           </Suspense>
 
-          <Suspense fallback={<CustomLoader />}>
-            <Portal />
-          </Suspense>
           <Suspense fallback={<CustomLoader />}>
             <Environment />
           </Suspense>
