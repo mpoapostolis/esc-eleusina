@@ -8,7 +8,7 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { useStore } from "../store";
+import { Item, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {
@@ -21,6 +21,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture, useWheel } from "@use-gesture/react";
 import { MathUtils, Raycaster, Sprite as SpriteType } from "three";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { _conf } from "./admin";
 
 extend({ OrbitControls });
 
@@ -48,21 +50,16 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(props: { pos: Pos }) {
-  const [move, setMove] = useState(true);
-  const texture = useLoader(THREE.TextureLoader, `/images/stone.png`);
+function Sprite(props: Item) {
+  const texture = useLoader(THREE.TextureLoader, props.src);
   const ref = useRef<SpriteType>();
-  const raycaster = new Raycaster();
-  useFrame((t) => {
-    if (!ref.current || !move) return;
-    ref.current.position.copy(t.camera.position);
-    ref.current.rotation.copy(t.camera.rotation);
-    ref.current.translateZ(-10);
-    ref.current.translateX(t.viewport.width * t.mouse.x);
-    ref.current.translateY(t.viewport.height * t.mouse.y);
-  });
+  useEffect(() => {
+    if (!ref.current || !props.position) return;
+    ref.current.position.copy(props.position);
+  }, [props.position, ref.current]);
+
   return (
-    <sprite onClick={() => setMove(false)} ref={ref}>
+    <sprite scale={props.scale} ref={ref}>
       <spriteMaterial attach="material" map={texture} />
     </sprite>
   );
@@ -87,35 +84,21 @@ function CustomLoader() {
   );
 }
 
-type Pos = {
-  clientX: number;
-  clientY: number;
-};
-
 const Home: NextPage = () => {
-  const [pos, setPos] = useState<Pos[]>([]);
+  const [conf, _setConf] = useState(_conf);
+  const store = useStore();
+  const setConf = (items: Item[]) => {
+    _setConf((s) => ({ ...s, [store.scene]: items }));
+  };
 
   const router = useRouter();
   useEffect(() => {
-    router.replace("/admin");
+    axios.get("/api/getConf", {}).then((d) => {
+      _setConf(d.data.items);
+    });
   }, []);
+
   const bind = useGesture({
-    onDrag: (w) => {
-      if (typeof window !== "undefined")
-        window.document.body.style.cursor = "grab";
-    },
-    onDoubleClick: (evt) => {
-      if (typeof window === "undefined") return;
-      const pos = {
-        clientX: evt.event.clientX,
-        clientY: evt.event.clientY,
-      };
-      setPos((s) => [...s, pos]);
-    },
-    onDragEnd: () => {
-      if (typeof window !== "undefined")
-        window.document.body.style.cursor = "auto";
-    },
     onWheel: (w) =>
       setFov((s) => {
         const n = Math.min(75, s + w.velocity[1] * w.direction[1]);
@@ -124,7 +107,7 @@ const Home: NextPage = () => {
         return n;
       }),
   });
-
+  const items = conf[store.scene];
   const [fov, setFov] = useState(75);
   return (
     <div {...bind()}>
@@ -134,9 +117,10 @@ const Home: NextPage = () => {
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
           <Suspense fallback={<CustomLoader />}>
-            {pos.map((p, idx) => (
-              <Sprite key={idx} pos={p} />
-            ))}
+            {items.map((p, idx) => {
+              const item = p as Item;
+              return <Sprite key={p.id} {...item} />;
+            })}
           </Suspense>
 
           <Suspense fallback={<CustomLoader />}>

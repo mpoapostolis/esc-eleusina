@@ -1,6 +1,4 @@
 import type { NextPage } from "next";
-import Menu from "../components/Menu";
-import Ui from "../components/Ui";
 import {
   Canvas,
   extend,
@@ -9,51 +7,32 @@ import {
   useThree,
 } from "@react-three/fiber";
 import { Item, Portal, Scene, useStore } from "../store";
-import { v4 as uuidv4 } from "uuid";
-import { useStore as xx } from "@react-three/fiber";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {
   Circle,
   Html,
-  Line,
   meshBounds,
   OrbitControlsProps,
-  Plane,
-  Polyhedron,
-  Tetrahedron,
-  TransformControls,
-  useCamera,
   useProgress,
 } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { useGesture, useWheel } from "@use-gesture/react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import {
-  BackSide,
-  BufferAttribute,
-  BufferGeometry,
-  BufferGeometryLoader,
   DoubleSide,
   Euler,
-  EdgesGeometry,
   MathUtils,
   Mesh,
-  Raycaster,
   Shape,
-  ShapeGeometry,
   Sprite as SpriteType,
   Vector3,
 } from "three";
 import AdminSettings from "../components/AdminSettings";
-import { Line2 } from "three/examples/jsm/lines/Line2";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 import Library from "../components/Library";
 import axios from "axios";
 
 extend({ OrbitControls });
 
 function Controls(props: { fov: number } & OrbitControlsProps) {
-  const store = useStore();
   const { camera, gl } = useThree();
   const ref = useRef<OrbitControlsProps>();
   useFrame((t) => {
@@ -92,11 +71,6 @@ function Sprite(
       ref.current.scale.set(props.scale, props.scale, props.scale);
     }
   });
-
-  // useEffect(() => {
-  //   if (!ref.current) return;
-  //   // props.update(ref.current?.position);
-  // }, [ref.current]);
 
   useEffect(() => {
     if (!ref.current || !props.position) return;
@@ -145,7 +119,7 @@ function CustomLoader() {
 }
 
 export type Conf = Record<Scene, (Item | Portal)[]>;
-const _conf: Conf = {
+export const _conf: Conf = {
   intro: [],
   elaiourgeio: [],
   teletourgeio: [],
