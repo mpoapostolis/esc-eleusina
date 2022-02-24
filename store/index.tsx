@@ -1,5 +1,6 @@
 import { Euler, Vector3 } from "three";
 import create from "zustand";
+import { ancientText } from "../components/AncientText";
 import { loadSound } from "../utils";
 
 export type Level =
@@ -149,6 +150,7 @@ export type Store = {
   setTmpHint: (s?: string) => void;
   setIsHintVisible: (b: boolean) => void;
   setAncientText: (s?: AncientText) => void;
+  onTrigger: (s?: string) => void;
   level: Level;
   descriptiveText?: string;
   modal: Modal;
@@ -206,6 +208,16 @@ export const useStore = create<Store>((set, get) => ({
       return { hand };
     }),
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
+  onTrigger: (triggerEvent?: string) =>
+    set((s) => {
+      switch (triggerEvent) {
+        case "ancientText":
+          return s.setAncientText(ancientText);
+
+        default:
+          break;
+      }
+    }),
 
   setEpicItem: (epicItem?: Item) =>
     set((s) => {

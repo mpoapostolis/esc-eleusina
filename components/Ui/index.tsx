@@ -5,7 +5,7 @@ import Hint from "../Hint";
 import HelpUiIcon from "../HelpUiIcon";
 
 export const sceneItems: Record<Scene, string[]> = {
-  intro: [""],
+  intro: ["stone"],
   karnagio: ["wing", "key", "lingerie", "wing1"],
   teletourgeio: ["scythe", "doxeio1", "doxeio2", "dafni"],
   elaiourgeio: ["mirror1", "mirror2", "dog"],
@@ -35,8 +35,11 @@ export default function Ui(props: { time: number }) {
         { hidden: store.status !== "RUNNING" }
       )}
     >
-      <div className="stroke text-white drop-shadow-2xl text-5xl p-3">
-        <div className="">Time: {props.time}</div>
+      <div
+        style={transform}
+        className="stroke text-white drop-shadow-2xl text-5xl p-3"
+      >
+        Time: {props.time}
       </div>
 
       <div

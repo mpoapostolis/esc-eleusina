@@ -4,16 +4,14 @@ import { useStore } from "../../store";
 import { epicItems } from "../EpicItem";
 
 export const ancientText = {
-  intro1: {
-    text: `
+  text: `
     Φως που σε λάτρεψα, όπως κάθε θνητός nl
     και συ τ’ ουρανού κλέος, nl
     γιατί μ’ αφήσατε; Τί σας έκανε nl
     να τραβηχτείτε από πάνω μου, nl
     για να παραδοθώ στου σκοταδιού την αφή; nl
     `,
-    keys: ["Φως", "σκοταδιού"],
-  },
+  keys: ["Φως", "σκοταδιού"],
 };
 
 export default function AncientText() {
@@ -27,8 +25,8 @@ export default function AncientText() {
   useEffect(() => {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
-      store.setAncientText(undefined);
       store.setEpicItem(epicItems.intro);
+      store.setAncientText(undefined);
       setWords([]);
     }
   }, [words]);

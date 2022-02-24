@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Menu from "../components/Menu";
 import Ui from "../components/Ui";
+import { useSpring, animated, config } from "@react-spring/three";
 import {
   Canvas,
   extend,
@@ -11,18 +12,16 @@ import {
 import { Item, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import {
-  Html,
-  OrbitControlsProps,
-  TransformControls,
-  useProgress,
-} from "@react-three/drei";
+import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { useGesture, useWheel } from "@use-gesture/react";
-import { MathUtils, Raycaster, Sprite as SpriteType } from "three";
-import { useRouter } from "next/router";
+import { useGesture } from "@use-gesture/react";
+import { MathUtils, Mesh, Sprite as SpriteType } from "three";
 import axios from "axios";
 import { _conf } from "./admin";
+import { useTimer } from "use-timer";
+import DescriptiveText from "../components/DescriptiveText";
+import AncientText from "../components/AncientText";
+import Scenes from "../components/Scenes";
 
 extend({ OrbitControls });
 
@@ -53,15 +52,49 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
 function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const ref = useRef<SpriteType>();
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    if (typeof document !== "undefined")
+      document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
+
   useEffect(() => {
     if (!ref.current || !props.position) return;
     ref.current.position.copy(props.position);
   }, [props.position, ref.current]);
 
+  let s = props.scale ?? 0.2;
+  if (hovered) s += 0.01;
+  const { scale } = useSpring({
+    scale: props.hideWhen ? 0 : s,
+    config: config.wobbly,
+    delay: props?.hideWhen ? 200 : 0,
+  });
+  const store = useStore();
+
   return (
-    <sprite scale={props.scale} ref={ref}>
+    <animated.sprite
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+      onClick={(evt) => {
+        if (props.onClickTrigger) {
+          store.onTrigger(props.onClickTrigger);
+        }
+        if (props.collectable) {
+          store.setInventory(props);
+          if (props.onCollectSucccess) props.onCollectSucccess();
+        }
+
+        if (props.onCollectError) props.onCollectError();
+
+        if (props.onClick) props?.onClick(evt);
+      }}
+      scale={scale}
+      ref={ref}
+    >
       <spriteMaterial attach="material" map={texture} />
-    </sprite>
+    </animated.sprite>
   );
 }
 
@@ -84,14 +117,43 @@ function CustomLoader() {
   );
 }
 
+function Portal() {
+  const countX = 4;
+  const countY = 6;
+  const fps = 25;
+  const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  useEffect(() => {
+    if (typeof document !== "undefined")
+      document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
+
+  useFrame((three) => {
+    const t = three.clock.elapsedTime;
+    const x = Math.floor(t * fps) % countX;
+    const y = Math.floor(((t * fps) % 32) / 4);
+    texture.offset.x = x / countX;
+    texture.offset.y = (5 - y) / countY;
+    texture.minFilter = THREE.LinearFilter;
+    texture.repeat.x = 1 / countX;
+    texture.repeat.y = 1 / countY;
+  });
+  return (
+    <mesh position={[-1, -1, -5]}>
+      <planeGeometry />
+      <meshBasicMaterial
+        transparent
+        color="white"
+        attach="material"
+        map={texture}
+      />
+    </mesh>
+  );
+}
+
 const Home: NextPage = () => {
   const [conf, _setConf] = useState(_conf);
   const store = useStore();
-  const setConf = (items: Item[]) => {
-    _setConf((s) => ({ ...s, [store.scene]: items }));
-  };
 
-  const router = useRouter();
   useEffect(() => {
     axios.get("/api/getConf", {}).then((d) => {
       _setConf(d.data.items);
@@ -107,11 +169,27 @@ const Home: NextPage = () => {
         return n;
       }),
   });
+
+  const timer = useTimer({
+    initialTime: 600,
+    timerType: "DECREMENTAL",
+    step: 1,
+    endTime: 0,
+  });
+
+  useEffect(() => {
+    if (store.status === "RUNNING") timer.start();
+    if (store.status !== "RUNNING") timer.pause();
+  }, [store.status]);
+
   const items = conf[store.scene];
   const [fov, setFov] = useState(75);
+
   return (
     <div {...bind()}>
-      <Ui time={30} />
+      <DescriptiveText />
+      <AncientText />
+      <Ui time={timer.time} />
       <Menu />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
@@ -124,7 +202,13 @@ const Home: NextPage = () => {
           </Suspense>
 
           <Suspense fallback={<CustomLoader />}>
+            <Portal />
+          </Suspense>
+          <Suspense fallback={<CustomLoader />}>
             <Environment />
+          </Suspense>
+          <Suspense fallback={<CustomLoader />}>
+            <Scenes />
           </Suspense>
         </Canvas>
       </div>

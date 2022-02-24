@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useEffect } from "react";
 import { useStore } from "../../store";
 
 const shadow = {
@@ -9,6 +10,7 @@ export default function DescriptiveText() {
   const store = useStore();
   const getMaxW =
     (store.descriptiveText?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
+
   return (
     <div
       onClick={() => {

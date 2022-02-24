@@ -1,4 +1,9 @@
+import { descriptiveText } from "../../store";
+
+import useDescriptiveText from "../../Hooks/useDescriptiveText";
+
 function Intro() {
+  useDescriptiveText(descriptiveText.intro, 1000);
   return <></>;
 }
 
