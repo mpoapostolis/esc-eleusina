@@ -152,6 +152,21 @@ export default function AdminSettings(props: {
             ></input>
             <br />
 
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              onClick trigger
+            </label>
+            <input
+              value={selectedItem.name}
+              onChange={(evt) => {
+                update({
+                  ...selectedItem,
+                  onClickTrigger: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+
+            <br />
             <Select
               onChange={(v) => {
                 update({

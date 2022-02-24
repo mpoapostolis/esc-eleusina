@@ -28,6 +28,7 @@ export type Item = {
   inventorySrc?: string;
   goToScene?: Scene;
   collectableIfHandHas?: string;
+  onClickTrigger?: string;
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
