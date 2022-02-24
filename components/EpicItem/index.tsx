@@ -10,9 +10,10 @@ export const epicItems: Record<Scene, Item> = {
     description: loremIpsum,
   },
   intro: {
+    id: "9890c396-8903-4453-9e63-c762cbce1e94",
     scale: 1,
     name: "stone",
-    src: "/images/stone.png",
+    src: "stone.png",
     description: loremIpsum,
   },
   teletourgeio: {

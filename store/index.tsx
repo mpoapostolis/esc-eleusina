@@ -284,11 +284,11 @@ export const useStore = create<Store>((set, get) => ({
   },
   invHas: (e: string) =>
     get()
-      .inventory.map((i) => i.name)
+      .inventory.map((i) => i.id)
       .includes(e),
   epicInvHas: (e: string) =>
     get()
-      .epicInventory.map((i) => i.name)
+      .epicInventory.map((i) => i.id)
       .includes(e),
 
   setInventory: (i: Item) => {

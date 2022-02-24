@@ -219,6 +219,14 @@ const Home: NextPage = () => {
           <Suspense fallback={<CustomLoader />}>
             {items.map((p, idx) => {
               const item = p as Item;
+              const show = item.requiredItems
+                ?.map((v) => {
+                  return store.invHas(v) || store.epicInvHas(v);
+                })
+                .every((e) => e);
+              if (store.invHas(`${item.id}`) || store.epicInvHas(`${item.id}`))
+                return null;
+              if (!show && item.requiredItems) return null;
               return p.type === "portal" ? (
                 <Portal key={p.id} {...item} />
               ) : (
