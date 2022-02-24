@@ -33,7 +33,6 @@ function Portal(props: Sprite) {
       document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const ref = useRef<Mesh>();
   const [drag, setDrag] = useState(false);
   useFrame((three) => {
     if (!ref.current) return;
@@ -49,6 +48,8 @@ function Portal(props: Sprite) {
     if (drag) ref.current.position.copy(three.raycaster.ray.direction);
     ref.current.scale.set(props.scale, props.scale, props.scale);
   });
+
+  const ref = useRef<Mesh>();
 
   useEffect(() => {
     if (!ref.current || !props.position) return;

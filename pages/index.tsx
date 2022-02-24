@@ -130,6 +130,8 @@ function Portal(props: Item) {
   }, [hovered]);
 
   useFrame((three) => {
+    if (!ref.current) return;
+
     const t = three.clock.elapsedTime;
     const x = Math.floor(t * fps) % countX;
     const y = Math.floor(((t * fps) % 32) / 4);
@@ -138,34 +140,35 @@ function Portal(props: Item) {
     texture.minFilter = THREE.LinearFilter;
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
+
+    ref.current.scale.set(props.scale, props.scale, props.scale);
   });
 
   const ref = useRef<Mesh>();
+
   useEffect(() => {
     if (!ref.current || !props.position) return;
     ref.current.position.copy(props.position);
   }, [props.position, ref.current]);
   const store = useStore();
-  console.log(props.requiredItems);
+
   return (
-    <mesh
+    <sprite
       onClick={() => {
         if (props.goToScene) store.setScene(props.goToScene);
       }}
       ref={ref}
-      scale={props.scale}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      position={props.position}
     >
-      <planeGeometry />
-      <meshBasicMaterial
+      <planeGeometry args={[1, 1]} />
+      <spriteMaterial
         transparent
         color="white"
         attach="material"
         map={texture}
       />
-    </mesh>
+    </sprite>
   );
 }
 
@@ -217,7 +220,7 @@ const Home: NextPage = () => {
             {items.map((p, idx) => {
               const item = p as Item;
               return p.type === "portal" ? (
-                <Portal key={p.id} {...p} />
+                <Portal key={p.id} {...item} />
               ) : (
                 <Sprite key={p.id} {...item} />
               );
