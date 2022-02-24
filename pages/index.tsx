@@ -122,6 +122,7 @@ function Portal() {
   const countY = 6;
   const fps = 25;
   const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  const [hovered, setHovered] = useState(false);
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
@@ -138,7 +139,11 @@ function Portal() {
     texture.repeat.y = 1 / countY;
   });
   return (
-    <mesh position={[-1, -1, -5]}>
+    <mesh
+      onPointerEnter={() => setHovered(true)}
+      onPointerLeave={() => setHovered(false)}
+      position={[-1, -1, -5]}
+    >
       <planeGeometry />
       <meshBasicMaterial
         transparent
