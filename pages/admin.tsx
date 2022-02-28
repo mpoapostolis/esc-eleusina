@@ -171,6 +171,9 @@ export const _conf: Conf = {
   elaiourgeio: [],
   teletourgeio: [],
   karnagio: [],
+  arxaiologikos: [],
+  eleusina: [],
+  pangal: [],
 };
 
 // const Svg = (p: { addPortal: boolean; setConf: (i: Item[]) => void }) => {
@@ -318,7 +321,7 @@ const Home: NextPage = () => {
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
 
         <Suspense fallback={<CustomLoader />}>
-          {conf[store.scene].map((o) => {
+          {conf[store.scene]?.map((o) => {
             const isHidden = hide.includes(`${o.id}`);
             const x = o as Item;
 
@@ -326,7 +329,7 @@ const Home: NextPage = () => {
               <Portal
                 {...o}
                 update={(v3) => {
-                  const idx = items.findIndex((i) => i.id === o.id);
+                  const idx = items?.findIndex((i) => i.id === o.id);
                   items[idx].position = v3;
                   setConf(items);
                 }}
@@ -334,7 +337,7 @@ const Home: NextPage = () => {
             ) : (
               <Sprite
                 update={(v3) => {
-                  const idx = items.findIndex((i) => i.id === o.id);
+                  const idx = items?.findIndex((i) => i.id === o.id);
                   items[idx].position = v3;
                   setConf(items);
                 }}

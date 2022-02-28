@@ -59,7 +59,7 @@ export default function AdminSettings(props: {
   const updateRequired = (id: string) => {
     if (!selectedItem) return;
     const requiredItems = selectedItem?.requiredItems ?? [];
-    const found = requiredItems.includes(id);
+    const found = requiredItems?.includes(id);
     const tmp = found
       ? requiredItems?.filter((e) => e !== id)
       : [...requiredItems, id];
@@ -68,13 +68,13 @@ export default function AdminSettings(props: {
   };
 
   const update = (p: Item) => {
-    const idx = items.findIndex((i) => i.id === p.id);
+    const idx = items?.findIndex((i) => i.id === p.id);
     items[idx] = p;
     props.setConf(items);
   };
 
   const [id, setId] = useState<string>();
-  const selectedItem = items.find((i) => i.id === id);
+  const selectedItem = items?.find((i) => i.id === id);
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
       <div className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
@@ -325,7 +325,7 @@ export default function AdminSettings(props: {
                 label=""
                 value={props.scene}
                 onChange={(v) => props.setScene(v.value as Scene)}
-                options={["Intro", "Karnagio", "Elaiourgeio"].map((addr) => ({
+                options={scenes.map((addr) => ({
                   label: addr,
                   value: addr.toLocaleLowerCase(),
                 }))}
@@ -367,7 +367,7 @@ export default function AdminSettings(props: {
             </Popover>
             <br />
             <div>
-              {items.map((i, idx) => (
+              {items?.map((i, idx) => (
                 <div key={i.id}>
                   <div className="flex  items-start my-2 text-xs">
                     <div className=" flex cursor-pointer w-32 justify-center flex-col items-center border border-opacity-20 border-gray-200  text-center p-2">
@@ -409,7 +409,7 @@ export default function AdminSettings(props: {
 
                     <span
                       onClick={() => {
-                        props.setConf(items.filter((e) => e.id !== i.id));
+                        props.setConf(items?.filter((e) => e.id !== i.id));
                       }}
                       role="button"
                       className="ml-auto w-4"

@@ -10,8 +10,24 @@ export type Level =
   | "ΕΙΝΑΙ-ΦΑΙΝΕΣΘΑΙ";
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
-export type Scene = "teletourgeio" | "intro" | "karnagio" | "elaiourgeio";
-export const scenes = ["teletourgeio", "intro", "karnagio", "elaiourgeio"];
+export type Scene =
+  | "intro"
+  | "arxaiologikos"
+  | "elaiourgeio"
+  | "eleusina"
+  | "teletourgeio"
+  | "pangal"
+  | "karnagio";
+
+export const scenes = [
+  "intro",
+  "arxaiologikos",
+  "elaiourgeio",
+  "eleusina",
+  "teletourgeio",
+  "pangal",
+  "karnagio",
+];
 
 export type Account = {
   accessToken?: string;
