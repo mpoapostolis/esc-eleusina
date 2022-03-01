@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { useEffect } from "react";
 import { useStore } from "../../store";
 
 const shadow = {

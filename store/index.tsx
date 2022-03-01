@@ -49,8 +49,9 @@ export type Item = {
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
-  onClickOpen?: "hint" | "dialogue" | undefined;
-  onCollectSuccess?: string;
+  onClickOpenModal?: "hint" | "dialogue" | undefined;
+  setDialogue?: string;
+  setHint?: string;
   onCollectFail?: string;
   requiredItems?: string[];
   name: string;
@@ -180,7 +181,6 @@ export type Store = {
   // portal?: Portal;
   scene: Scene;
   hand?: string;
-  dialogue: string[];
   status: Status;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
@@ -190,8 +190,6 @@ export type Store = {
   setEpicItem: (s?: Item) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
-  setDialogue: (s: string[]) => void;
-  nextDialogue: () => void;
   invHas: (e: string) => boolean;
   epicInvHas: (e: string) => boolean;
   setInventory: (i: Item) => void;
@@ -281,7 +279,6 @@ export const useStore = create<Store>((set, get) => ({
       return { status: ancientText ? "MODAL" : "RUNNING", ancientText };
     }),
   inventoryNotf: [],
-  dialogue: [],
   modal: undefined,
   setToken: (s: string) =>
     set((store) => ({
@@ -292,13 +289,6 @@ export const useStore = create<Store>((set, get) => ({
       account: { ...store.account, email: s },
     })),
 
-  setDialogue: (d: string[]) => set(() => ({ dialogue: d })),
-  nextDialogue: () => {
-    set((state) => {
-      const [_, ...dialogue] = state.dialogue;
-      return { dialogue };
-    });
-  },
   invHas: (e: string) =>
     get()
       .inventory.map((i) => i.id)

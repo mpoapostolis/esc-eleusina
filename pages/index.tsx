@@ -3,7 +3,6 @@ import Menu from "../components/Menu";
 import Ui from "../components/Ui";
 import { useSpring, animated, config } from "@react-spring/three";
 import {
-  applyProps,
   Canvas,
   extend,
   useFrame,
@@ -23,6 +22,7 @@ import { useTimer } from "use-timer";
 import DescriptiveText from "../components/DescriptiveText";
 import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
+import Hand from "../components/Hand";
 
 extend({ OrbitControls });
 
@@ -86,6 +86,10 @@ function Sprite(props: Item) {
           store.setInventory(props);
           if (props.onCollectSucccess) props.onCollectSucccess();
         }
+
+        if (props.setDialogue) store.setDescriptiveText(props.setDialogue);
+        if (props.setHint) store.setTmpHint(props.setHint);
+        if (props.onClickOpenModal === "dialogue") store.setStatus("MODAL");
 
         if (props.onCollectError) props.onCollectError();
 
@@ -179,9 +183,15 @@ const Home: NextPage = () => {
   const store = useStore();
 
   useEffect(() => {
-    axios.get("/api/getConf", {}).then((d) => {
-      _setConf(d.data.items);
-    });
+    axios
+      .get("/api/getConf", {
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+      })
+      .then((d) => {
+        _setConf(d.data.items);
+      });
   }, []);
 
   const bind = useGesture({

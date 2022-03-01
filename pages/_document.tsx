@@ -15,7 +15,12 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          <meta
+            http-equiv="Content-Type"
+            content="text/html; charset=windows-1251"
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

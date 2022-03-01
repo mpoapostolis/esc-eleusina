@@ -67,6 +67,10 @@ export default function AdminSettings(props: {
     update({ ...selectedItem, requiredItems: tmp });
   };
 
+  const [onClick, setOnclick] = useState<
+    undefined | "goToScene" | "set hint" | "set Dialogue" | "trigger"
+  >();
+
   const update = (p: Item) => {
     const idx = items?.findIndex((i) => i.id === p.id);
     items[idx] = p;
@@ -150,6 +154,21 @@ export default function AdminSettings(props: {
               className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
             ></input>
             <br />
+            <Select
+              onChange={(v) => {
+                update({
+                  ...selectedItem,
+                  goToScene: v.value as Scene,
+                });
+              }}
+              value={selectedItem.goToScene}
+              label="onClick go to scene"
+              options={[undefined, ...scenes].map((o) => ({
+                label: o === undefined ? "-" : o,
+                value: o,
+              }))}
+            ></Select>
+            <br />
 
             <label className="block text-left text-xs font-medium mb-2 text-gray-200">
               onClick trigger
@@ -170,10 +189,10 @@ export default function AdminSettings(props: {
               onChange={(v) => {
                 update({
                   ...selectedItem,
-                  onClickOpen: v.value as "hint" | "dialogue" | undefined,
+                  onClickOpenModal: v.value as "hint" | "dialogue" | undefined,
                 });
               }}
-              value={selectedItem.onClickOpen}
+              value={selectedItem.onClickOpenModal}
               label="onClick open"
               options={[undefined, "dialogue", "hint"].map((o) => ({
                 label: o === undefined ? "-" : o,
@@ -181,43 +200,42 @@ export default function AdminSettings(props: {
               }))}
             ></Select>
             <br />
-            {selectedItem.onClickOpen === "hint" && (
-              <>
-                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  set hint
-                </label>
-                <div>
-                  <textarea
-                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                    rows={5}
-                    value={selectedItem.onCollectFail}
-                    onChange={(evt) => {
-                      update({
-                        ...selectedItem,
-                        onCollectFail: evt.currentTarget.value,
-                      });
-                    }}
-                  ></textarea>
-                </div>
-                <br />
-              </>
-            )}
-
-            <Select
-              onChange={(v) => {
-                update({
-                  ...selectedItem,
-                  goToScene: v.value as Scene,
-                });
-              }}
-              value={selectedItem.goToScene}
-              label="onClick go to scene"
-              options={[undefined, ...scenes].map((o) => ({
-                label: o === undefined ? "-" : o,
-                value: o,
-              }))}
-            ></Select>
-            <br />
+            <>
+              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                on click set hint
+              </label>
+              <div>
+                <textarea
+                  className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                  rows={5}
+                  value={selectedItem.setHint}
+                  onChange={(evt) => {
+                    update({
+                      ...selectedItem,
+                      setHint: evt.currentTarget.value,
+                    });
+                  }}
+                ></textarea>
+              </div>
+              <br />
+              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                on click set dialogue
+              </label>
+              <div>
+                <textarea
+                  className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                  rows={5}
+                  value={selectedItem.setDialogue}
+                  onChange={(evt) => {
+                    update({
+                      ...selectedItem,
+                      setDialogue: evt.currentTarget.value,
+                    });
+                  }}
+                ></textarea>
+              </div>
+              <br />
+            </>
 
             {selectedItem.collectable && (
               <>
@@ -284,7 +302,7 @@ export default function AdminSettings(props: {
                 <br />
 
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  onCollect fail set hint{" "}
+                  onCollect fail open hint
                 </label>
                 <div>
                   <textarea
