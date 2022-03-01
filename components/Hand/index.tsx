@@ -3,9 +3,7 @@ import { useRef } from "react";
 import { Mesh, TextureLoader } from "three";
 import { useStore } from "../../store";
 
-export function Hand() {
-  const store = useStore();
-  const found = store.inventory.find((s) => store.hand === s.id);
+function H(props: { src: string }) {
   useFrame(({ mouse, camera, viewport }) => {
     if (ref.current) {
       ref.current.position.copy(camera.position);
@@ -17,13 +15,18 @@ export function Hand() {
     }
   });
   const ref = useRef<Mesh>();
-  if (!found) return null;
-  const texture = useLoader(TextureLoader, found.src);
+  const texture = useLoader(TextureLoader, props.src);
   return (
     <sprite scale={10} ref={ref} position={[20, -5, 0]}>
       <spriteMaterial attach="material" map={texture} />
     </sprite>
   );
+}
+
+export function Hand() {
+  const store = useStore();
+  const found = store.inventory.find((s) => store.hand === s.id);
+  return found ? <H src={found.src} /> : null;
 }
 
 Hand.getInitialProps = () => {

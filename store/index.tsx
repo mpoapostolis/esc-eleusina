@@ -208,7 +208,7 @@ export const useStore = create<Store>((set, get) => ({
     accessToken: "23",
   },
   status: "RUNNING",
-  scene: "teletourgeio",
+  scene: "intro",
   level: "Φως-Σκοτάδι",
   inventory: [],
   epicInventory: [],

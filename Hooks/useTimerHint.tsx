@@ -16,7 +16,6 @@ export default function useTimerHint(
   useEffect(() => {
     if (hide) return;
     const elapsedTime = Math.floor(t.clock.elapsedTime);
-    if (store.status === "RUNNING" && time === elapsedTime)
-      store.setTmpHint(str);
+    if (store.status === "RUNNING" && time === elapsedTime) store.setHint(str);
   }, [t.clock.elapsedTime]);
 }

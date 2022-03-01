@@ -2,7 +2,6 @@ import { loadSound } from "../../utils";
 import { Item, Scene, useStore } from "../../store";
 import clsx from "clsx";
 import Hint from "../Hint";
-import HelpUiIcon from "../HelpUiIcon";
 
 export const sceneItems: Record<Scene, string[]> = {
   intro: ["stone"],
