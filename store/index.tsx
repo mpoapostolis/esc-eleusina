@@ -42,7 +42,7 @@ export type AncientText = {
 
 export type Item = {
   id?: string;
-  rotation: Euler;
+  rotation?: Euler;
   inventorySrc?: string;
   goToScene?: Scene;
   collectableIfHandHas?: string;
