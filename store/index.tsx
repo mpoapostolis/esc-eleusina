@@ -49,6 +49,7 @@ export type Item = {
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
+  onClickOpen?: "hint" | "dialogue" | undefined;
   onCollectSuccess?: string;
   onCollectFail?: string;
   requiredItems?: string[];

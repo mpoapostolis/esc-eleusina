@@ -170,6 +170,43 @@ export default function AdminSettings(props: {
               onChange={(v) => {
                 update({
                   ...selectedItem,
+                  onClickOpen: v.value as "hint" | "dialogue" | undefined,
+                });
+              }}
+              value={selectedItem.onClickOpen}
+              label="onClick open"
+              options={[undefined, "dialogue", "hint"].map((o) => ({
+                label: o === undefined ? "-" : o,
+                value: o,
+              }))}
+            ></Select>
+            <br />
+            {selectedItem.onClickOpen === "hint" && (
+              <>
+                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                  set hint
+                </label>
+                <div>
+                  <textarea
+                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                    rows={5}
+                    value={selectedItem.onCollectFail}
+                    onChange={(evt) => {
+                      update({
+                        ...selectedItem,
+                        onCollectFail: evt.currentTarget.value,
+                      });
+                    }}
+                  ></textarea>
+                </div>
+                <br />
+              </>
+            )}
+
+            <Select
+              onChange={(v) => {
+                update({
+                  ...selectedItem,
                   goToScene: v.value as Scene,
                 });
               }}
@@ -214,6 +251,7 @@ export default function AdminSettings(props: {
                   />
                 </Popover>
                 <br />
+
                 <Popover
                   label={
                     <>
@@ -246,29 +284,10 @@ export default function AdminSettings(props: {
                 <br />
 
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  onCollect success hint{" "}
+                  onCollect fail set hint{" "}
                 </label>
                 <div>
                   <textarea
-                    value={selectedItem.onCollectSuccess}
-                    onChange={(evt) => {
-                      update({
-                        ...selectedItem,
-                        onCollectSuccess: evt.currentTarget.value,
-                      });
-                    }}
-                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                    rows={5}
-                  ></textarea>
-                </div>
-                <br />
-                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  onCollect fail hint{" "}
-                </label>
-                <div>
-                  <textarea
-                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                    rows={5}
                     value={selectedItem.onCollectFail}
                     onChange={(evt) => {
                       update({
@@ -276,10 +295,13 @@ export default function AdminSettings(props: {
                         onCollectFail: evt.currentTarget.value,
                       });
                     }}
+                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+                    rows={5}
                   ></textarea>
                 </div>
               </>
             )}
+
             <hr className="my-5 opacity-50" />
 
             <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
@@ -352,7 +374,7 @@ export default function AdminSettings(props: {
                           type: id === "arrows.png" ? "portal" : "",
                           src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
                         },
-                        ...items,
+                        ...(items ?? []),
                       ])
                     }
                     className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"

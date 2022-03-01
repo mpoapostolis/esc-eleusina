@@ -156,6 +156,8 @@ function Portal(props: Item) {
     <sprite
       onClick={() => {
         if (props.goToScene) store.setScene(props.goToScene);
+        if (props.collectable) store.setInventory(props);
+        // if(props.selectable) store.setHand()
       }}
       ref={ref}
       onPointerEnter={() => setHovered(true)}
