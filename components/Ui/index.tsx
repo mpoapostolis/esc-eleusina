@@ -14,14 +14,14 @@ export const sceneItems: Record<Scene, string[]> = {
   pangal: [],
 };
 
-export default function Ui(props: { time: number }) {
+export default function Ui(props: { items: Item[]; time: number }) {
   const sound = loadSound("/sounds/hint.wav");
   const store = useStore();
 
   const transform = { transform: "skewX(-20deg)" };
 
   const currInv: Item[] = store.inventory.filter((item) =>
-    sceneItems[store.scene].includes(item.name)
+    props.items.map((i) => i.id).includes(item.id)
   );
   //  sceneItems[store.scene];
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
@@ -102,7 +102,7 @@ export default function Ui(props: { time: number }) {
               <div
                 key={i}
                 onClick={() => {
-                  if (item?.selectable) store.setHand(item.name);
+                  if (item?.selectable) store.setHand(item.id);
                   if (item?.action) {
                     item?.action();
                   }

@@ -22,7 +22,6 @@ type Sprite = Item & {
   update: (v3: Vector3) => void;
 };
 function Portal(props: Sprite) {
-  console.log(props.scale);
   const countX = 4;
   const countY = 6;
   const fps = 25;

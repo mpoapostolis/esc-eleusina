@@ -226,7 +226,7 @@ const Home: NextPage = () => {
     <div {...bind()}>
       <DescriptiveText />
       <AncientText />
-      <Ui time={timer.time} />
+      <Ui items={conf[store.scene]} time={timer.time} />
       <Menu />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
@@ -251,6 +251,9 @@ const Home: NextPage = () => {
                 <Sprite key={p.id} {...item} />
               );
             })}
+          </Suspense>
+          <Suspense fallback={<CustomLoader />}>
+            <Hand />
           </Suspense>
 
           <Suspense fallback={<CustomLoader />}>

@@ -67,10 +67,6 @@ export default function AdminSettings(props: {
     update({ ...selectedItem, requiredItems: tmp });
   };
 
-  const [onClick, setOnclick] = useState<
-    undefined | "goToScene" | "set hint" | "set Dialogue" | "trigger"
-  >();
-
   const update = (p: Item) => {
     const idx = items?.findIndex((i) => i.id === p.id);
     items[idx] = p;
@@ -100,7 +96,7 @@ export default function AdminSettings(props: {
               <div className="w-full px-4">
                 <Range
                   min={0.05}
-                  max={1}
+                  max={5}
                   step={0.01}
                   onChange={(evt) => {
                     const value = +evt.target.value;
@@ -420,7 +416,7 @@ export default function AdminSettings(props: {
                       <div>
                         <Range
                           min={0.05}
-                          max={1}
+                          max={5}
                           step={0.01}
                           value={i.scale}
                           onChange={(evt) => {

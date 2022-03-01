@@ -5,13 +5,7 @@ import { useStore } from "../../store";
 
 export function Hand() {
   const store = useStore();
-  const found = store.inventory.find((s) => store.hand === s.name);
-
-  const texture = useLoader(
-    TextureLoader,
-    found ? found.src : "/images/emoji.png"
-  );
-  const { viewport } = useThree();
+  const found = store.inventory.find((s) => store.hand === s.id);
   useFrame(({ mouse, camera, viewport }) => {
     if (ref.current) {
       ref.current.position.copy(camera.position);
@@ -23,11 +17,12 @@ export function Hand() {
     }
   });
   const ref = useRef<Mesh>();
+  if (!found) return null;
+  const texture = useLoader(TextureLoader, found.src);
   return (
-    <mesh ref={ref} position={[20, -5, 0]}>
-      <planeGeometry attach="geometry" args={[3, 3]} />
-      <meshBasicMaterial transparent attach="material" map={texture} />
-    </mesh>
+    <sprite scale={10} ref={ref} position={[20, -5, 0]}>
+      <spriteMaterial attach="material" map={texture} />
+    </sprite>
   );
 }
 
