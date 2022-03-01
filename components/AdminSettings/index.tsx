@@ -24,19 +24,19 @@ function Checkbox(
   );
 }
 
-function AllImage(props: { imgs?: string[]; onClick: (e?: any) => void }) {
+function AllImage(props: {
+  imgs?: { id?: string; src: string }[];
+  onClick: (e?: any) => void;
+}) {
   return (
     <div className="max-h-96 grid p-4 gap-4 bg-black grid-cols-2 items-center overflow-auto">
-      {props.imgs?.map((id, idx) => (
+      {props.imgs?.map((o, idx) => (
         <div
-          key={id}
-          onClick={() => props.onClick(id)}
+          key={o.id}
+          onClick={() => props.onClick(o.id)}
           className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
         >
-          <img
-            className="cursor-pointer w-full"
-            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
-          />
+          <img className="cursor-pointer w-full" src={o.src} />
         </div>
       ))}
     </div>
@@ -73,6 +73,8 @@ export default function AdminSettings(props: {
     props.setConf(items);
   };
 
+  const idToSrc = (id: string) =>
+    props.conf[props.scene].find((e) => e.id === id)?.src;
   const [id, setId] = useState<string>();
   const selectedItem = items?.find((i) => i.id === id);
   return (
@@ -246,7 +248,7 @@ export default function AdminSettings(props: {
                         {selectedItem.inventorySrc ? (
                           <img
                             className="w-20 h-auto"
-                            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${selectedItem.inventorySrc}`}
+                            src={idToSrc(selectedItem.inventorySrc)}
                           />
                         ) : (
                           "➕"
@@ -256,7 +258,10 @@ export default function AdminSettings(props: {
                   }
                 >
                   <AllImage
-                    imgs={props.imgs}
+                    imgs={props.imgs.map((id) => ({
+                      id,
+                      src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
+                    }))}
                     onClick={(id: string) => {
                       update({
                         ...selectedItem,
@@ -277,7 +282,7 @@ export default function AdminSettings(props: {
                         {selectedItem.collectableIfHandHas ? (
                           <img
                             className="w-20 h-auto"
-                            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${selectedItem.collectableIfHandHas}`}
+                            src={idToSrc(selectedItem.collectableIfHandHas)}
                           />
                         ) : (
                           "➕"
@@ -287,7 +292,7 @@ export default function AdminSettings(props: {
                   }
                 >
                   <AllImage
-                    imgs={props.imgs}
+                    imgs={props.conf[props.scene]}
                     onClick={(id: string) => {
                       update({
                         ...selectedItem,

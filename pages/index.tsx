@@ -79,6 +79,18 @@ function Sprite(props: Item) {
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
+        const canICollect = props.collectableIfHandHas
+          ? store.hand === props.collectableIfHandHas
+          : true;
+        if (!canICollect) {
+          store.setHint(props.onCollectFail);
+          store.setIsHintVisible(true);
+
+          return;
+        }
+
+        if (store.hand) store.setHand(undefined);
+
         if (props.onClickTrigger) {
           store.onTrigger(props.onClickTrigger);
         }
