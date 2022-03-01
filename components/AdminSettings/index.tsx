@@ -106,6 +106,7 @@ export default function AdminSettings(props: {
                     const value = +evt.target.value;
                     update({ ...selectedItem, scale: value });
                   }}
+                  value={selectedItem.scale}
                   label="scale"
                 />
 
@@ -421,6 +422,7 @@ export default function AdminSettings(props: {
                           min={0.05}
                           max={1}
                           step={0.01}
+                          value={i.scale}
                           onChange={(evt) => {
                             const value = +evt.target.value;
                             update({ ...i, scale: value });

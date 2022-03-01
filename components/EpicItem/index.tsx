@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Item, Scene, useStore } from "../../store";
 import { loremIpsum } from "../../utils";
 
-export const epicItems: Record<Scene, Item> = {
+export const epicItems: Record<string, Item> = {
   karnagio: {
     scale: 1,
     name: "peiraias",

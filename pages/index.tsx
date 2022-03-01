@@ -88,7 +88,10 @@ function Sprite(props: Item) {
         }
 
         if (props.setDialogue) store.setDescriptiveText(props.setDialogue);
-        if (props.setHint) store.setTmpHint(props.setHint);
+        if (props.setHint) store.setHint(props.setHint);
+        if (props.setHint) store.setHint(props.setHint);
+        if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
+
         if (props.onClickOpenModal === "dialogue") store.setStatus("MODAL");
 
         if (props.onCollectError) props.onCollectError();

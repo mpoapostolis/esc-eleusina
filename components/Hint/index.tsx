@@ -8,11 +8,7 @@ export default function Hint() {
   };
   const store = useStore();
 
-  const visible = store.isHintVisible && (store.hint || store.tmpHint);
-  const getHelp = () => {
-    if (visible && store.tmpHint) return helps[store.tmpHint];
-    if (visible && store.hint) return helps[store.hint];
-  };
+  const visible = store.isHintVisible && store.hint;
 
   return (
     <div
@@ -30,7 +26,7 @@ export default function Hint() {
         }}
         className="w-full p-10 cursor-pointer hover:cursor-zoom-out"
       >
-        <div className=" relative  flex  tracking-wider italic  text-3xl font-bold text-white mb-1 justify-end w-full">
+        <div className=" relative  flex  tracking-wider italic  text-2xl font-bold text-white mb-1 justify-end w-full">
           <div
             style={transform}
             className="from-transparent absolute -right-2 w-80 opacity-90 text-5xl to-gray-500 bg-gradient-to-r h-7 font-normal bottom-0"
@@ -50,8 +46,8 @@ export default function Hint() {
           style={transform}
           className="m-2 px-4 py-4 min-h-fit  text-2xl rounded-lg  border-2 border-black -skew-x-12  w-full bg-white bg-opacity-40"
         >
-          <div className="text-white font-bold text-3xl" style={shadow}>
-            {getHelp()}
+          <div className="text-white font-bold text-2xl" style={shadow}>
+            {store.hint}
           </div>
         </div>
         <hr className="border-dashed  border border-black w-3/4" />

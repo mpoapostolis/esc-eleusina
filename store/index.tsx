@@ -161,12 +161,11 @@ export type Status =
 
 export type Store = {
   account: Account;
-  hint?: HelpKey;
+  hint?: string;
   isHintVisible: boolean;
   ancientText?: AncientText;
-  setHint: (s?: HelpKey) => void;
+  setHint: (s?: string) => void;
   tmpHint?: string;
-  setTmpHint: (s?: string) => void;
   setIsHintVisible: (b: boolean) => void;
   setAncientText: (s?: AncientText) => void;
   onTrigger: (s?: string) => void;
@@ -209,7 +208,7 @@ export const useStore = create<Store>((set, get) => ({
     accessToken: "23",
   },
   status: "RUNNING",
-  scene: "intro",
+  scene: "teletourgeio",
   level: "Φως-Σκοτάδι",
   inventory: [],
   epicInventory: [],
@@ -253,15 +252,10 @@ export const useStore = create<Store>((set, get) => ({
       }
     }),
 
-  setHint: (hint?: HelpKey) =>
+  setHint: (hint?: string) =>
     set(() => ({
       hint: hint,
     })),
-  setTmpHint: (tmpHint?: string) =>
-    set(() => {
-      hint?.play();
-      return { isHintVisible: true, tmpHint };
-    }),
   setIsHintVisible: (isHintVisible) =>
     set(() => {
       hint.play();

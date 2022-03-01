@@ -17,7 +17,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <meta
-            http-equiv="Content-Type"
+            httpEquiv="Content-Type"
             content="text/html; charset=windows-1251"
           />
         </Head>
