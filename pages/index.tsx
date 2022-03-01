@@ -267,16 +267,12 @@ const Home: NextPage = () => {
                 <Sprite key={p.id} {...item} />
               );
             })}
-          </Suspense>
-          <Suspense fallback={<CustomLoader />}>
-            <Hand />
+            <Environment />
+            <Scenes />
           </Suspense>
 
           <Suspense fallback={<CustomLoader />}>
-            <Environment />
-          </Suspense>
-          <Suspense fallback={<CustomLoader />}>
-            <Scenes />
+            <Hand />
           </Suspense>
         </Canvas>
       </div>
