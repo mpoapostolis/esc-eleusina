@@ -15,7 +15,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
-import { MathUtils, Mesh, Sprite as SpriteType } from "three";
+import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
 import axios from "axios";
 import { _conf } from "./admin";
 import { useTimer } from "use-timer";
@@ -61,8 +61,9 @@ function Sprite(props: Item) {
   }, [hovered]);
 
   useEffect(() => {
-    if (!ref.current || !props.position) return;
+    if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
+    ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
 
   let s = props.scale ?? 0.2;
@@ -75,7 +76,7 @@ function Sprite(props: Item) {
   const store = useStore();
 
   return (
-    <animated.sprite
+    <animated.mesh
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
@@ -88,10 +89,8 @@ function Sprite(props: Item) {
 
           return;
         }
-
         if (store.hand) store.setHand(undefined);
         if (props.setHint) store.setHint(props.setHint);
-
         if (props.onClickTrigger) {
           store.onTrigger(props.onClickTrigger);
         }
@@ -99,23 +98,25 @@ function Sprite(props: Item) {
           store.setInventory(props);
           if (props.onCollectSucccess) props.onCollectSucccess();
         }
-
         if (props.setDialogue) store.setDescriptiveText(props.setDialogue);
         if (props.setHint) store.setHint(props.setHint);
         if (props.setHint) store.setHint(props.setHint);
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
-
         if (props.onClickOpenModal === "dialogue") store.setStatus("MODAL");
-
         if (props.onCollectError) props.onCollectError();
-
         if (props.onClick) props?.onClick(evt);
       }}
       scale={scale}
       ref={ref}
     >
-      <spriteMaterial attach="material" map={texture} />
-    </animated.sprite>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial
+        transparent
+        side={DoubleSide}
+        attach="material"
+        map={texture}
+      />
+    </animated.mesh>
   );
 }
 
@@ -167,13 +168,15 @@ function Portal(props: Item) {
   const ref = useRef<Mesh>();
 
   useEffect(() => {
-    if (!ref.current || !props.position) return;
+    if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
+    ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
+
   const store = useStore();
 
   return (
-    <sprite
+    <mesh
       onClick={() => {
         if (props.goToScene) store.setScene(props.goToScene);
         if (props.collectable) store.setInventory(props);
@@ -184,13 +187,13 @@ function Portal(props: Item) {
       onPointerLeave={() => setHovered(false)}
     >
       <planeGeometry args={[1, 1]} />
-      <spriteMaterial
+      <meshBasicMaterial
         transparent
         color="white"
         attach="material"
         map={texture}
       />
-    </sprite>
+    </mesh>
   );
 }
 

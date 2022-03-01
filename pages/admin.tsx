@@ -11,7 +11,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
+import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/Library";
 import axios from "axios";
@@ -19,7 +19,7 @@ import axios from "axios";
 extend({ OrbitControls });
 
 type Sprite = Item & {
-  update: (v3: Vector3) => void;
+  update: (p: { e3: Euler; v3: Vector3 }) => void;
 };
 function Portal(props: Sprite) {
   const countX = 4;
@@ -44,33 +44,39 @@ function Portal(props: Sprite) {
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
 
-    if (drag) ref.current.position.copy(three.raycaster.ray.direction);
+    if (drag) {
+      ref.current.position.copy(three.raycaster.ray.direction);
+      ref.current.rotation.copy(three.camera.rotation);
+    }
     ref.current.scale.set(props.scale, props.scale, props.scale);
   });
 
   const ref = useRef<Mesh>();
 
   useEffect(() => {
-    if (!ref.current || !props.position) return;
+    if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
+    ref.current.scale.set(props.scale, props.scale, props.scale);
+    ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
 
   const t = useThree();
   return (
     <sprite
       position={props.position ?? t.raycaster.ray.direction}
+      rotation={props.rotation ?? t.camera.rotation}
       onDoubleClick={() => {
         if (!ref.current) return;
         if (!ref.current) return;
-        const v3 = new Vector3();
-        props.update(v3.copy(ref.current.position));
+        const v3 = new Vector3().copy(ref.current.position);
+        const e3 = new Euler().copy(ref.current.rotation);
+        props.update({ e3, v3 });
         setDrag(!drag);
       }}
       ref={ref}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >
-      <planeGeometry args={[1, 1]} />
       <spriteMaterial
         transparent
         color="white"
@@ -114,34 +120,42 @@ function Sprite(props: Sprite) {
     if (drag && !props.hidden) {
       ref.current.position.copy(t.raycaster.ray.direction);
       ref.current.scale.set(props.scale, props.scale, props.scale);
+      ref.current.rotation.copy(t.camera.rotation);
     }
   });
 
   useEffect(() => {
-    if (!ref.current || !props.position) return;
+    if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
+    ref.current.rotation.copy(props.rotation);
     ref.current.scale.set(props.scale, props.scale, props.scale);
   }, [props.position, ref.current]);
 
   const t = useThree();
   return (
-    <sprite
+    <mesh
       position={props.position ?? t.raycaster.ray.direction}
+      rotation={props.rotation ?? t.camera.rotation}
       onDoubleClick={() => {
         if (!ref.current) return;
-        const v3 = new Vector3();
-        props.update(v3.copy(ref.current.position));
+        const v3 = new Vector3().copy(ref.current.position);
+        const e3 = new Euler().copy(ref.current.rotation);
+        props.update({ e3, v3 });
         setDrag(!drag);
       }}
       scale={props.scale}
       ref={ref}
     >
-      <spriteMaterial
+      <planeGeometry args={[1, 1]} />
+
+      <meshBasicMaterial
+        transparent
         attach="material"
+        color="white"
         opacity={props.hidden ? 0 : 1}
         map={texture}
       />
-    </sprite>
+    </mesh>
   );
 }
 
@@ -175,93 +189,6 @@ export const _conf: Conf = {
   pangal: [],
 };
 
-// const Svg = (p: { addPortal: boolean; setConf: (i: Item[]) => void }) => {
-//   // const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
-//   const shape = new Shape();
-//   const store = useStore();
-//   const points = store.portal?.points ?? [];
-//   points.forEach((p, idx) => {
-//     if (!p) return;
-//     if (idx === 0) shape.moveTo(p.x, p.y);
-//     else shape.lineTo(p.x, p.y);
-//   });
-//   const ref = useRef<Mesh>();
-//   const planeRef = useRef<Mesh>();
-//   useFrame((t) => {
-//     if (!ref.current) return;
-//     ref.current.position.copy(t.camera.position);
-//     ref.current.rotation.copy(t.camera.rotation);
-//     if (!planeRef.current) return;
-
-//     planeRef.current.position.copy(t.camera.position);
-//     planeRef.current.rotation.copy(t.camera.rotation);
-//     planeRef.current.translateZ(-1);
-//   });
-//   const t = useThree();
-
-//   useEffect(() => {
-//     const v3 = new Vector3();
-//     const rot = new Euler();
-//     if (planeRef.current)
-//       store.setPortal({
-//         goToScene: "elaiourgeio",
-//         position: v3.copy(planeRef.current.position),
-//         rotation: rot.copy(planeRef.current.rotation),
-//         points: points,
-//       });
-//   }, [points, planeRef.current]);
-
-//   return (
-//     <group raycast={meshBounds}>
-//       {p.addPortal && (
-//         <>
-//           <Circle ref={ref} args={[0.025]} />
-//           <mesh
-//             onClick={(e) => {
-//               if (!planeRef.current) return;
-//               const dx = t.viewport.width / 5;
-//               const dy = t.viewport.height / 5;
-//               const x = (e.spaceX * dx) / 2;
-//               const y = (e.spaceY * dy) / 2;
-
-//               const _p = [
-//                 ...points,
-//                 {
-//                   x,
-//                   y,
-//                 },
-//               ];
-
-//               const v3 = new Vector3();
-//               const rot = new Euler();
-//               if (planeRef.current)
-//                 store.setPortal({
-//                   goToScene: "elaiourgeio",
-//                   position: v3.copy(planeRef.current.position),
-//                   rotation: rot.copy(planeRef.current.rotation),
-//                   points: _p,
-//                 });
-//             }}
-//             ref={planeRef}
-//           >
-//             <planeGeometry
-//               args={[t.viewport.width / 5, t.viewport.height / 5, 30, 30]}
-//             />
-//             <meshBasicMaterial
-//               side={DoubleSide}
-//               wireframe
-//               transparent
-//               opacity={0.1}
-//               attach="material"
-//               color="grey"
-//             />
-//           </mesh>
-//         </>
-//       )}
-//     </group>
-//   );
-// };
-
 const Home: NextPage = () => {
   const [conf, _setConf] = useState(_conf);
   const [imgs, setImgs] = useState<string[]>([]);
@@ -275,14 +202,6 @@ const Home: NextPage = () => {
   const [portal, _addPortal] = useState(false);
   const [library, _setLibrary] = useState(false);
   const setLibrary = () => _setLibrary(!library);
-
-  // const shape = new Shape();
-  // const points = store.portal?.points ?? [];
-  // points.forEach((p, idx) => {
-  //   if (!p) return;
-  //   if (idx === 0) shape.moveTo(p.x, p.y);
-  //   else shape.lineTo(p.x, p.y);
-  // });
 
   useEffect(() => {
     if (!library)
@@ -327,17 +246,21 @@ const Home: NextPage = () => {
             return o.type ? (
               <Portal
                 {...o}
-                update={(v3) => {
+                key={o.id}
+                update={(p) => {
                   const idx = items?.findIndex((i) => i.id === o.id);
-                  items[idx].position = v3;
+                  items[idx].position = p.v3;
+                  items[idx].rotation = p.e3;
                   setConf(items);
                 }}
               />
             ) : (
               <Sprite
-                update={(v3) => {
+                update={(p) => {
                   const idx = items?.findIndex((i) => i.id === o.id);
-                  items[idx].position = v3;
+                  items[idx].position = p.v3;
+                  items[idx].rotation = p.e3;
+
                   setConf(items);
                 }}
                 hidden={isHidden}
