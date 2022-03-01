@@ -112,7 +112,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   "flex bg-black relative bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
                   {
                     "bg-green-900 cursor-pointer":
-                      store.hand && store.hand === item?.name,
+                      store.hand && store.hand === item?.id,
                     "cursor-pointer": item?.action,
                     "rounded-tl-2xl": i === 0,
                     "rounded-tr-2xl": i === 2,

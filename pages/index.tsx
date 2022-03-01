@@ -90,6 +90,7 @@ function Sprite(props: Item) {
         }
 
         if (store.hand) store.setHand(undefined);
+        if (props.setHint) store.setHint(props.setHint);
 
         if (props.onClickTrigger) {
           store.onTrigger(props.onClickTrigger);
