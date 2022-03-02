@@ -63,14 +63,6 @@ export type Item = {
   action?: () => void;
 } & Record<string, any>;
 
-// export type Portal = {
-//   id?: string;
-//   goToScene: Scene;
-//   rotation: Euler;
-//   position: Vector3;
-//   points: { x: number; y: number }[];
-// };
-
 // @ts-ignore
 export const descriptiveText: Record<string | Scene, string> = {
   intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
@@ -175,6 +167,7 @@ export type Store = {
   modal: Modal;
   inventory: Item[];
   epicInventory: Item[];
+  lexigram?: string[];
   inventoryNotf: string[];
   selectItem?: Item;
   epicItem?: string;
@@ -184,6 +177,7 @@ export type Store = {
   status: Status;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
+  setLexigram: (s?: string[]) => void;
   // setPortal: (p?: Portal) => void;
   setEmail: (s: string) => void;
   setDescriptiveText: (s?: string) => void;
@@ -223,16 +217,31 @@ export const useStore = create<Store>((set, get) => ({
       const hand = s.hand === h ? undefined : h;
       return { hand };
     }),
+  // lexigram: ["εβδομάδα", "έτος", "σήμερα", "αύριο", "χθες", "ημερολόγιο"],
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
   onTrigger: (triggerEvent?: string) =>
     set((s) => {
       switch (triggerEvent) {
         case "ancientText":
           return s.setAncientText(ancientText);
+        case "lexigram":
+          return s.setLexigram([
+            "εβδομάδα",
+            "έτος",
+            "σήμερα",
+            "αύριο",
+            "χθες",
+            "ημερολόγιο",
+          ]);
 
         default:
           break;
       }
+    }),
+  setLexigram: (s?: string[]) =>
+    set(() => {
+      dap?.play();
+      return { status: "MODAL", lexigram: s };
     }),
 
   setEpicItem: (epicItem?: Item) =>

@@ -24,6 +24,7 @@ import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
 import EpicItem from "../components/EpicItem";
+import Lexigram from "../components/Lexigram";
 
 extend({ OrbitControls });
 
@@ -238,10 +239,12 @@ const Home: NextPage = () => {
 
   const items = conf[store.scene];
   const [fov, setFov] = useState(75);
+
   return (
     <div {...bind()}>
       <DescriptiveText />
       <AncientText />
+      <Lexigram />
       <Ui items={conf[store.scene]} time={timer.time} />
       <Menu />
       <EpicItem />

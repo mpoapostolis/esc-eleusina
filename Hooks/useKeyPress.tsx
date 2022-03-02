@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
-type K = {
-  key: string;
-};
 
-export default function useKeyPress(targetKey: string) {
+export default function useKeyPress() {
   // State for keeping track of whether key is pressed
   const [keyPressed, setKeyPressed] = useState<boolean>(false);
-  // If pressed key is our target key then set to true
-  function downHandler({ key }: K) {
-    if (key === targetKey) {
-      setKeyPressed(false);
-    }
+  const [key, setKey] = useState<string>();
+
+  function downHandler(evt: KeyboardEvent) {
+    // evt.preventDefault();
+    setKeyPressed(true);
+    setKey(evt.key);
   }
   // If released key is our target key then set to false
-  const upHandler = ({ key }: K) => {
-    if (key === targetKey) {
-      setKeyPressed(true);
-    }
-  };
+  function upHandler(evt: KeyboardEvent) {
+    // evt.preventDefault();
+    setKeyPressed(false);
+    setKey(undefined);
+  }
   // Add event listeners
   useEffect(() => {
     window.addEventListener("keydown", downHandler);
@@ -28,5 +26,5 @@ export default function useKeyPress(targetKey: string) {
       window.removeEventListener("keyup", upHandler);
     };
   }, []); // Empty array ensures that effect is only run on mount and unmount
-  return keyPressed;
+  return { keyPressed, key };
 }
