@@ -1,67 +1,24 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
-import useKeyPress from "../../Hooks/useKeyPress";
+import { useState } from "react";
 import { useStore } from "../../store";
 import Keyboard from "../Keyboard";
 
-const greekVowel: Record<string, string> = {
-  ά: "α",
-  έ: "ε",
-  ή: "η",
-  ί: "ι",
-  ό: "ο",
-  ύ: "υ",
-  ώ: "ω",
-};
-
-const keys = [
-  "q",
-  "w",
-  "e",
-  "r",
-  "t",
-  "y",
-  "u",
-  "i",
-  "o",
-  "p",
-  "a",
-  "s",
-  "d",
-  "f",
-  "g",
-  "h",
-  "j",
-  "k",
-  "l",
-  "z",
-  "x",
-  "c",
-  "v",
-  "b",
-  "n",
-  "m",
-];
-
 function Lexigram() {
   const store = useStore();
-  const arr = store.lexigram ?? [""];
+
+  const normalizeLexi = store.lexigram?.map((s) =>
+    s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase()
+  ) ?? [""];
+
+  const arr = normalizeLexi ?? [""];
   const max = Math.max(...arr?.map((e) => e.length));
-  console.log(max);
-  const letters = new Set<string>();
   const [wordd, setWord] = useState<string[]>([]);
   const tmpWord = Array(max - Math.min(wordd.length, max)).fill("");
   const word = [...wordd, ...tmpWord];
-
-  store.lexigram
-    ?.map((e) => e.split(""))
-    .flat(1)
-
-    .forEach((e) => {
-      const char = greekVowel[e] ?? e;
-      letters.add(char.toUpperCase());
-    });
-
+  const [correct, setCorrect] = useState<Record<string, boolean>>({});
   return (
     <div
       onClick={() => {}}
@@ -74,15 +31,12 @@ function Lexigram() {
     >
       <div className="p-10 shadow-inner shadow-gray-500  border border-gray-500  rounded-md max-w-4xl w-full h-fit">
         <div className="grid grid-cols-2">
-          {store.lexigram
+          {normalizeLexi
             ?.sort((a, b) => a.length - b.length)
             .map((word) => (
               <div key={word} className="flex mb-1">
                 {word.split("").map((e, idx) => {
-                  const char = greekVowel[e] ?? e;
-                  const isCorrect =
-                    wordd[idx]?.toLocaleLowerCase() ===
-                    char?.toLocaleLowerCase();
+                  const isCorrect = correct[word] || wordd[idx] === e;
                   return (
                     <div
                       key={idx}
@@ -93,7 +47,7 @@ function Lexigram() {
                         }
                       )}
                     >
-                      {isCorrect && char.toUpperCase()}
+                      {isCorrect && e}
                     </div>
                   );
                 })}
@@ -123,14 +77,22 @@ function Lexigram() {
 
         <Keyboard
           onKeyPress={(e) => {
-            if (e === "Enter") return;
+            if (!wordd) return;
+            if (e === "Enter") {
+              const word = wordd.join("");
+              if (normalizeLexi?.includes(word)) {
+                setWord([]);
+                setCorrect((s) => ({ ...s, [word]: true }));
+              }
+              return;
+            }
             if (wordd.length === max && e !== "Backspace") return;
             setWord((s) => {
               const tmp = [...s];
               if (e === "Backspace") {
                 tmp.pop();
                 return tmp;
-              } else return [...s, e];
+              } else return [...s, e.toUpperCase()];
             });
           }}
         />

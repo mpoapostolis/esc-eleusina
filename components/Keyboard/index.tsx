@@ -2,36 +2,6 @@ import clsx from "clsx";
 import { DetailedHTMLProps, HTMLAttributes, useEffect } from "react";
 import useKeyPress from "../../Hooks/useKeyPress";
 
-const letters = [
-  ";",
-  "ς",
-  "ε",
-  "ρ",
-  "τ",
-  "υ",
-  "θ",
-  "ι",
-  "ο",
-  "π",
-  "α",
-  "σ",
-  "δ",
-  "φ",
-  "γ",
-  "η",
-  "ξ",
-  "κ",
-  "λ",
-  "ζ",
-  "χ",
-  "ψ",
-  "ω",
-  "β",
-  "ν",
-  "μ",
-  "Backspace",
-];
-
 function Key(
   props: {
     special?: boolean;
@@ -61,7 +31,8 @@ function Key(
 function Keyboard(props: { onKeyPress: (k: string) => void }) {
   const { key, keyPressed } = useKeyPress();
   useEffect(() => {
-    if (key && letters.includes(key)) props.onKeyPress(key);
+    if ((key && key.length === 1) || key === "Enter" || key === "Backspace")
+      props.onKeyPress(key);
   }, [key]);
 
   return (
