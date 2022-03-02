@@ -27,10 +27,11 @@ export default function AncientText() {
     if (store.ancientText?.keys.every((a) => set.has(a))) {
       store.setEpicItem(epicItems.intro);
       store.setAncientText(undefined);
+      store.setHint(undefined);
+
       setWords([]);
     }
   }, [words]);
-
   return (
     <div
       className={clsx(

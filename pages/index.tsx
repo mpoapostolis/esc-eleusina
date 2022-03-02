@@ -23,6 +23,7 @@ import DescriptiveText from "../components/DescriptiveText";
 import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
+import EpicItem from "../components/EpicItem";
 
 extend({ OrbitControls });
 
@@ -237,13 +238,13 @@ const Home: NextPage = () => {
 
   const items = conf[store.scene];
   const [fov, setFov] = useState(75);
-
   return (
     <div {...bind()}>
       <DescriptiveText />
       <AncientText />
       <Ui items={conf[store.scene]} time={timer.time} />
       <Menu />
+      <EpicItem />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />

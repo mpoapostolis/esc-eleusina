@@ -108,7 +108,7 @@ export default function AdminSettings(props: {
                 />
 
                 <Checkbox
-                  label="Collectable"
+                  label="Collect to inventory"
                   checked={selectedItem.collectable}
                   onChange={(evt) => {
                     update({
@@ -122,7 +122,7 @@ export default function AdminSettings(props: {
                 />
                 <div className="my-1" />
                 <Checkbox
-                  label="Selectable"
+                  label="Select as tool"
                   onChange={(evt) => {
                     update({
                       ...selectedItem,
@@ -160,7 +160,7 @@ export default function AdminSettings(props: {
                 });
               }}
               value={selectedItem.goToScene}
-              label="onClick go to scene"
+              label="onClick go to scene (360)"
               options={[undefined, ...scenes].map((o) => ({
                 label: o === undefined ? "-" : o,
                 value: o,
@@ -191,8 +191,8 @@ export default function AdminSettings(props: {
                 });
               }}
               value={selectedItem.onClickOpenModal}
-              label="onClick open"
-              options={[undefined, "dialogue", "hint"].map((o) => ({
+              label="onClick open Guidelines or Hint"
+              options={[undefined, "guidelines", "hint"].map((o) => ({
                 label: o === undefined ? "-" : o,
                 value: o,
               }))}
@@ -200,7 +200,7 @@ export default function AdminSettings(props: {
             <br />
             <>
               <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                on click set hint
+                on click set Hint Text
               </label>
               <div>
                 <textarea
@@ -217,7 +217,7 @@ export default function AdminSettings(props: {
               </div>
               <br />
               <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                on click set dialogue
+                on click set Guidance text
               </label>
               <div>
                 <textarea
@@ -241,13 +241,13 @@ export default function AdminSettings(props: {
                   label={
                     <>
                       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                        inventory src
+                        inventory image
                       </label>
                       <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
                         {selectedItem.inventorySrc ? (
                           <img
+                            src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${selectedItem.inventorySrc}`}
                             className="w-20 h-auto"
-                            src={idToSrc(selectedItem.inventorySrc)}
                           />
                         ) : (
                           "➕"
@@ -275,7 +275,7 @@ export default function AdminSettings(props: {
                   label={
                     <>
                       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                        Collect if keep
+                        Required tool to colect {selectedItem.name}
                       </label>
                       <div className="border w-full  h-28 p-4 text-2xl  border-gray-700 flex items-center justify-center">
                         {selectedItem.collectableIfHandHas ? (
@@ -303,7 +303,7 @@ export default function AdminSettings(props: {
                 <br />
 
                 <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  onCollect fail open hint
+                  Hint text when fail to collect (no required tool selected)
                 </label>
                 <div>
                   <textarea
@@ -324,7 +324,7 @@ export default function AdminSettings(props: {
             <hr className="my-5 opacity-50" />
 
             <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
-              Required items to appear
+              Required items in inventory to show {selectedItem.name}
             </label>
             <div className="grid gap-6 grid-cols-2">
               {props.conf[props.scene].map((i) => {

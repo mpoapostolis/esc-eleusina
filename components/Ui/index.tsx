@@ -126,7 +126,15 @@ export default function Ui(props: { items: Item[]; time: number }) {
                     <div className="text-xs absolute mx-auto w-full bottom-0 bg-black bg-opacity-30  text-center ">
                       {item.name}
                     </div>
-                    <img className="w-full p-1" src={item.src} alt="" />
+                    <img
+                      className="w-full p-1"
+                      src={
+                        item.inventorySrc
+                          ? `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${item?.inventorySrc}`
+                          : item.src
+                      }
+                      alt=""
+                    />
                   </>
                 )}
               </div>
