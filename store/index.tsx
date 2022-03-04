@@ -3,6 +3,24 @@ import create from "zustand";
 import { ancientText } from "../components/AncientText";
 import { loadSound } from "../utils";
 
+export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
+
+export const setKey = (payload: Record<string, any>) => {
+  if (typeof window !== "undefined")
+    localStorage.setItem(LOCAL_STORAGE_AUTH_KEY, JSON.stringify(payload));
+};
+export const loadKey = () => {
+  if (typeof window !== "undefined") {
+    const k = localStorage.getItem(LOCAL_STORAGE_AUTH_KEY);
+    const obj = k ? JSON.parse(k) : undefined;
+    return obj;
+  }
+};
+
+const clearKey = (k: string) => {
+  localStorage.removeItem(k);
+};
+
 export type Level =
   | "Φως-Σκοτάδι"
   | "Υπόγειο-Επίγειο"
@@ -50,13 +68,14 @@ export type Item = {
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
-  onClickOpenModal?: "hint" | "dialogue" | undefined;
-  setDialogue?: string;
+  onClickOpenModal?: "hint" | "guidelines" | undefined;
+  setGuidelines?: string;
   setHint?: string;
   onCollectFail?: string;
   requiredItems?: string[];
   name: string;
   type?: string;
+  hideAfterClick?: boolean;
   scale: number;
   src: string;
   description?: string;
@@ -64,7 +83,7 @@ export type Item = {
 } & Record<string, any>;
 
 // @ts-ignore
-export const descriptiveText: Record<string | Scene, string> = {
+export const guideLines: Record<string | Scene, string> = {
   intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
     Για να δούμε.... Θα αντέξουν τα μάτια σου το φως; Θα προσαρμοστούν στο σκοτάδι; Θα καταφέρεις να ξεκλειδώσεις το δωμάτιο; `,
   archeologikos: `Αναζήτησε το κρυμμένο κείμενο. Βρες το "Ρολόι των γραμμάτων" και σχημάτισε σε αυτό τις 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων «ομιλία και σιωπή». Ποιο είναι το μυστικό που είναι φυλακισμένο μέσα στον χρόνο;`,
@@ -163,7 +182,9 @@ export type Store = {
   setAncientText: (s?: AncientText) => void;
   onTrigger: (s?: string) => void;
   level: Level;
-  descriptiveText?: string;
+  guideLinesVissible?: boolean;
+  setguideLinesVissible: (e: boolean) => void;
+  guideLines?: string;
   modal: Modal;
   inventory: Item[];
   epicInventory: Item[];
@@ -180,7 +201,7 @@ export type Store = {
   setLexigram: (s?: string[]) => void;
   // setPortal: (p?: Portal) => void;
   setEmail: (s: string) => void;
-  setDescriptiveText: (s?: string) => void;
+  setguideLines: (s?: string) => void;
   setEpicItem: (s?: Item) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
@@ -199,11 +220,9 @@ const hint = loadSound("/sounds/hint.wav");
 const win = loadSound("/sounds/win.wav");
 
 export const useStore = create<Store>((set, get) => ({
-  account: {
-    accessToken: "23",
-  },
-  status: "RUNNING",
-  scene: "intro",
+  account: {},
+  status: "MENU",
+  scene: "teletourgeio",
   level: "Φως-Σκοτάδι",
   inventory: [],
   epicInventory: [],
@@ -217,6 +236,13 @@ export const useStore = create<Store>((set, get) => ({
       const hand = s.hand === h ? undefined : h;
       return { hand };
     }),
+  setguideLinesVissible: (b: boolean) => {
+    dap?.play();
+    set(() => ({
+      status: b ? "MODAL" : "RUNNING",
+      guideLinesVissible: b,
+    }));
+  },
   // lexigram: ["εβδομάδα", "έτος", "σήμερα", "αύριο", "χθες", "ημερολόγιο"],
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
   onTrigger: (triggerEvent?: string) =>
@@ -272,10 +298,9 @@ export const useStore = create<Store>((set, get) => ({
       return { isHintVisible };
     }),
   setLevel: (l: Level) => set(() => ({ level: l })),
-  setDescriptiveText: (descriptiveText?: string) =>
+  setguideLines: (guideLines?: string) =>
     set(() => {
-      dap?.play();
-      return { status: descriptiveText ? "MODAL" : "RUNNING", descriptiveText };
+      return { guideLines };
     }),
   setAncientText: (ancientText?: AncientText) =>
     set(() => {

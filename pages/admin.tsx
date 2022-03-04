@@ -6,7 +6,7 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { Item, Scene, useStore } from "../store";
+import { Item, loadKey, Scene, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
@@ -15,6 +15,7 @@ import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/Library";
 import axios from "axios";
+import Menu from "../components/Menu";
 
 extend({ OrbitControls });
 
@@ -204,6 +205,14 @@ const Home: NextPage = () => {
   const setLibrary = () => _setLibrary(!library);
 
   useEffect(() => {
+    const token = loadKey();
+    if (token) {
+      store.setToken(token);
+      store.setStatus("RUNNING");
+    }
+  }, []);
+
+  useEffect(() => {
     if (!library)
       axios.get("/api/getConf", {}).then((d) => {
         _setConf(d.data.items);
@@ -235,6 +244,8 @@ const Home: NextPage = () => {
       ) : (
         <Library setLibrary={setLibrary} />
       )}
+      <Menu />
+
       <Canvas flat={true} linear={true} mode="concurrent">
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
 
@@ -243,7 +254,7 @@ const Home: NextPage = () => {
             const isHidden = hide.includes(`${o.id}`);
             const x = o as Item;
 
-            return o.type ? (
+            return o.type === "portal" ? (
               <Portal
                 {...o}
                 key={o.id}

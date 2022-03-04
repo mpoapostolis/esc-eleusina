@@ -19,7 +19,7 @@ export default function AncientText() {
   const [words, setWords] = useState<string[]>([]);
 
   useEffect(() => {
-    if (store.descriptiveText) store.setDescriptiveText(undefined);
+    if (store.guideLines) store.setguideLines(undefined);
   }, []);
 
   useEffect(() => {

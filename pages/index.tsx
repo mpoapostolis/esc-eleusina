@@ -9,7 +9,7 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { Item, useStore } from "../store";
+import { Item, loadKey, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
@@ -19,7 +19,7 @@ import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
 import axios from "axios";
 import { _conf } from "./admin";
 import { useTimer } from "use-timer";
-import DescriptiveText from "../components/DescriptiveText";
+import GuideLines from "../components/GuideLines";
 import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
@@ -56,6 +56,7 @@ function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
     if (typeof document !== "undefined")
@@ -68,7 +69,7 @@ function Sprite(props: Item) {
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
 
-  let s = props.scale ?? 0.2;
+  let s = props.hideAfterClick && clicked ? 0 : props.scale ?? 0.2;
   if (hovered) s += 0.01;
   const { scale } = useSpring({
     scale: props.hideWhen ? 0 : s,
@@ -77,11 +78,14 @@ function Sprite(props: Item) {
   });
   const store = useStore();
 
+  if (props.type === "help" && !store.hint) return null;
+  if (props.type === "guidelines" && !store.guideLines) return null;
   return (
     <animated.mesh
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
+        setClicked(true);
         const canICollect = props.collectableIfHandHas
           ? store.hand === props.collectableIfHandHas
           : true;
@@ -100,11 +104,13 @@ function Sprite(props: Item) {
           store.setInventory(props);
           if (props.onCollectSucccess) props.onCollectSucccess();
         }
-        if (props.setDialogue) store.setDescriptiveText(props.setDialogue);
+        console.log(props.setGuidelines, props.onClickOpenModal);
+        if (props.setGuidelines) store.setguideLines(props.setGuidelines);
         if (props.setHint) store.setHint(props.setHint);
-        if (props.setHint) store.setHint(props.setHint);
+
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
-        if (props.onClickOpenModal === "dialogue") store.setStatus("MODAL");
+        if (props.onClickOpenModal === "guidelines")
+          store.setguideLinesVissible(true);
         if (props.onCollectError) props.onCollectError();
         if (props.onClick) props?.onClick(evt);
       }}
@@ -240,9 +246,17 @@ const Home: NextPage = () => {
   const items = conf[store.scene];
   const [fov, setFov] = useState(75);
 
+  useEffect(() => {
+    const token = loadKey();
+    if (token) {
+      store.setToken(token);
+      store.setStatus("RUNNING");
+    }
+  }, []);
+
   return (
     <div {...bind()}>
-      <DescriptiveText />
+      <GuideLines />
       <AncientText />
       <Lexigram />
       <Ui items={conf[store.scene]} time={timer.time} />

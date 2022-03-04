@@ -5,20 +5,21 @@ const shadow = {
   WebkitTextStroke: "1px black",
 };
 
-export default function DescriptiveText() {
+export default function GuideLines() {
   const store = useStore();
   const getMaxW =
-    (store.descriptiveText?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
+    (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
 
   return (
     <div
       onClick={() => {
-        store.setDescriptiveText(undefined);
+        store.setguideLinesVissible(false);
+        store.setStatus("RUNNING");
       }}
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "MODAL" || !store.descriptiveText,
+          hidden: store.status !== "MODAL" || !store.guideLinesVissible,
         }
       )}
     >
@@ -35,7 +36,7 @@ export default function DescriptiveText() {
             className=" w-10 m-3 h-10 z-50 pointer-events-auto absolute right-0 top-0"
             alt=""
           />
-          <div style={shadow}>{store.descriptiveText}</div>
+          <div style={shadow}>{store.guideLines}</div>
         </div>
       </div>
     </div>

@@ -134,6 +134,18 @@ export default function AdminSettings(props: {
                   }}
                   checked={selectedItem.selectable}
                 />
+                <div className="my-1" />
+
+                <Checkbox
+                  label="Disappear after click"
+                  checked={selectedItem.collectable}
+                  onChange={(evt) => {
+                    update({
+                      ...selectedItem,
+                      hideAfterClick: evt.target.checked,
+                    });
+                  }}
+                />
               </div>
             </div>
             <hr className="my-5 opacity-50" />
@@ -187,7 +199,10 @@ export default function AdminSettings(props: {
               onChange={(v) => {
                 update({
                   ...selectedItem,
-                  onClickOpenModal: v.value as "hint" | "dialogue" | undefined,
+                  onClickOpenModal: v.value as
+                    | "hint"
+                    | "guidelines"
+                    | undefined,
                 });
               }}
               value={selectedItem.onClickOpenModal}
@@ -223,11 +238,11 @@ export default function AdminSettings(props: {
                 <textarea
                   className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
                   rows={5}
-                  value={selectedItem.setDialogue}
+                  value={selectedItem.setGuidelines}
                   onChange={(evt) => {
                     update({
                       ...selectedItem,
-                      setDialogue: evt.currentTarget.value,
+                      setGuidelines: evt.currentTarget.value,
                     });
                   }}
                 ></textarea>
@@ -402,29 +417,38 @@ export default function AdminSettings(props: {
               }
             >
               <div className="max-h-96 grid p-4 gap-4 bg-black grid-cols-2 items-center overflow-auto">
-                {props.imgs?.map((id, idx) => (
-                  <div
-                    key={id}
-                    onClick={() =>
-                      props.setConf([
-                        {
-                          id: uuidv4(),
-                          scale: 0.5,
-                          name: id === "arrows.png" ? "portal" : "",
-                          type: id === "arrows.png" ? "portal" : "",
-                          src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
-                        },
-                        ...(items ?? []),
-                      ])
-                    }
-                    className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
-                  >
-                    <img
-                      className="cursor-pointer w-full"
-                      src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
-                    />
-                  </div>
-                ))}
+                {props.imgs?.map((id, idx) => {
+                  let type = "";
+                  if (id === "arrows.png") type = "portal";
+                  if (id === "6ae6d79e-556b-4f99-9e2d-309f549b55be.png")
+                    type = "guidelines";
+                  if (id === "996e42c8-0a73-4fa0-af13-46bb9e9d9e87.png")
+                    type = "help";
+
+                  return (
+                    <div
+                      key={id}
+                      onClick={() =>
+                        props.setConf([
+                          {
+                            id: uuidv4(),
+                            scale: 0.5,
+                            name: type,
+                            type: type,
+                            src: `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`,
+                          },
+                          ...(items ?? []),
+                        ])
+                      }
+                      className="p-4 h-full w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
+                    >
+                      <img
+                        className="cursor-pointer w-full"
+                        src={`https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${id}`}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </Popover>
             <br />

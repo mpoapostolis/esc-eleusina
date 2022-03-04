@@ -4,7 +4,15 @@ import MenuItem from "../MenuItem";
 import Link from "next/link";
 import clsx from "clsx";
 import axios, { AxiosError } from "axios";
-import { HelpKey, Item, Level, Scene, Status, useStore } from "../../store";
+import {
+  HelpKey,
+  Item,
+  Level,
+  Scene,
+  setKey,
+  Status,
+  useStore,
+} from "../../store";
 import { useRouter } from "next/dist/client/router";
 import { loadSound } from "../../utils";
 const hint = loadSound("/sounds/hint.wav");
@@ -47,10 +55,12 @@ function Register() {
     store.setStatus("RUNNING");
   };
   const type = store.status.toLowerCase();
+  const router = useRouter();
   return (
     <>
       <form
         onSubmit={async (e) => {
+          const isAdmin = router.pathname === "/admin";
           e.preventDefault();
           setErr({});
           // @ts-ignore
@@ -78,12 +88,16 @@ function Register() {
           }
           if (Object.keys(err).length === 0)
             await axios
-              .post("/api/auth", body)
+              // .post(isAdmin ? "/api/adminauth" : "/api/auth", body)
+              .post("/api/adminauth", body)
               .then((d) => {
                 store.setEmail(email.value);
                 store.setToken(d.data.accessToken);
+                setKey(d.data.accessToken);
               })
-              .then(() => store.setStatus("MENU"))
+              .then(() => {
+                store.setStatus(isAdmin ? "RUNNING" : "MENU");
+              })
               .catch((err: AxiosError) => {
                 setErr({
                   email: err.response?.data.msg,
@@ -277,6 +291,7 @@ const Main = () => {
   const store = useStore();
 
   const setType = (status: Status) => store.setStatus(status);
+  const router = useRouter();
   return (
     <div className="z-50 grid gap-y-3 w-full p-5">
       {store.account.accessToken && (
@@ -329,14 +344,16 @@ const Main = () => {
             title="Login"
           />
 
-          <MenuItem
-            onClick={() => {
-              hint?.play();
-              setType("REGISTER");
-            }}
-            src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
-            title="Register"
-          />
+          {router.pathname !== "/admin" && (
+            <MenuItem
+              onClick={() => {
+                hint?.play();
+                setType("REGISTER");
+              }}
+              src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
+              title="Register"
+            />
+          )}
         </>
       )}
     </div>

@@ -1,11 +1,11 @@
-import { descriptiveText, useStore } from "../../store";
+import { guideLines, useStore } from "../../store";
 
-import useDescriptiveText from "../../Hooks/useDescriptiveText";
+import useGuideLines from "../../Hooks/useGuideLines";
 import { useEffect } from "react";
 
 function Intro() {
   const store = useStore();
-  useDescriptiveText(descriptiveText.intro, 1000);
+  useGuideLines(guideLines.intro, 1000);
 
   useEffect(() => {
     store.setHint(

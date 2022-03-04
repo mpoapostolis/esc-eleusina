@@ -38,7 +38,7 @@ export default function EpicItem() {
   const store = useStore();
 
   const getMaxW =
-    (store.descriptiveText?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
+    (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
   const found = store.epicInventory.find((s) => store.epicItem === s.name);
   return (
     <div
