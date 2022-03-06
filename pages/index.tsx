@@ -17,7 +17,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
 import axios from "axios";
-import { _conf } from "./admin";
+import { Img } from "./admin";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
 import AncientText from "../components/AncientText";
@@ -52,31 +52,47 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(props: Item) {
+function Sprite(
+  props: Item & {
+    giveReward: (s: string) => void;
+  }
+) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
+  const [insideBox, setInsideBox] = useState<string[]>([]);
+  const store = useStore();
+  const isUsed = store.usedItems[`${props._id}`];
 
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
-
   useEffect(() => {
     if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
-
-  let s = props.hideAfterClick && clicked ? 0 : props.scale ?? 0.2;
+  let s = props.scale ?? 0.2;
   if (hovered) s += 0.01;
+  const collected = props.collectable && store.invHas(props._id);
   const { scale } = useSpring({
-    scale: props.hideWhen ? 0 : s,
+    scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
-    delay: props?.hideWhen ? 200 : 0,
   });
-  const store = useStore();
+
+  useEffect(() => {
+    if (props.orderInsideTheBox) {
+      const isSame = props.orderInsideTheBox
+        .map((x, idx) => {
+          return x === insideBox[idx];
+        })
+        .every(Boolean);
+      if (isSame && props.boxReward) {
+        props.giveReward(props.boxReward);
+      }
+    }
+  }, [insideBox, props.orderInsideTheBox]);
 
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
@@ -85,28 +101,50 @@ function Sprite(props: Item) {
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
-        setClicked(true);
-        const canICollect = props.collectableIfHandHas
-          ? store.hand === props.collectableIfHandHas
-          : true;
-        if (!canICollect) {
-          store.setHint(props.onCollectFail);
-          store.setIsHintVisible(true);
-
+        if (props.type === "box" && props.orderInsideTheBox) {
+          if (store.hand === props.orderInsideTheBox[insideBox.length]) {
+            const str = store.hand;
+            setInsideBox((s) => [...s, str]);
+            store.removeInvItem(store.hand);
+            store.setHand(undefined);
+            store.setIsHintVisible(false);
+            store.setUsedItem(store.hand);
+          } else {
+            store.setHint(props.orderBoxError);
+            store.setIsHintVisible(true);
+          }
           return;
         }
-        if (store.hand) store.setHand(undefined);
+
+        if (store.hand && !props.collectableIfHandHas && props.type !== "box") {
+          store.setHint("Nothing happened...");
+          store.setIsHintVisible(true);
+          return;
+        }
+
+        if (props.collectableIfHandHas) {
+          if (store.hand === props.collectableIfHandHas) {
+            store.setUsedItem(store.hand);
+            store.removeInvItem(store.hand);
+            store.setHand(undefined);
+            store.setIsHintVisible(false);
+          } else {
+            store.setHint(props.onCollectFail);
+            store.setIsHintVisible(true);
+            return;
+          }
+        }
+
+        if (props.collectable) {
+          store.setInventory(props);
+        }
+
         if (props.setHint) store.setHint(props.setHint);
         if (props.onClickTrigger) {
           store.onTrigger(props.onClickTrigger);
         }
-        if (props.collectable) {
-          store.setInventory(props);
-          if (props.onCollectSucccess) props.onCollectSucccess();
-        }
-        console.log(props.setGuidelines, props.onClickOpenModal);
+
         if (props.setGuidelines) store.setguideLines(props.setGuidelines);
-        if (props.setHint) store.setHint(props.setHint);
 
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
         if (props.onClickOpenModal === "guidelines")
@@ -188,7 +226,6 @@ function Portal(props: Item) {
       onClick={() => {
         if (props.goToScene) store.setScene(props.goToScene);
         if (props.collectable) store.setInventory(props);
-        // if(props.selectable) store.setHand()
       }}
       ref={ref}
       onPointerEnter={() => setHovered(true)}
@@ -206,20 +243,7 @@ function Portal(props: Item) {
 }
 
 const Home: NextPage = () => {
-  const [conf, _setConf] = useState(_conf);
   const store = useStore();
-
-  useEffect(() => {
-    axios
-      .get("/api/getConf", {
-        headers: {
-          "Content-Type": "application/json; charset=UTF-8",
-        },
-      })
-      .then((d) => {
-        _setConf(d.data.items);
-      });
-  }, []);
 
   const bind = useGesture({
     onWheel: (w) =>
@@ -243,7 +267,24 @@ const Home: NextPage = () => {
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
 
-  const items = conf[store.scene];
+  const [items, setItems] = useState<Item[]>([]);
+  const [imgs, setImgs] = useState<Img[]>([]);
+
+  const getImgs = async () =>
+    axios.get("/api/library").then((d) => {
+      setImgs(d.data);
+    });
+
+  const getItems = async () =>
+    axios.get("/api/items").then((d) => {
+      setItems(d.data);
+    });
+
+  useEffect(() => {
+    getItems();
+    getImgs();
+  }, []);
+
   const [fov, setFov] = useState(75);
 
   useEffect(() => {
@@ -253,36 +294,41 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
-
+  const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div {...bind()}>
       <GuideLines />
       <AncientText />
       <Lexigram />
-      <Ui items={conf[store.scene]} time={timer.time} />
+      <Ui items={sceneItems} time={timer.time} />
       <Menu />
       <EpicItem />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
           <Suspense fallback={<CustomLoader />}>
-            {items?.map((p, idx) => {
+            {sceneItems?.map((p, idx) => {
               const item = p as Item;
               const show = item?.requiredItems
                 ?.map((v) => {
-                  return store.invHas(v) || store.epicInvHas(v);
+                  return (
+                    store.invHas(v) || store.epicInvHas(v) || store.usedItems[v]
+                  );
                 })
                 .every((e) => e);
-              if (
-                store.invHas(`${item?.id}`) ||
-                store.epicInvHas(`${item?.id}`)
-              )
-                return null;
+
               if (!show && item?.requiredItems) return null;
               return p.type === "portal" ? (
-                <Portal key={p.id} {...item} />
+                <Portal key={p._id} {...item} />
               ) : (
-                <Sprite key={p.id} {...item} />
+                <Sprite
+                  key={p._id}
+                  giveReward={(i) => {
+                    const found = items.find((e) => e._id === i);
+                    if (found) store.setEpicItem(found);
+                  }}
+                  {...item}
+                />
               );
             })}
             <Environment />

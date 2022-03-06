@@ -295,13 +295,17 @@ const Main = () => {
   return (
     <div className="z-50 grid gap-y-3 w-full p-5">
       {store.account.accessToken && (
-        <Link href="/">
+        <a
+          onClick={() => {
+            router.push("/");
+          }}
+        >
           <MenuItem
             onClick={() => store.setStatus("RUNNING")}
             src="https://s2.svgbox.net/materialui.svg?ic=games&color=fff9"
             title="Play"
           />
-        </Link>
+        </a>
       )}
 
       {store.account.accessToken && (

@@ -16,6 +16,7 @@ import AdminSettings from "../components/AdminSettings";
 import Library from "../components/Library";
 import axios from "axios";
 import Menu from "../components/Menu";
+import { useRouter } from "next/router";
 
 extend({ OrbitControls });
 
@@ -179,30 +180,22 @@ function CustomLoader() {
   );
 }
 
-export type Conf = Record<Scene, Item[]>;
-export const _conf: Conf = {
-  intro: [],
-  elaiourgeio: [],
-  teletourgeio: [],
-  karnagio: [],
-  arxaiologikos: [],
-  eleusina: [],
-  pangal: [],
+export type Img = {
+  _id: string;
+  name?: string;
+  src: string;
 };
+export type Conf = Item[];
 
 const Home: NextPage = () => {
-  const [conf, _setConf] = useState(_conf);
-  const [imgs, setImgs] = useState<string[]>([]);
-
+  const [items, setItems] = useState<Item[]>([]);
+  const [imgs, setImgs] = useState<Img[]>([]);
   const store = useStore();
-  const setConf = (items: Item[]) => {
-    _setConf((s) => ({ ...s, [store.scene]: items }));
-  };
-  const [hide, setHide] = useState<string[]>([]);
   const setScene = (s: Scene) => store.setScene(s);
   const [portal, _addPortal] = useState(false);
-  const [library, _setLibrary] = useState(false);
-  const setLibrary = () => _setLibrary(!library);
+  const router = useRouter();
+  const library = router.query.type === "library";
+  const id = router.query.id;
 
   useEffect(() => {
     const token = loadKey();
@@ -211,38 +204,51 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
+  const getImgs = async () =>
+    axios.get("/api/library").then((d) => {
+      setImgs(d.data);
+    });
+
+  const getItems = async () =>
+    axios.get("/api/items").then((d) => {
+      setItems(d.data);
+    });
 
   useEffect(() => {
-    if (!library)
-      axios.get("/api/getConf", {}).then((d) => {
-        _setConf(d.data.items);
-        setImgs(d.data.assets);
-      });
+    getItems();
+    getImgs();
   }, [library]);
-  const items = conf[store.scene] as Item[];
 
+  useEffect(() => {
+    // getItems();
+  }, [id]);
+
+  const updateItem = (i: Partial<Item>, _id?: string) => {
+    const id = _id ?? router.query.id;
+    router.push({
+      query: { id },
+    });
+
+    const idx = items.findIndex((e) => e._id === id);
+    const tmp = [...items];
+    tmp[idx] = { ...tmp[idx], ...i };
+    setItems(tmp);
+  };
+  const sceneItems = items.filter((e) => e.scene === store.scene);
   return (
     <div className="canvas">
       {!library ? (
         <AdminSettings
-          hide={hide}
-          imgs={["arrows.png", ...imgs]}
-          setHide={(idx: string) => {
-            const found = hide.includes(idx);
-            const hiddenObj = found
-              ? hide.filter((e) => e !== idx)
-              : [...hide, idx];
-            setHide(hiddenObj);
-          }}
-          conf={conf}
+          imgs={imgs}
+          getItems={() => getItems()}
+          items={sceneItems}
+          update={(p) => updateItem(p)}
           portal={portal}
-          setLibrary={setLibrary}
-          setConf={setConf}
           setScene={setScene}
           scene={store.scene}
         />
       ) : (
-        <Library setLibrary={setLibrary} />
+        <Library />
       )}
       <Menu />
 
@@ -250,47 +256,17 @@ const Home: NextPage = () => {
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
 
         <Suspense fallback={<CustomLoader />}>
-          {conf[store.scene]?.map((o) => {
-            const isHidden = hide.includes(`${o.id}`);
-            const x = o as Item;
-
-            return o.type === "portal" ? (
-              <Portal
-                {...o}
-                key={o.id}
-                update={(p) => {
-                  const idx = items?.findIndex((i) => i.id === o.id);
-                  items[idx].position = p.v3;
-                  items[idx].rotation = p.e3;
-                  setConf(items);
-                }}
-              />
-            ) : (
-              <Sprite
-                update={(p) => {
-                  const idx = items?.findIndex((i) => i.id === o.id);
-                  items[idx].position = p.v3;
-                  items[idx].rotation = p.e3;
-
-                  setConf(items);
-                }}
-                hidden={isHidden}
-                key={o.id}
-                {...x}
-              />
-            );
-          })}
+          {sceneItems
+            .filter((e) => !e.isEpic)
+            ?.map((o, idx) => {
+              return o.type === "portal" ? (
+                <Portal {...o} key={idx} update={(p) => updateItem(p, o._id)} />
+              ) : (
+                <Sprite update={(p) => updateItem(p, o._id)} key={idx} {...o} />
+              );
+            })}
         </Suspense>
-        {/* {portal && <Svg setConf={setConf} addPortal={portal} />} */}
-        {/* {store.portal && (
-          <mesh
-            position={store.portal.position}
-            rotation={store.portal.rotation}
-          >
-            <shapeGeometry args={[shape]} />
-            <meshBasicMaterial color="yellow" opacity={0.25} transparent />
-          </mesh>
-        )} */}
+
         <Suspense fallback={<CustomLoader />}>
           <Environment />
         </Suspense>

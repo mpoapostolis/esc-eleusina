@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios, { AxiosError } from 'axios'
-import { randomUUID } from 'crypto';
-
 
 export const config = {
   api: {

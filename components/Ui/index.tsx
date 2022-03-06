@@ -101,7 +101,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
               <div
                 key={i}
                 onClick={() => {
-                  if (item?.selectable) store.setHand(item.id);
+                  if (item?.selectable) store.setHand(item._id);
                   if (item?.action) {
                     item?.action();
                   }
@@ -111,9 +111,8 @@ export default function Ui(props: { items: Item[]; time: number }) {
                 className={clsx(
                   "flex bg-black relative bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
                   {
-                    "bg-green-900 cursor-pointer":
-                      store.hand && store.hand === item?.id,
-                    "cursor-pointer": item?.action,
+                    "bg-green-900 ": store.hand && store.hand === item?._id,
+                    "cursor-pointer": item.selectable || item?.action,
                     "rounded-tl-2xl": i === 0,
                     "rounded-tr-2xl": i === 2,
                     "rounded-bl-2xl": i === 6,
@@ -128,11 +127,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
                     </div>
                     <img
                       className="w-full p-1"
-                      src={
-                        item.inventorySrc
-                          ? `https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/${item?.inventorySrc}`
-                          : item.src
-                      }
+                      src={item.inventorySrc ? item?.inventorySrc : item.src}
                       alt=""
                     />
                   </>

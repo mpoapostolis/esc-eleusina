@@ -8,7 +8,7 @@ function Key(
     pressed: boolean;
   } & DetailedHTMLProps<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
 ) {
-  const { children, ...rest } = props;
+  const { children, pressed, special, ...rest } = props;
 
   return (
     <button
@@ -17,8 +17,8 @@ function Key(
           rounded-xl hover:scale-90 uppercase w-full border 
           p-3  font-black text-gray-300 duration-150`,
         {
-          "bg-white bg-opacity-10 scale-90": props.pressed,
-          "text-xs font-semibold": props.special,
+          "bg-white bg-opacity-10 scale-90": pressed,
+          "text-xs font-semibold": special,
         }
       )}
       {...rest}

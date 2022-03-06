@@ -17,10 +17,6 @@ export const loadKey = () => {
   }
 };
 
-const clearKey = (k: string) => {
-  localStorage.removeItem(k);
-};
-
 export type Level =
   | "Φως-Σκοτάδι"
   | "Υπόγειο-Επίγειο"
@@ -59,11 +55,18 @@ export type AncientText = {
 };
 
 export type Item = {
-  id?: string;
+  _id?: string;
+  isEpic?: boolean;
+  disappearIfIdExist?: string | null;
   rotation?: Euler;
-  inventorySrc?: string;
+  inventorySrc?: string | null;
+  orderInsideTheBox?: string[];
+  scene: Scene;
+  rewardDescription?: string;
+  boxReward?: string | null;
+  orderBoxError?: string;
   goToScene?: Scene;
-  collectableIfHandHas?: string;
+  collectableIfHandHas?: string | null;
   onClickTrigger?: string;
   position?: Vector3;
   selectable?: boolean;
@@ -191,21 +194,22 @@ export type Store = {
   lexigram?: string[];
   inventoryNotf: string[];
   selectItem?: Item;
-  epicItem?: string;
-  // portal?: Portal;
+  epicItem?: Item;
+  usedItems: Record<string, boolean>;
+
   scene: Scene;
   hand?: string;
   status: Status;
+  setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
   setLexigram: (s?: string[]) => void;
-  // setPortal: (p?: Portal) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
   setEpicItem: (s?: Item) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
-  invHas: (e: string) => boolean;
+  invHas: (e?: string) => boolean;
   epicInvHas: (e: string) => boolean;
   setInventory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
@@ -228,14 +232,23 @@ export const useStore = create<Store>((set, get) => ({
   epicInventory: [],
   hint: undefined,
   isHintVisible: false,
-  // setPortal: (portal?: Portal) => set(() => ({ portal })),
-
+  usedItems: {},
   setStatus: (status) => set(() => ({ status })),
-  setHand: (h?: string) =>
+  setUsedItem: (id: string) =>
+    set((s) => ({
+      usedItems: {
+        ...s.usedItems,
+        [id]: true,
+      },
+    })),
+
+  setHand: (h?: string) => {
+    if (h) dap?.play();
     set((s) => {
       const hand = s.hand === h ? undefined : h;
       return { hand };
-    }),
+    });
+  },
   setguideLinesVissible: (b: boolean) => {
     dap?.play();
     set(() => ({
@@ -259,6 +272,7 @@ export const useStore = create<Store>((set, get) => ({
             "χθες",
             "ημερολόγιο",
           ]);
+        case "teletourgeio":
 
         default:
           break;
@@ -279,7 +293,7 @@ export const useStore = create<Store>((set, get) => ({
         win?.play();
         return {
           ...s,
-          epicItem: epicItem.name,
+          epicItem: epicItem,
           status: "EPIC_ITEM",
           epicInventory: epicItem
             ? [...s.epicInventory, epicItem]
@@ -318,13 +332,13 @@ export const useStore = create<Store>((set, get) => ({
       account: { ...store.account, email: s },
     })),
 
-  invHas: (e: string) =>
+  invHas: (e?: string) =>
     get()
-      .inventory.map((i) => i.id)
+      .inventory.map((i) => i._id)
       .includes(e),
   epicInvHas: (e: string) =>
     get()
-      .epicInventory.map((i) => i.id)
+      .epicInventory.map((i) => i._id)
       .includes(e),
 
   setInventory: (i: Item) => {
@@ -347,7 +361,7 @@ export const useStore = create<Store>((set, get) => ({
       const hand = s === state.hand ? undefined : state.hand;
       return {
         hand,
-        inventory: state.inventory.filter((item) => item.name !== s),
+        inventory: state.inventory.filter((item) => item._id !== s),
       };
     }),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
