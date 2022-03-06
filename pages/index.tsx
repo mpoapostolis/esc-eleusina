@@ -25,6 +25,8 @@ import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
 import EpicItem from "../components/EpicItem";
 import Lexigram from "../components/Lexigram";
+import useGuideLines from "../Hooks/useGuideLines";
+import useTimerHint from "../Hooks/useTimerHint";
 
 extend({ OrbitControls });
 
@@ -242,6 +244,16 @@ function Portal(props: Item) {
   );
 }
 
+function TimerHint(props: Item) {
+  useTimerHint(`${props.text}`, props.delayTimeHint);
+  return null;
+}
+
+function GuideLineItem(props?: Item) {
+  useGuideLines(`${props?.text}`, 2000);
+  return null;
+}
+
 const Home: NextPage = () => {
   const store = useStore();
 
@@ -318,18 +330,23 @@ const Home: NextPage = () => {
                 .every((e) => e);
 
               if (!show && item?.requiredItems) return null;
-              return p.type === "portal" ? (
-                <Portal key={p._id} {...item} />
-              ) : (
-                <Sprite
-                  key={p._id}
-                  giveReward={(i) => {
-                    const found = items.find((e) => e._id === i);
-                    if (found) store.setEpicItem(found);
-                  }}
-                  {...item}
-                />
-              );
+              if (p.type === "timerHint")
+                return <TimerHint key={p._id} {...p} />;
+              if (p.type === "guidelines")
+                return <GuideLineItem key={p._id} {...p} />;
+              else
+                return p.type === "portal" ? (
+                  <Portal key={p._id} {...item} />
+                ) : (
+                  <Sprite
+                    key={p._id}
+                    giveReward={(i) => {
+                      const found = items.find((e) => e._id === i);
+                      if (found) store.setEpicItem(found);
+                    }}
+                    {...item}
+                  />
+                );
             })}
             <Environment />
             <Scenes />

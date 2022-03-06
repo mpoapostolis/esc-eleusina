@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useStore } from "../../store";
-import { epicItems } from "../EpicItem";
 
 export const ancientText = {
   text: `
@@ -25,7 +24,7 @@ export default function AncientText() {
   useEffect(() => {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
-      store.setEpicItem(epicItems.intro);
+      // store.setEpicItem();
       store.setAncientText(undefined);
       store.setHint(undefined);
 

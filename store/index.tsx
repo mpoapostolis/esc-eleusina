@@ -68,10 +68,12 @@ export type Item = {
   goToScene?: Scene;
   collectableIfHandHas?: string | null;
   onClickTrigger?: string;
+  text?: string;
+  delayTimeHint?: number;
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
-  onClickOpenModal?: "hint" | "guidelines" | undefined;
+  onClickOpenModal?: "hint" | "guidelines" | "timerHint" | undefined;
   setGuidelines?: string;
   setHint?: string;
   onCollectFail?: string;

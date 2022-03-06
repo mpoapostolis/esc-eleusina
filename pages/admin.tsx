@@ -13,7 +13,7 @@ import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
-import Library from "../components/Library";
+import Library from "../components/AdminSettings/Library";
 import axios from "axios";
 import Menu from "../components/Menu";
 import { useRouter } from "next/router";
@@ -187,6 +187,9 @@ export type Img = {
 };
 export type Conf = Item[];
 
+function TimerHint() {
+  return null;
+}
 const Home: NextPage = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [imgs, setImgs] = useState<Img[]>([]);
@@ -224,9 +227,10 @@ const Home: NextPage = () => {
   }, [id]);
 
   const updateItem = (i: Partial<Item>, _id?: string) => {
+    const q = router.query;
     const id = _id ?? router.query.id;
     router.push({
-      query: { id },
+      query: { ...q, id },
     });
 
     const idx = items.findIndex((e) => e._id === id);
@@ -259,6 +263,9 @@ const Home: NextPage = () => {
           {sceneItems
             .filter((e) => !e.isEpic)
             ?.map((o, idx) => {
+              if (o.type === "timerHint") return <TimerHint key={o._id} />;
+              if (o.type === "guidelines") return <TimerHint key={o._id} />;
+
               return o.type === "portal" ? (
                 <Portal {...o} key={idx} update={(p) => updateItem(p, o._id)} />
               ) : (
