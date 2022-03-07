@@ -66,6 +66,14 @@ function Sprite(
   const store = useStore();
   const isUsed = store.usedItems[`${props._id}`];
 
+  const show = props?.requiredItems
+    ? props?.requiredItems
+        ?.map((v) => {
+          return store.invHas(v) || store.epicInvHas(v) || store.usedItems[v];
+        })
+        .every((e) => e)
+    : true;
+
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
@@ -75,7 +83,7 @@ function Sprite(
     ref.current.position.copy(props.position);
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
-  let s = props.scale ?? 0.2;
+  let s = show ? props.scale ?? 0.2 : 0;
   if (hovered) s += 0.01;
   const collected = props.collectable && store.invHas(props._id);
   const { scale } = useSpring({
@@ -321,15 +329,7 @@ const Home: NextPage = () => {
           <Suspense fallback={<CustomLoader />}>
             {sceneItems?.map((p, idx) => {
               const item = p as Item;
-              const show = item?.requiredItems
-                ?.map((v) => {
-                  return (
-                    store.invHas(v) || store.epicInvHas(v) || store.usedItems[v]
-                  );
-                })
-                .every((e) => e);
 
-              if (!show && item?.requiredItems) return null;
               if (p.type === "timerHint")
                 return <TimerHint key={p._id} {...p} />;
               if (p.type === "guidelines")

@@ -138,7 +138,7 @@ export default function SelectedItem(props: {
         <div className="w-full px-4">
           <Range
             min={0.05}
-            max={5}
+            max={1}
             step={0.01}
             onChange={(evt) => {
               const value = +evt.target.value;

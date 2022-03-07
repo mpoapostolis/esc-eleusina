@@ -52,6 +52,140 @@ export function AllImage(props: {
   );
 }
 
+const Component = (props: {
+  items: Item[];
+  imgs: Img[];
+  getItems: () => void;
+  update: (p: Partial<Item>) => void;
+  portal: boolean;
+  setScene: (s: Scene) => void;
+  scene: Scene;
+}) => {
+  const router = useRouter();
+  const id = router.query.id;
+  const type = router.query.type;
+
+  const store = useStore();
+  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+
+  switch (type) {
+    case "scene":
+      return <SceneSettings getItems={props.getItems} items={sceneItems} />;
+    case "selectedItem":
+      return (
+        <SelectedItem
+          getItems={props.getItems}
+          imgs={props.imgs}
+          items={props.items}
+          update={props.update}
+        />
+      );
+
+    default:
+      return (
+        <>
+          <div className="h-8  text-xl text-gray-400 w-full  font-bold">
+            <h1>General Settings</h1>
+          </div>
+          <hr className="my-5 opacity-20" />
+          <div className="w-full bg-opacity-20">
+            <Select
+              label=""
+              value={props.scene}
+              onChange={(v) => props.setScene(v.value as Scene)}
+              options={scenes.map((addr) => ({
+                label: addr,
+                value: addr.toLocaleLowerCase(),
+              }))}
+            />
+          </div>
+          <div className="my-2" />
+
+          <button
+            onClick={() =>
+              router.push({
+                query: {
+                  type: "scene",
+                },
+              })
+            }
+            className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
+          >
+            Scene Settings
+          </button>
+          <hr className="my-5 opacity-20" />
+
+          <div className="mb-4 grid grid-cols-3 gap-4">
+            {props.items
+              ?.filter(
+                (e) => !["timerHint", "guidelines"].includes(`${e.type}`)
+              )
+              ?.map((i, idx) => {
+                return (
+                  <div
+                    className="relative"
+                    key={idx}
+                    onClick={() =>
+                      router.push({
+                        query: {
+                          type: "selectedItem",
+                          id: i._id,
+                        },
+                      })
+                    }
+                  >
+                    <img
+                      className="w-full  text-xs cursor-pointer
+                        flex justify-center flex-col items-center 
+                        border border-opacity-20 border-gray-200  text-center p-6"
+                      src={i.src}
+                    />
+                    <div className="text-white absolute bottom-0 text-xs text-center  w-full bg-black bg-opacity-30">
+                      {i.name}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+          <Popover
+            label={
+              <button className="w-full px-3 py-2 text-center bg-white bg-opacity-20">
+                + Add Item
+              </button>
+            }
+          >
+            <AllImage
+              imgs={props.imgs}
+              onClick={(id) => {
+                axios
+                  .post("/api/items", {
+                    scene: store.scene,
+                    imgId: id?._id,
+                    scale: 0.5,
+                  })
+                  .then((d) => {
+                    props.getItems();
+                    router.push({
+                      query: {
+                        type: "selectedItem",
+                        id: d.data.id,
+                      },
+                    });
+                  });
+              }}
+            />
+          </Popover>
+          <button
+            onClick={() => router.push("/admin?type=library")}
+            className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"
+          >
+            library
+          </button>
+        </>
+      );
+  }
+};
+
 export default function AdminSettings(props: {
   items: Item[];
   imgs: Img[];
@@ -61,140 +195,10 @@ export default function AdminSettings(props: {
   setScene: (s: Scene) => void;
   scene: Scene;
 }) {
-  const router = useRouter();
-  const id = router.query.id;
-  const type = router.query.type;
-
-  const store = useStore();
-  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
-
-  const imgIdToInfo: Record<string, Img> = {};
-  props.imgs.forEach((img) => {
-    imgIdToInfo[`${img._id}`] = img;
-  });
-
-  const Component = () => {
-    switch (type) {
-      case "scene":
-        return <SceneSettings getItems={props.getItems} items={sceneItems} />;
-      case "selectedItem":
-        return (
-          <SelectedItem
-            getItems={props.getItems}
-            imgs={props.imgs}
-            items={props.items}
-            update={props.update}
-          />
-        );
-
-      default:
-        return (
-          <>
-            <div className="h-8  text-xl text-gray-400 w-full  font-bold">
-              <h1>General Settings</h1>
-            </div>
-            <hr className="my-5 opacity-20" />
-            <div className="w-full bg-opacity-20">
-              <Select
-                label=""
-                value={props.scene}
-                onChange={(v) => props.setScene(v.value as Scene)}
-                options={scenes.map((addr) => ({
-                  label: addr,
-                  value: addr.toLocaleLowerCase(),
-                }))}
-              />
-            </div>
-            <div className="my-2" />
-
-            <button
-              onClick={() =>
-                router.push({
-                  query: {
-                    type: "scene",
-                  },
-                })
-              }
-              className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
-            >
-              Scene Settings
-            </button>
-            <hr className="my-5 opacity-20" />
-
-            <div className="mb-4 grid grid-cols-3 gap-4">
-              {props.items
-                ?.filter(
-                  (e) => !["timerHint", "guidelines"].includes(`${e.type}`)
-                )
-                ?.map((i, idx) => {
-                  return (
-                    <div
-                      className="relative"
-                      key={idx}
-                      onClick={() =>
-                        router.push({
-                          query: {
-                            type: "selectedItem",
-                            id: i._id,
-                          },
-                        })
-                      }
-                    >
-                      <img
-                        className="w-full  text-xs cursor-pointer
-                          flex justify-center flex-col items-center 
-                          border border-opacity-20 border-gray-200  text-center p-6"
-                        src={i.src}
-                      />
-                      <div className="text-white absolute bottom-0 text-xs text-center  w-full bg-black bg-opacity-30">
-                        {i.name}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-            <Popover
-              label={
-                <button className="w-full px-3 py-2 text-center bg-white bg-opacity-20">
-                  + Add Item
-                </button>
-              }
-            >
-              <AllImage
-                imgs={props.imgs}
-                onClick={(id) => {
-                  axios
-                    .post("/api/items", {
-                      scene: store.scene,
-                      imgId: id?._id,
-                      scale: 0.5,
-                    })
-                    .then((d) => {
-                      props.getItems();
-                      router.push({
-                        query: {
-                          type: "selectedItem",
-                          id: d.data.id,
-                        },
-                      });
-                    });
-                }}
-              />
-            </Popover>
-            <button
-              onClick={() => router.push("/admin?type=library")}
-              className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"
-            >
-              library
-            </button>
-          </>
-        );
-    }
-  };
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
       <div className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
-        <Component />
+        <Component {...props} />
       </div>
     </div>
   );
