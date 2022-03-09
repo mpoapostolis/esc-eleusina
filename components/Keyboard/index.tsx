@@ -8,16 +8,16 @@ function Key(
     pressed: boolean;
   } & DetailedHTMLProps<HTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
 ) {
-  const { children, pressed, special, ...rest } = props;
+  const { children, special, pressed, ...rest } = props;
 
   return (
     <button
       className={clsx(
         `border-gray-700 shadow-inner shadow-gray-500 bg-black 
-          rounded-xl hover:scale-90 uppercase w-full border 
-          p-3  font-black text-gray-300 duration-150`,
+          rounded-xl hover:scale-90  p-3 uppercase w-full md:p-3 font-black 
+          text-white`,
         {
-          "bg-white bg-opacity-10 scale-90": pressed,
+          "bg-black bg-opacity-20 scale-90": pressed,
           "text-xs font-semibold": special,
         }
       )}
@@ -36,7 +36,7 @@ function Keyboard(props: { onKeyPress: (k: string) => void }) {
   }, [key]);
 
   return (
-    <div className={clsx("w-full text-white font-black text-base")}>
+    <div className={clsx("w-full  text-white font-black text-base")}>
       <div className="flex justify-center  gap-1 my-1 w-full">
         {["ς", "ε", "ρ", "τ", "υ", "θ", "ι", "ο", "π", "Backspace"].map((k) => (
           <Key
@@ -45,11 +45,20 @@ function Keyboard(props: { onKeyPress: (k: string) => void }) {
             pressed={k === key && keyPressed}
             key={k}
           >
-            {k}
+            {k === "Backspace" ? (
+              <div className="flex justify-center w-full">
+                <img
+                  className="h-5 w-5"
+                  src="https://s2.svgbox.net/materialui.svg?ic=backspace&color=fff"
+                />
+              </div>
+            ) : (
+              k
+            )}
           </Key>
         ))}
       </div>
-      <div className="flex justify-center gap-1 my-1 w-full">
+      <div className="flex px-5 justify-center gap-1 my-1 w-full">
         {["α", "σ", "δ", "φ", "γ", "η", "ξ", "κ", "λ"].map((k) => (
           <Key
             onClick={() => props.onKeyPress(k)}

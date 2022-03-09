@@ -363,6 +363,54 @@ export default function SelectedItem(props: {
               ></input>
 
               <br />
+
+              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                onClick set Lexigram seperated by comma (,)
+              </label>
+              <input
+                value={selectedItem.lexigram}
+                onChange={(evt) => {
+                  props.update({
+                    lexigram: evt.currentTarget.value,
+                  });
+                }}
+                className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+              ></input>
+
+              <br />
+
+              <Popover
+                label={
+                  <>
+                    <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                      Lexigram reward
+                    </label>
+                    <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                      {selectedItem.lexigramReward ? (
+                        <div>
+                          <img
+                            src={selectedItem.lexigramReward?.src}
+                            className="w-20 h-auto"
+                          />
+                        </div>
+                      ) : (
+                        "➕"
+                      )}
+                    </div>
+                  </>
+                }
+              >
+                <AllImage
+                  imgs={props.items}
+                  onClick={async (o) => {
+                    props.update({
+                      lexigramReward: o as Item | null,
+                    });
+                  }}
+                />
+              </Popover>
+              <br />
+
               <Select
                 onChange={(v) => {
                   props.update({

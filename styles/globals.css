@@ -31,5 +31,5 @@ a {
 
 *::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background-color: lightgray;
+  background-color: #222;
 }

@@ -66,6 +66,9 @@ export type Item = {
   boxReward?: string | null;
   orderBoxError?: string;
   goToScene?: Scene;
+  lexigram?: string;
+  lexigramReward?: Item | null;
+  hidden?: boolean;
   collectableIfHandHas?: string | null;
   onClickTrigger?: string;
   text?: string;
@@ -193,7 +196,10 @@ export type Store = {
   modal: Modal;
   inventory: Item[];
   epicInventory: Item[];
+
   lexigram?: string[];
+  lexigramReward?: Item | null;
+
   inventoryNotf: string[];
   selectItem?: Item;
   epicItem?: Item;
@@ -205,7 +211,7 @@ export type Store = {
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
-  setLexigram: (s?: string[]) => void;
+  setLexigram: (s?: string[], reward?: Item | null) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
   setEpicItem: (s?: Item) => void;
@@ -228,7 +234,7 @@ const win = loadSound("/sounds/win.wav");
 export const useStore = create<Store>((set, get) => ({
   account: {},
   status: "MENU",
-  scene: "teletourgeio",
+  scene: "elaiourgeio",
   level: "Φως-Σκοτάδι",
   inventory: [],
   epicInventory: [],
@@ -258,32 +264,28 @@ export const useStore = create<Store>((set, get) => ({
       guideLinesVissible: b,
     }));
   },
-  // lexigram: ["εβδομάδα", "έτος", "σήμερα", "αύριο", "χθες", "ημερολόγιο"],
+
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
   onTrigger: (triggerEvent?: string) =>
     set((s) => {
       switch (triggerEvent) {
         case "ancientText":
           return s.setAncientText(ancientText);
-        case "lexigram":
-          return s.setLexigram([
-            "εβδομάδα",
-            "έτος",
-            "σήμερα",
-            "αύριο",
-            "χθες",
-            "ημερολόγιο",
-          ]);
+
         case "teletourgeio":
 
         default:
           break;
       }
     }),
-  setLexigram: (s?: string[]) =>
+  setLexigram: (lexigram?: string[], lexigramReward?: Item | null) =>
     set(() => {
       dap?.play();
-      return { status: "MODAL", lexigram: s };
+      return {
+        status: lexigram ? "MODAL" : "RUNNING",
+        lexigram,
+        lexigramReward,
+      };
     }),
 
   setEpicItem: (epicItem?: Item) =>
