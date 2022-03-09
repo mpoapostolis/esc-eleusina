@@ -68,6 +68,7 @@ export type Item = {
   goToScene?: Scene;
   lexigram?: string;
   lexigramReward?: Item | null;
+  jigSawUrl?: string;
   hidden?: boolean;
   collectableIfHandHas?: string | null;
   onClickTrigger?: string;
@@ -192,11 +193,12 @@ export type Store = {
   level: Level;
   guideLinesVissible?: boolean;
   setguideLinesVissible: (e: boolean) => void;
+  setJigSaw: (e?: string) => void;
   guideLines?: string;
   modal: Modal;
   inventory: Item[];
   epicInventory: Item[];
-
+  jigSawUrl?: string;
   lexigram?: string[];
   lexigramReward?: Item | null;
 
@@ -249,6 +251,13 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
+  setJigSaw: (e?: string) => {
+    if (e) dap?.play();
+    set(() => ({
+      status: e ? "MODAL" : "RUNNING",
+      jigSawUrl: e,
+    }));
+  },
 
   setHand: (h?: string) => {
     if (h) dap?.play();

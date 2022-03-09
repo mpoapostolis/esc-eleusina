@@ -30,12 +30,6 @@ import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 
-import { Globals } from "@react-spring/shared";
-
-Globals.assign({
-  frameLoop: "always",
-});
-
 extend({ OrbitControls });
 
 function Controls(props: { fov: number } & OrbitControlsProps) {
@@ -204,7 +198,7 @@ const Home: NextPage = () => {
   return (
     <div>
       <JigSaw />
-      {/* <GuideLines />
+      <GuideLines />
       <AncientText />
       <Lexigram />
       <Ui items={sceneItems} time={timer.time} />
@@ -243,7 +237,7 @@ const Home: NextPage = () => {
             <Hand />
           </Suspense>
         </Canvas>
-      </div> */}
+      </div>
     </div>
   );
 };

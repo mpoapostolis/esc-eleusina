@@ -1,7 +1,8 @@
-import { useDrag, useGesture } from "@use-gesture/react";
+import { useGesture } from "@use-gesture/react";
 import { animated, useSpring } from "@react-spring/web";
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
+import { useStore } from "../../store";
 
 const paths = [
   "M441,83.999c-6.114,0-11.793,1.839-16.537,4.979  c0,0-13.463,11.133-13.463-26.367V14H211v48.611c0,37.5-13.463,26.367-13.463,26.367c-4.743-3.14-10.422-4.979-16.537-4.979  c-16.569,0-30,13.432-30,30.001s13.431,30,30,30c6.113,0,11.793-1.838,16.535-4.978c0,0,13.464-11.133,13.464,26.367V214h48.611  c37.5,0,26.367-13.463,26.367-13.463c-3.14-4.743-4.979-10.422-4.979-16.537c0-16.569,13.432-30,30.001-30s30,13.431,30,30  c0,6.113-1.838,11.793-4.978,16.535c0,0-11.133,13.464,26.367,13.464H411v-48.611c0-37.5,13.464-26.367,13.464-26.367  C429.206,142.162,434.886,144,441,144c16.569,0,30-13.431,30-30S457.568,83.999,441,83.999z",
@@ -22,45 +23,48 @@ const paths = [
   "M341.001,584.003c0,6.114-1.839,11.79-4.979,16.537  c0,0-11.133,13.46,26.367,13.46H411v-48.611c0-37.5,13.464-26.367,13.464-26.367c4.742,3.142,10.422,4.98,16.535,4.98  c16.569,0,30-13.433,30-30.002s-13.431-30-30-30c-6.114,0-11.793,1.839-16.537,4.979c0,0-13.463,11.132-13.463-26.367v-48.611  h-48.611c-37.5,0-26.367,13.463-26.367,13.463c3.14,4.743,4.979,10.422,4.979,16.537C341.001,460.57,327.569,474,311,474  s-30-13.43-30-29.999c0-6.113,1.838-11.793,4.978-16.535c0,0,11.133-13.464-26.367-13.464H211v48.611  c0,37.499-13.463,26.367-13.463,26.367C192.794,485.84,187.115,484,181,484C164.433,484,151,497.431,151,514  s13.434,30.002,30.001,30.002c6.113,0,11.793-1.839,16.535-4.98c0,0,13.464-11.133,13.464,26.367V614h48.611  c37.5,0,26.367-13.466,26.367-13.466c-3.14-4.741-4.978-10.422-4.978-16.531c0-16.568,13.431-30.002,30-30.002  S341.001,567.435,341.001,584.003z",
 ];
 
-const src = `https://source.unsplash.com/random`;
 function Piece(p: {
+  correct: boolean;
   clip: string;
-  onDragStart: () => void;
-  onDragEnd: () => void;
+  onCorrect: () => void;
+  solve: boolean;
 }) {
+  const store = useStore();
   const [style, api] = useSpring(() => ({
     x: 0,
     y: 0,
-    backgroundImage: `url(${src})`,
     clipPath: p.clip,
   }));
 
-  const initX = useMemo(() => Math.random() * 300, []);
-  const initY = useMemo(() => Math.random() * 300, []);
+  const initX = useMemo(() => -350 + Math.random() * 700, [p.solve]);
+  const initY = useMemo(() => -200 + Math.random() * 400, [p.solve]);
 
   useEffect(() => {
-    api.set({
+    if (p.solve) api({ x: 0, y: 0 });
+    else api({ x: initX, y: initY });
+  }, [p.solve]);
+
+  useEffect(() => {
+    api({
       x: initX,
       y: initY,
     });
   }, []);
 
   const bind = useGesture({
-    onPointerDown: () => {
-      p.onDragStart();
-    },
-    onPointerUp: () => {
-      p.onDragEnd();
-    },
     onDragEnd: (evt) => {
       const isNear =
         Math.abs(Math.abs(initX) - Math.abs(evt.offset[0])) < 50 &&
         Math.abs(Math.abs(initY) - Math.abs(evt.offset[1])) < 50;
 
-      if (isNear) api.set({ x: 0, y: 0 });
+      if (isNear) {
+        api({ x: 0, y: 0 });
+        p.onCorrect();
+      }
     },
 
     onDrag: (evt) => {
+      if (p.correct) return;
       let x = style.x.get();
       let y = style.y.get();
       x += evt.delta[0];
@@ -73,19 +77,65 @@ function Piece(p: {
   });
 
   return (
-    <animated.div
+    <animated.img
+      src={store.jigSawUrl}
       {...bind()}
-      className="w-full shadow-2xl fixed top-16 -ml-2 h-full"
+      draggable={false}
+      className={clsx("shadow-2xl fixed top-16 -ml-2 h-full ")}
       style={style}
-    ></animated.div>
+    ></animated.img>
   );
 }
 
 const arr = [...Array(16).fill("")];
+const pieces: Record<string, boolean> = arr.reduce(
+  (acc, curr, idx) => ({
+    ...acc,
+    [idx]: false,
+  }),
+  {}
+);
 export default function JigSaw() {
+  const [correct, setCorrect] = useState(pieces);
   const [active, setActive] = useState<number>();
+  const [solve, setSolve] = useState(false);
+  const values = Object.values({ ...correct });
+
+  useEffect(() => {
+    if (values.every(Boolean) && values.length === 16) console.log("win");
+  }, [values]);
+  const store = useStore();
+
   return (
-    <div className="w-screen flex bg-black select-none  bg-opacity-90  border h-screen p-0 m-0">
+    <div
+      className={clsx(
+        "w-screen fixed z-50 flex bg-black select-none  bg-opacity-90   h-screen p-0 m-0",
+        {
+          hidden: store.status !== "MODAL" || !store.jigSawUrl,
+        }
+      )}
+    >
+      <button className=" w-10 m-5 h-10 z-50 pointer-events-auto absolute right-0 top-0">
+        <img
+          className="w-full h-full"
+          onClick={() => {
+            store.setJigSaw(undefined);
+          }}
+          src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
+          role="button"
+        />
+      </button>
+
+      <button
+        onClick={() => {
+          if (!solve) setCorrect(pieces);
+          setSolve(!solve);
+        }}
+        className="border bg-white bg-opacity-5 px-4 py-2 m-5 text-xl font-bold rounded z-50 pointer-events-auto absolute text-gray-300 right-0 bottom-0"
+      >
+        {solve ? "shuffle" : "solve"}
+      </button>
+
       <div
         style={{
           width: `802px`,
@@ -100,8 +150,6 @@ export default function JigSaw() {
               style={{
                 height: "202px",
                 width: "202px",
-                // clipPath: `url(#shape${idx})`,
-                // backgroundImage: `url(${src})`,
               }}
               className="flex border items-center w-full  justify-center text-gray-500 text-3xl border-opacity-5 border-white h-full"
             >
@@ -123,8 +171,11 @@ export default function JigSaw() {
             })}
           >
             <Piece
-              onDragStart={() => {}}
-              onDragEnd={() => {}}
+              solve={solve}
+              correct={correct[idx]}
+              onCorrect={() => {
+                setCorrect((s) => ({ ...s, [idx]: true }));
+              }}
               key={idx}
               clip={`url(#shape${idx})`}
             />

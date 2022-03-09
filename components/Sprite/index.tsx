@@ -81,6 +81,10 @@ export default function Sprite(
         if (props.lexigram) {
           store.setLexigram(props.lexigram.split(","), props.lexigramReward);
         }
+        if (props.type === "jigsaw" && props.jigSawUrl) {
+          console.log(props.jigSawUrl);
+          store.setJigSaw(props.jigSawUrl);
+        }
 
         if (store.hand && !props.collectableIfHandHas && props.type !== "box") {
           store.setHint("Nothing happened...");
