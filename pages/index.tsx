@@ -99,7 +99,7 @@ function Portal(props: Item) {
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
 
-    ref.current.scale.set(props.scale, props.scale, props.scale);
+    ref.current.scale.set(props.scale / 4, props.scale / 6, 1);
   });
 
   const ref = useRef<Mesh>();

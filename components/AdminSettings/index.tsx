@@ -3,7 +3,7 @@ import { Item, Scene, scenes, useStore } from "../../store";
 import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
-import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+import { DetailedHTMLProps, InputHTMLAttributes, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
@@ -67,6 +67,10 @@ const Component = (props: {
 
   const store = useStore();
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+
+  useEffect(() => {
+    if (id) router.push(`/admin?id=${id}&type=selectedItem`);
+  }, [id]);
 
   switch (type) {
     case "scene":
