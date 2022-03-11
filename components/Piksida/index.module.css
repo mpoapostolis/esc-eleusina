@@ -22,20 +22,23 @@
 }
 
 .input {
-  outline: none;
   text-shadow: 0px 0px 10px #000;
   text-shadow: white;
   display: flex;
   justify-content: center;
   justify-items: flex-end;
   padding: 20px;
+  outline: none;
   color: #d6cdc3;
-  width: 100%;
-  border-top-right-radius: 50%;
-  border-bottom-right-radius: 50%;
+  width: 45%;
+  text-align: center;
   font-size: 60px;
   font-size: 2rem;
-  text-align: left;
   font-weight: bolder;
+  transition: 0.125s;
+  animation-duration: 0.25s;
   background: transparent;
+}
+.input:focus {
+  background: #000a;
 }

@@ -190,7 +190,7 @@ export default function Piksida() {
                   style={{
                     transform: `rotate(${-deg}deg)`,
                   }}
-                  className={"relative my-1 duration-1000 mx-7 "}
+                  className={"relative  duration-1000 m-7 "}
                 >
                   Σ
                 </div>
@@ -214,7 +214,7 @@ export default function Piksida() {
                   }}
                   className={clsx(styles.input, " rotate-180 ")}
                 ></input>
-                <div className="relative mx-7  opacity-0">S</div>
+                <div className="relative m-7  opacity-0">S</div>
                 <input
                   onFocus={() => {
                     const p = points[3];
