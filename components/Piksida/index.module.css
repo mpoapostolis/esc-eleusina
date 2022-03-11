@@ -6,6 +6,7 @@
     inset 0 0 10px 1px #9a8770;
   z-index: 2;
   color: #9a8770;
+  z-index: 90;
   font-weight: bold;
   font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
   font-size: 3rem;
@@ -13,7 +14,7 @@
 }
 
 .r {
-  background: #9a8770;
+  background: #f00;
 }
 
 .panel {
@@ -27,18 +28,69 @@
   display: flex;
   justify-content: center;
   justify-items: flex-end;
-  padding: 20px;
+  padding: 10px;
   outline: none;
   color: #d6cdc3;
   width: 45%;
-  text-align: center;
-  font-size: 60px;
+  text-align: left;
   font-size: 2rem;
   font-weight: bolder;
   transition: 0.125s;
   animation-duration: 0.25s;
   background: transparent;
 }
-.input:focus {
-  background: #000a;
+
+.take:before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  top: -50px;
+  width: 80px;
+  height: 100px;
+  left: 50%;
+  margin-left: -40px;
+  border-radius: 50%;
+  background-color: #9b472b;
+}
+
+.take:after {
+  position: absolute;
+  top: -50px;
+  width: 35px;
+  background-color: #9b472b;
+  border-radius: 50px;
+  content: "";
+  height: 100px;
+  left: 55%;
+  margin-left: -40px;
+}
+
+.ring {
+  content: "";
+  border-radius: 50%;
+  position: absolute;
+  top: -68px;
+  width: 50px;
+  height: 50px;
+  left: 49.5%;
+  margin-left: -35px;
+  border: solid 10px #743621;
+}
+
+.ring:after {
+  position: absolute;
+  content: "";
+  z-index: 1;
+  top: 30px;
+  left: 60%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  background-color: #4c2214;
+  border-radius: 50%;
+}
+
+.textShadow {
+  color: #d6cdc3;
+  text-shadow: 0px 0px 10px #000;
 }

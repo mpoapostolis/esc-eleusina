@@ -138,125 +138,112 @@ export default function Piksida() {
   const [deg, setDeg] = useState(0);
 
   return (
-    <div className="fixed   flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen">
-      <div className="grid bg-black h-screen grid-cols-2 m-auto  w-full">
-        <div className=" rounded z-50" id="map" ref={mapContainer} />
-
-        <div className=" p-10">
+    <div className="fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen">
+      <div className="relative bg-black h-screen  m-auto  w-full">
+        <div
+          className=" rounded w-screen h-screen z-0"
+          id="map"
+          ref={mapContainer}
+        >
           <div
-            className={clsx(styles.compass, "w-full p-10 flex items-center")}
+            style={{ zIndex: 9999 }}
+            className="absolute bottom-0 right-0 z-50 max-w-lg w-full items-center justify-between flex-col md:m-5"
           >
+            <div className={styles.take}>
+              <div className={styles.ring}></div>
+            </div>
             <div
-              style={{
-                transform: `rotate(${deg}deg)`,
-              }}
               className={clsx(
-                styles.panel,
-                "w-full p-10 overflow-hidden aspect-square duration-1000  flex items-center justify-center relative rounded-full"
+                styles.compass,
+                "relative w-full p-4 flex items-center"
               )}
             >
-              <div className="w-full  h-full relative">
-                <img
-                  className="relative  -left-5"
-                  src="/images/compass.svg"
-                  alt=""
-                />
-                {[...Array(24).fill("")].map((_, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      top: "50%",
-                      transform: `rotate(${idx * 7.5}deg)`,
-                    }}
-                    className={clsx(
-                      styles.r,
-                      "top-5 border-b   opacity-10  w-full absolute"
-                    )}
+              <div
+                style={{
+                  transform: `rotate(${deg}deg)`,
+                }}
+                className={clsx(
+                  styles.panel,
+                  "w-full overflow-hidden aspect-square duration-1000  flex items-center justify-center relative rounded-full"
+                )}
+              >
+                <div className="w-full rounded-full h-full relative">
+                  <img
+                    className="relative right-3"
+                    src="/images/compass.svg"
+                    alt=""
                   />
-                ))}
-              </div>
-
-              <div className="flex w-full justify-center absolute z-50 ">
-                <input
-                  onFocus={() => {
-                    const p = points[2];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(2);
-                  }}
-                  className={clsx(styles.input, "rotate-180 ")}
-                ></input>
-
-                <div
-                  style={{
-                    transform: `rotate(${-deg}deg)`,
-                  }}
-                  className={"relative  duration-1000 m-7 "}
-                >
-                  Σ
+                  {[...Array(24).fill("")].map((_, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        top: "50%",
+                        transform: `rotate(${idx * 7.5}deg)`,
+                      }}
+                      className={clsx(
+                        styles.r,
+                        "top-5 border-b   opacity-10  w-full absolute"
+                      )}
+                    />
+                  ))}
                 </div>
 
-                <input
-                  onFocus={() => {
-                    const p = points[0];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(0);
-                  }}
-                  className={clsx(styles.input, " ")}
-                ></input>
-              </div>
+                <div className="flex w-full justify-center absolute z-50 ">
+                  <input
+                    onFocus={() => {
+                      const p = points[2];
+                      flyTo(p.coords, p.bearing, p.pitch);
+                      setIdx(2);
+                    }}
+                    className={clsx(styles.input, "rotate-180 ")}
+                  ></input>
 
-              <div className="flex w-full rotate-90 justify-center  absolute z-50 ">
-                <input
-                  onFocus={() => {
-                    const p = points[1];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(1);
-                  }}
-                  className={clsx(styles.input, " rotate-180 ")}
-                ></input>
-                <div className="relative m-7  opacity-0">S</div>
-                <input
-                  onFocus={() => {
-                    const p = points[3];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(3);
-                  }}
-                  className={clsx(styles.input, "")}
-                ></input>
-              </div>
+                  <div
+                    style={{
+                      transform: `rotate(${-deg}deg)`,
+                    }}
+                    className={clsx(
+                      "duration-300  flex justify-center items-center",
+                      styles.textShadow
+                    )}
+                  >
+                    Σ
+                  </div>
 
-              {/* <div className="flex w-full justify-center   h-16  absolute z-50">
-                <input
-                  onFocus={() => {
-                    const p = points[2];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(2);
-                  }}
-                  className={clsx(styles.input, "  rotate-180")}
-                ></input>
-                <span className={"text-3xl mx-8"}></span>
-                <input
-                  onFocus={() => {
-                    const p = points[3];
-                    flyTo(p.coords, p.bearing, p.pitch);
-                    setIdx(3);
-                  }}
-                  className={clsx(styles.input, " ")}
-                ></input>
-              </div> */}
+                  <input
+                    onFocus={() => {
+                      const p = points[0];
+                      flyTo(p.coords, p.bearing, p.pitch);
+                      setIdx(0);
+                    }}
+                    className={clsx(styles.input, " ")}
+                  ></input>
+                </div>
+
+                <div className="flex w-full rotate-90 justify-center  absolute z-50 ">
+                  <input
+                    onFocus={() => {
+                      const p = points[1];
+                      flyTo(p.coords, p.bearing, p.pitch);
+                      setIdx(1);
+                    }}
+                    className={clsx(styles.input, " rotate-180 ")}
+                  ></input>
+                  <input
+                    onFocus={() => {
+                      const p = points[3];
+                      flyTo(p.coords, p.bearing, p.pitch);
+                      setIdx(3);
+                    }}
+                    className={clsx(styles.input, "ml-10")}
+                  ></input>
+                </div>
+              </div>
             </div>
           </div>
-          <br />
-
-          {points.map((k, idx) => (
-            <li
-              onClick={() => flyTo(k.coords, k.bearing, k.pitch)}
-              className="text-gray-400 full flex items-center mb-2 font-bold"
-              key={k.name}
-            >
-              <span className="h-full flex items-center mr-2 ">•</span> {k.desc}
-            </li>
-          ))}
+        </div>
+        <div className="absolute top-0 left-0 z-50 bg-opacity-70 w-full p-10 bg-black text-center  text-gray-400 text-3xl full items-center flex justify-center font-bold">
+          {points[deg / 90].desc}
         </div>
       </div>
     </div>
