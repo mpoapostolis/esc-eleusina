@@ -22,28 +22,20 @@
 }
 
 .input {
-  border-right: 2px solid#9a8770;
-  border-left: none;
   outline: none;
+  text-shadow: 0px 0px 10px #000;
   text-shadow: white;
   display: flex;
   justify-content: center;
   justify-items: flex-end;
   padding: 20px;
-  color: #9a8770;
-  width: 26%;
-  border-top-right-radius: 25px;
-  border-bottom-right-radius: 25px;
+  color: #d6cdc3;
+  width: 100%;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
   font-size: 60px;
   font-size: 2rem;
   text-align: left;
-  font-weight: bold;
-  background: linear-gradient(
-    0deg,
-    #0000 15%,
-    #000a 30%,
-    #000,
-    #000a 60%,
-    #0000
-  );
+  font-weight: bolder;
+  background: transparent;
 }
