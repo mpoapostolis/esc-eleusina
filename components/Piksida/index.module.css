@@ -1,0 +1,49 @@
+.compass {
+  border-radius: 50%;
+  background-color: #c8603d;
+  border: 2px solid #763c24;
+  box-shadow: 0 0px 0px 8px #9b472b, 0 0px 0px 8px #743621,
+    inset 0 0 10px 1px #9a8770;
+  z-index: 2;
+  color: #9a8770;
+  font-weight: bold;
+  font-family: "Times New Roman", Times, Baskerville, Georgia, serif;
+  font-size: 3rem;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.r {
+  background: #9a8770;
+}
+
+.panel {
+  box-shadow: inset 0 0 16px 10px #250b03;
+  background-color: #252b29;
+}
+
+.input {
+  border-right: 2px solid#9a8770;
+  border-left: none;
+  outline: none;
+  text-shadow: white;
+  display: flex;
+  justify-content: center;
+  justify-items: flex-end;
+  padding: 20px;
+  color: #9a8770;
+  width: 26%;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  font-size: 60px;
+  font-size: 2rem;
+  text-align: left;
+  font-weight: bold;
+  background: linear-gradient(
+    0deg,
+    #0000 15%,
+    #000a 30%,
+    #000,
+    #000a 60%,
+    #0000
+  );
+}

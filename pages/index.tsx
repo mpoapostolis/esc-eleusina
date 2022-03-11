@@ -29,6 +29,7 @@ import useGuideLines from "../Hooks/useGuideLines";
 import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
+import Piksida from "../components/Piksida";
 
 extend({ OrbitControls });
 
@@ -197,7 +198,8 @@ const Home: NextPage = () => {
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div>
-      <JigSaw />
+      <Piksida />
+      {/* <JigSaw />
       <GuideLines />
       <AncientText />
       <Lexigram />
@@ -237,7 +239,7 @@ const Home: NextPage = () => {
             <Hand />
           </Suspense>
         </Canvas>
-      </div>
+      </div> */}
     </div>
   );
 };
