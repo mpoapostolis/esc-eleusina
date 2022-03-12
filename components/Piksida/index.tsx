@@ -241,9 +241,9 @@ export default function Piksida() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="absolute top-0 left-0 z-50 bg-opacity-70 w-full p-10 bg-black text-center  text-gray-400 text-3xl full items-center flex justify-center font-bold">
-          {points[deg / 90].desc}
+          <div className="absolute bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
+            <div className="w-2/4">{points[deg / 90].desc}</div>
+          </div>
         </div>
       </div>
     </div>

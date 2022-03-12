@@ -51,6 +51,7 @@ function Portal(props: Sprite) {
       ref.current.rotation.copy(three.camera.rotation);
     }
     ref.current.scale.set(props.scale, props.scale, props.scale);
+    ref.current.scale.set(props.scale / 4, props.scale / 6, 1);
   });
 
   const ref = useRef<Mesh>();
