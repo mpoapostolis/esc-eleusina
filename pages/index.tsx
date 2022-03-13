@@ -198,8 +198,8 @@ const Home: NextPage = () => {
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div>
-      <Piksida />
-      {/* <JigSaw />
+      {/* <Piksida /> */}
+      <JigSaw />
       <GuideLines />
       <AncientText />
       <Lexigram />
@@ -239,7 +239,7 @@ const Home: NextPage = () => {
             <Hand />
           </Suspense>
         </Canvas>
-      </div> */}
+      </div>
     </div>
   );
 };
