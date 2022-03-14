@@ -30,14 +30,11 @@
   justify-items: flex-end;
   padding: 10px;
   outline: none;
-  color: #d6cdc3;
-  width: 45%;
+  width: 100%;
   text-align: left;
-  font-size: 2rem;
-  font-weight: bolder;
+  font-weight: 900;
   transition: 0.125s;
   animation-duration: 0.25s;
-  background: transparent;
 }
 
 .take:before {

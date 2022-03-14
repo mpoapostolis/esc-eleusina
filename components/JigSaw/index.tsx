@@ -3,6 +3,7 @@ import { animated, useSpring } from "@react-spring/web";
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../store";
+import { useFrame, useThree } from "@react-three/fiber";
 
 const paths = [
   "M441,83.999c-6.114,0-11.793,1.839-16.537,4.979  c0,0-13.463,11.133-13.463-26.367V14H211v48.611c0,37.5-13.463,26.367-13.463,26.367c-4.743-3.14-10.422-4.979-16.537-4.979  c-16.569,0-30,13.432-30,30.001s13.431,30,30,30c6.113,0,11.793-1.838,16.535-4.978c0,0,13.464-11.133,13.464,26.367V214h48.611  c37.5,0,26.367-13.463,26.367-13.463c-3.14-4.743-4.979-10.422-4.979-16.537c0-16.569,13.432-30,30.001-30s30,13.431,30,30  c0,6.113-1.838,11.793-4.978,16.535c0,0-11.133,13.464,26.367,13.464H411v-48.611c0-37.5,13.464-26.367,13.464-26.367  C429.206,142.162,434.886,144,441,144c16.569,0,30-13.431,30-30S457.568,83.999,441,83.999z",
@@ -24,6 +25,7 @@ const paths = [
 ];
 
 function Piece(p: {
+  idx: number;
   correct: boolean;
   clip: string;
   onCorrect: () => void;
@@ -36,9 +38,16 @@ function Piece(p: {
     clipPath: p.clip,
     width: "820px",
   }));
+  const getNumber = () => {
+    if (typeof window === "undefined") return 0;
+    console.log(p.idx % 4, (p.idx % 4) * 200);
 
-  const initX = useMemo(() => -350 + Math.random() * 700, [p.solve]);
-  const initY = useMemo(() => -200 + Math.random() * 400, [p.solve]);
+    const side = (window.innerWidth - 820) / 2;
+    // return Math.random() < 0.5 ? +side : -side;
+    return -side - (p.idx % 4) * 150;
+  };
+  const initX = useMemo(() => getNumber(), [p.solve]);
+  const initY = 0;
 
   useEffect(() => {
     if (p.solve) api({ x: 0, y: 0 });
@@ -112,7 +121,7 @@ export default function JigSaw() {
       className={clsx(
         "w-screen fixed z-50 flex bg-black select-none  bg-opacity-90   h-screen p-0 m-0",
         {
-          hidden: store.status !== "MODAL" || !store.jigSawUrl,
+          // hidden: store.status !== "MODAL" || !store.jigSawUrl,
         }
       )}
     >
@@ -172,6 +181,7 @@ export default function JigSaw() {
             })}
           >
             <Piece
+              idx={idx}
               solve={solve}
               correct={correct[idx]}
               onCorrect={() => {

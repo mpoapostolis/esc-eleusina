@@ -1,7 +1,7 @@
 // eslint-disable-line import/no-webpack-loader-syntax
 // @ts-ignore
 import mapboxgl, { Map, Point } from "mapbox-gl";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import clsx from "clsx";
@@ -13,22 +13,20 @@ const points = [
   {
     name: "Σκαραμαγκάς",
     bearing: 90,
-    pitch: 70,
     coords: {
       lng: 23.5890555,
       lat: 38.004808,
-      zoom: 15,
+      zoom: 12,
     },
     desc: `Διάσημα τα ναυπηγεία του - ανατολικά `,
   },
   {
     name: "Σαλαμίνα",
     bearing: 0,
-    pitch: 60,
     coords: {
       lng: 23.5023259,
       lat: 37.9763449,
-      zoom: 13,
+      zoom: 12,
     },
     desc: `Νησί που συνδέεται με αρχαία ναυμαχία - δυτικά  `,
   },
@@ -36,22 +34,20 @@ const points = [
   {
     name: "Σαρανταπόταμος",
     bearing: 0,
-    pitch: 60,
     coords: {
       lng: 23.5061835,
       lat: 38.0282363,
-      zoom: 14,
+      zoom: 12,
     },
     desc: `Αλλιώς ο ποταμός Ελευσινιακός Κηφισσός - βόρεια `,
   },
   {
     name: "Σαρωνικός",
     bearing: 0,
-    pitch: 60,
     coords: {
       lng: 23.5431423,
       lat: 37.979663,
-      zoom: 14,
+      zoom: 12,
     },
     desc: `Ο Ελευσινιακός Κόλπος αποτελεί μικρότερο κομμάτι του -νότια `,
   },
@@ -60,6 +56,7 @@ const points = [
 export default function Piksida() {
   const mapContainer = useRef(null);
   const map = useRef<Map | null>(null);
+  const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
     if (map.current) return;
@@ -67,9 +64,12 @@ export default function Piksida() {
     const initialMap = new mapboxgl.Map({
       container: "map",
       pitch: 0, // pitch in degrees
-      style: "mapbox://styles/mpoapostolisapp/cl0l2qd4g009p15ql3of8ktpb",
-      center: [23.5275785, 38.0208724],
-      zoom: 11,
+      center: {
+        lng: 23.5061835,
+        lat: 38.0,
+      },
+      style: "mapbox://styles/mpoapostolisapp/cl0qm3nwo00dk15n0fderkmw0",
+      zoom: 12,
     });
 
     initialMap.on("load", () => {
@@ -77,21 +77,11 @@ export default function Piksida() {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
         tileSize: 512,
-        maxzoom: 14,
+
+        maxzoom: 11,
       });
       // add the DEM source as a terrain layer with exaggerated height
       initialMap.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
-
-      // add a sky layer that will show when the initialMap is highly pitched
-      initialMap.addLayer({
-        id: "sky",
-        type: "sky",
-        paint: {
-          "sky-type": "atmosphere",
-          "sky-atmosphere-sun": [0.0, 0.0],
-          "sky-atmosphere-sun-intensity": 15,
-        },
-      });
     });
 
     points.forEach((c) => {
@@ -104,23 +94,30 @@ export default function Piksida() {
         .setPopup(popup)
         .addTo(initialMap);
     });
+    const marker = new mapboxgl.Marker({
+      color: "color",
+      scale: 1.2,
+    }).setLngLat({
+      lng: 0,
+      lat: 0,
+    });
 
+    setMarker(marker);
+    marker.addTo(initialMap);
     initialMap.addControl(new mapboxgl.NavigationControl());
-    initialMap.on("click", console.log);
 
     map.current = initialMap;
   });
 
-  const flyTo = async (
-    c: { lat: number; lng: number; zoom: number },
-    bearing: number,
-    pitch: number
-  ) => {
-    if (!map.current) return;
+  const flyTo = async (c: { lat: number; lng: number; zoom: number }) => {
+    if (!map.current || !marker) return;
+    marker.setLngLat({
+      lat: c.lat,
+      lng: c.lng,
+    });
+
     map.current.easeTo({
-      bearing: bearing,
       duration: 500,
-      pitch: pitch,
       center: {
         lat: c.lat,
         lng: c.lng,
@@ -131,12 +128,44 @@ export default function Piksida() {
   };
   const setIdx = (i: number) => {
     if (!map.current) return;
-    console.log(i, deg);
-    setDeg((s) => i * 90);
+    setDeg(i * 90);
   };
 
   const [deg, setDeg] = useState(0);
+  const [answers, setAnswers] = useState({
+    north: false,
+    east: false,
+    west: false,
+    south: false,
+  });
 
+  const setPlace = (e: ChangeEvent<HTMLInputElement>) => {
+    e.currentTarget.value = e.currentTarget.value.toUpperCase();
+    const value = e.currentTarget.value;
+    const name = e.currentTarget.name;
+
+    switch (name) {
+      case "west":
+        if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ")
+          setAnswers((s) => ({ ...s, [name]: true }));
+        break;
+      case "south":
+        if (value === "ΑΡΩΝΙΚΟΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        break;
+      case "north":
+        if (value === "ΑΛΑΜΙΝΑ") setAnswers((s) => ({ ...s, [name]: true }));
+        break;
+      case "east":
+        if (value === "ΚΑΡΑΜΑΓΚΑΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        break;
+    }
+  };
+
+  const rotateComapss = (idx: number) => {
+    const p = points[idx];
+    flyTo(p.coords);
+    setIdx(idx);
+  };
   return (
     <div className="fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen">
       <div className="relative bg-black h-screen  m-auto  w-full">
@@ -189,14 +218,34 @@ export default function Piksida() {
                 </div>
 
                 <div className="flex w-full justify-center absolute z-50 ">
-                  <input
-                    onFocus={() => {
-                      const p = points[2];
-                      flyTo(p.coords, p.bearing, p.pitch);
-                      setIdx(2);
-                    }}
-                    className={clsx(styles.input, "rotate-180 ")}
-                  ></input>
+                  <div
+                    onClick={() => rotateComapss(2)}
+                    className={clsx("flex rotate-180 ")}
+                  >
+                    <input
+                      onFocus={() => rotateComapss(2)}
+                      disabled={answers.west}
+                      name="west"
+                      onChange={setPlace}
+                      className={clsx(
+                        styles.input,
+                        "bg-black bg-opacity-70 text-lg",
+                        {
+                          "opacity-0 ": deg !== 90 * 2,
+                        }
+                      )}
+                    ></input>
+                    <img
+                      className={clsx(
+                        "absolute right-0 top-2 rounded-full w-7",
+                        {
+                          hidden: !answers.west,
+                        }
+                      )}
+                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
+                      alt=""
+                    />
+                  </div>
 
                   <div
                     style={{
@@ -210,38 +259,98 @@ export default function Piksida() {
                     Σ
                   </div>
 
-                  <input
-                    onFocus={() => {
-                      const p = points[0];
-                      flyTo(p.coords, p.bearing, p.pitch);
-                      setIdx(0);
-                    }}
-                    className={clsx(styles.input, " ")}
-                  ></input>
+                  <div
+                    onClick={() => rotateComapss(0)}
+                    className={clsx("flex ")}
+                  >
+                    <input
+                      onFocus={() => rotateComapss(0)}
+                      disabled={answers.east}
+                      name="east"
+                      onChange={setPlace}
+                      className={clsx(
+                        styles.input,
+                        "bg-black bg-opacity-70 text-lg",
+                        {
+                          "opacity-0 ": deg !== 90 * 0,
+                        }
+                      )}
+                    ></input>
+                    <img
+                      className={clsx(
+                        "absolute right-0 top-2 rounded-full w-7",
+                        {
+                          hidden: !answers.east,
+                        }
+                      )}
+                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
+                      alt=""
+                    />
+                  </div>
                 </div>
 
                 <div className="flex w-full rotate-90 justify-center  absolute z-50 ">
-                  <input
-                    onFocus={() => {
-                      const p = points[1];
-                      flyTo(p.coords, p.bearing, p.pitch);
-                      setIdx(1);
-                    }}
-                    className={clsx(styles.input, " rotate-180 ")}
-                  ></input>
-                  <input
-                    onFocus={() => {
-                      const p = points[3];
-                      flyTo(p.coords, p.bearing, p.pitch);
-                      setIdx(3);
-                    }}
-                    className={clsx(styles.input, "ml-10")}
-                  ></input>
+                  <div
+                    onClick={() => rotateComapss(1)}
+                    className={clsx("flex rotate-180 ")}
+                  >
+                    <input
+                      onFocus={() => rotateComapss(1)}
+                      disabled={answers.north}
+                      name="north"
+                      onChange={setPlace}
+                      className={clsx(
+                        styles.input,
+                        "bg-black bg-opacity-70 text-lg",
+                        {
+                          "opacity-0 ": deg !== 90 * 1,
+                        }
+                      )}
+                    ></input>
+                    <img
+                      className={clsx(
+                        "absolute right-0 top-2 rounded-full w-7",
+                        {
+                          hidden: !answers.north,
+                        }
+                      )}
+                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    onClick={() => rotateComapss(3)}
+                    className={clsx("flex ml-10")}
+                  >
+                    <input
+                      onFocus={() => rotateComapss(3)}
+                      disabled={answers.south}
+                      name="south"
+                      onChange={setPlace}
+                      className={clsx(
+                        styles.input,
+                        "bg-black bg-opacity-70 text-lg",
+                        {
+                          "opacity-0 ": deg !== 90 * 3,
+                        }
+                      )}
+                    ></input>
+                    <img
+                      className={clsx(
+                        "absolute right-0 top-2 rounded-full w-7",
+                        {
+                          hidden: !answers.south,
+                        }
+                      )}
+                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
+                      alt=""
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
+          <div className="fixed bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
             <div className="w-2/4">{points[deg / 90].desc}</div>
           </div>
         </div>

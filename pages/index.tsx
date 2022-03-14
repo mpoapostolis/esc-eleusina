@@ -133,6 +133,10 @@ function Portal(props: Item) {
   );
 }
 
+const Jig = () => {
+  return <canvas></canvas>;
+};
+
 function TimerHint(props: Item) {
   useTimerHint(`${props.text}`, props.delayTimeHint);
   return null;
@@ -198,15 +202,16 @@ const Home: NextPage = () => {
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div>
+      <Jig />
       {/* <Piksida /> */}
-      <JigSaw />
-      <GuideLines />
+      {/* <JigSaw /> */}
+      {/* <GuideLines />
       <AncientText />
       <Lexigram />
       <Ui items={sceneItems} time={timer.time} />
       <Menu />
-      <EpicItem />
-      <div className="canvas">
+      <EpicItem /> */}
+      {/* <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
           <Suspense fallback={<CustomLoader />}>
@@ -239,7 +244,7 @@ const Home: NextPage = () => {
             <Hand />
           </Suspense>
         </Canvas>
-      </div>
+      </div> */}
     </div>
   );
 };
