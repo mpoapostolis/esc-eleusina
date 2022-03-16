@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { AllImage } from ".";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
+import Popover from "../Popover";
 import Select from "../Select";
 
 function Row(props: Item & { getItems: () => any }) {
@@ -96,6 +98,8 @@ function Row(props: Item & { getItems: () => any }) {
 
 export default function SceneSettings(props: {
   getItems: () => void;
+  update: (p: Partial<Item>) => void;
+
   items: Item[];
 }) {
   const store = useStore();
@@ -206,10 +210,48 @@ export default function SceneSettings(props: {
               setLoad(false);
             });
         }}
-        className="mt-auto flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
+        className="mt-3 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
       >
         {load ? <Load /> : `+ Add Timer Hint`}
       </button>
+      <hr className="my-5 opacity-20" />
+
+      <Select
+        onChange={(v) => {
+          props.update({
+            type: v.value as string,
+          });
+        }}
+        label="Mini Game"
+        options={[undefined, "box", "compass", "jigsaw", "lexigram"].map(
+          (o) => ({
+            label: o === undefined ? "-" : o,
+            value: o,
+          })
+        )}
+      ></Select>
+      <br />
+      <Popover
+        label={
+          <>
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              Reward
+            </label>
+            <div className="border relative p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+              ➕
+            </div>
+          </>
+        }
+      >
+        <AllImage
+          imgs={props.items}
+          onClick={(o) => {
+            props.update({
+              boxReward: o?._id ?? null,
+            });
+          }}
+        />
+      </Popover>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
+import Minigame from "./MiniGame";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -67,6 +68,7 @@ const Component = (props: {
 
   const store = useStore();
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+  const isMiniGame = props.items.find((item) => item.isMiniGame);
 
   useEffect(() => {
     if (id) router.push(`/admin?id=${id}&type=selectedItem`);
@@ -74,7 +76,13 @@ const Component = (props: {
 
   switch (type) {
     case "scene":
-      return <SceneSettings getItems={props.getItems} items={sceneItems} />;
+      return (
+        <SceneSettings
+          update={props.update}
+          getItems={props.getItems}
+          items={sceneItems}
+        />
+      );
     case "selectedItem":
       return (
         <SelectedItem
@@ -84,7 +92,14 @@ const Component = (props: {
           update={props.update}
         />
       );
-
+    case "minigame":
+      return (
+        <Minigame
+          update={props.update}
+          getItems={props.getItems}
+          items={sceneItems}
+        />
+      );
     default:
       return (
         <>
@@ -104,19 +119,34 @@ const Component = (props: {
             />
           </div>
           <div className="my-2" />
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() =>
+                router.push({
+                  query: {
+                    type: "scene",
+                  },
+                })
+              }
+              className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
+            >
+              Scene Settings
+            </button>
 
-          <button
-            onClick={() =>
-              router.push({
-                query: {
-                  type: "scene",
-                },
-              })
-            }
-            className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
-          >
-            Scene Settings
-          </button>
+            <button
+              onClick={() => {
+                router.push({
+                  query: {
+                    type: "minigame",
+                    id: isMiniGame?._id,
+                  },
+                });
+              }}
+              className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
+            >
+              Mini game
+            </button>
+          </div>
           <hr className="my-5 opacity-20" />
 
           <div className="mb-4 grid grid-cols-3 gap-4">
@@ -179,6 +209,7 @@ const Component = (props: {
               }}
             />
           </Popover>
+
           <button
             onClick={() => router.push("/admin?type=library")}
             className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"

@@ -218,10 +218,10 @@ export default function SelectedItem(props: {
             options={[
               undefined,
               "portal",
-              "hint",
-              "guidelines",
               "box",
+              "compass",
               "jigsaw",
+              "lexigram",
             ].map((o) => ({
               label: o === undefined ? "-" : o,
               value: o,
@@ -339,20 +339,24 @@ export default function SelectedItem(props: {
             </>
           ) : (
             <>
-              <Select
-                onChange={(v) => {
-                  props.update({
-                    goToScene: v.value as Scene,
-                  });
-                }}
-                value={selectedItem.goToScene}
-                label="onClick go to scene (360)"
-                options={[undefined, ...scenes].map((o) => ({
-                  label: o === undefined ? "-" : o,
-                  value: o,
-                }))}
-              ></Select>
-              <br />
+              {selectedItem.type === "portal" && (
+                <>
+                  <Select
+                    onChange={(v) => {
+                      props.update({
+                        goToScene: v.value as Scene,
+                      });
+                    }}
+                    value={selectedItem.goToScene}
+                    label="onClick go to scene (360)"
+                    options={[undefined, ...scenes].map((o) => ({
+                      label: o === undefined ? "-" : o,
+                      value: o,
+                    }))}
+                  ></Select>
+                  <br />
+                </>
+              )}
 
               <label className="block text-left text-xs font-medium mb-2 text-gray-200">
                 jigSaw image url

@@ -56,6 +56,7 @@ export type AncientText = {
 
 export type Item = {
   _id?: string;
+  isMiniGame?: boolean;
   isEpic?: boolean;
   disappearIfIdExist?: string | null;
   rotation?: Euler;
@@ -201,6 +202,7 @@ export type Store = {
   jigSawUrl?: string;
   lexigram?: string[];
   lexigramReward?: Item | null;
+  compass?: boolean;
 
   inventoryNotf: string[];
   selectItem?: Item;
@@ -210,6 +212,7 @@ export type Store = {
   scene: Scene;
   hand?: string;
   status: Status;
+  setCompass: (p?: boolean) => void;
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
@@ -259,6 +262,15 @@ export const useStore = create<Store>((set, get) => ({
     }));
   },
 
+  setCompass: (compass) => {
+    dap?.play();
+    set(() => ({
+      status: compass ? "MODAL" : "RUNNING",
+      compass,
+    }));
+
+    set((s) => {});
+  },
   setHand: (h?: string) => {
     if (h) dap?.play();
     set((s) => {
@@ -280,6 +292,8 @@ export const useStore = create<Store>((set, get) => ({
       switch (triggerEvent) {
         case "ancientText":
           return s.setAncientText(ancientText);
+        case "compass":
+          return s.setCompass(!s.compass);
 
         case "teletourgeio":
 

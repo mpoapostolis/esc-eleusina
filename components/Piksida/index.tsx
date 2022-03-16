@@ -1,10 +1,11 @@
-// eslint-disable-line import/no-webpack-loader-syntax
-// @ts-ignore
 import mapboxgl, { Map, Point } from "mapbox-gl";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import clsx from "clsx";
+import { useStore } from "../../store";
+import { loadSound } from "../../utils";
+const win = loadSound("/sounds/win.wav");
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoibXBvYXBvc3RvbGlzYXBwIiwiYSI6ImNsMGt0NWEycTBwbWEzY205cmxjNjZuMjUifQ.PjvkTnV_Puw9hKmBQXVJBA";
@@ -104,7 +105,7 @@ export default function Piksida() {
 
     setMarker(marker);
     marker.addTo(initialMap);
-    initialMap.addControl(new mapboxgl.NavigationControl());
+    initialMap.addControl(new mapboxgl.NavigationControl(), "top-left");
 
     map.current = initialMap;
   });
@@ -139,6 +140,19 @@ export default function Piksida() {
     south: false,
   });
 
+  useEffect(() => {
+    if (answers.north && answers.east && answers.west && answers.south) {
+      win?.play();
+      store.setCompass(false);
+      store.setEpicItem({
+        name: "cerberous",
+        scale: 1,
+        src: "/images/cerberous.png",
+        scene: "arxaiologikos",
+      });
+    }
+  }, [answers]);
+
   const setPlace = (e: ChangeEvent<HTMLInputElement>) => {
     e.currentTarget.value = e.currentTarget.value.toUpperCase();
     const value = e.currentTarget.value;
@@ -166,9 +180,17 @@ export default function Piksida() {
     flyTo(p.coords);
     setIdx(idx);
   };
+  const store = useStore();
   return (
-    <div className="fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen">
-      <div className="relative bg-black h-screen  m-auto  w-full">
+    <div
+      className={clsx(
+        "fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen",
+        {
+          hidden: store.status !== "MODAL" || !store.compass,
+        }
+      )}
+    >
+      <div className="relative bg-black h-screen   m-auto  ">
         <div
           className=" rounded w-screen h-screen z-0"
           id="map"
@@ -264,6 +286,7 @@ export default function Piksida() {
                     className={clsx("flex ")}
                   >
                     <input
+                      autoFocus
                       onFocus={() => rotateComapss(0)}
                       disabled={answers.east}
                       name="east"
@@ -349,9 +372,16 @@ export default function Piksida() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="fixed bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
-            <div className="w-2/4">{points[deg / 90].desc}</div>
+            <button
+              onClick={() => store.setCompass(false)}
+              className="fixed text-gray-800 font-  w-10 h-10 flex items-center justify-center rounded-full  border border-gray-300 bg-white shadow-lg  top-0 right-0 z-0 bg-opacity-70 m-3 text-xl"
+            >
+              ✖
+            </button>
+
+            <div className="fixed bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
+              <div className="w-2/4">{points[deg / 90].desc}</div>
+            </div>
           </div>
         </div>
       </div>
