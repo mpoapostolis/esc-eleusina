@@ -147,9 +147,11 @@ const arr = [...Array(16).fill("")];
 
 export default function JigSaw() {
   const [shuffle, setShuffle] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number }[]>([]);
+  const [position, setPosition] = useState<{ x: number; y: number }[]>(
+    Array(16).fill(undefined)
+  );
   useEffect(() => {
-    const isDone = position.every((item) => item?.x === position[0]?.x);
+    const isDone = position.every((item) => item && item?.x === position[0]?.x);
     if (isDone) {
       win?.play();
       store.setJigSaw(undefined);
