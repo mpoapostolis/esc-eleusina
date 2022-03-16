@@ -251,8 +251,6 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  jigSawUrl:
-    "https://images6.fanpop.com/image/photos/41800000/Boobies-for-Christmas-thelefteris24-41813193-1072-804.jpg",
   setJigSaw: (e?: string) => {
     if (e) dap?.play();
     set(() => ({
