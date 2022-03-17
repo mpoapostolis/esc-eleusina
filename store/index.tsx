@@ -238,7 +238,7 @@ const win = loadSound("/sounds/win.wav");
 
 export const useStore = create<Store>((set, get) => ({
   account: {},
-  status: "MODAL",
+  status: "MENU",
   scene: "elaiourgeio",
   level: "Φως-Σκοτάδι",
   inventory: [],
