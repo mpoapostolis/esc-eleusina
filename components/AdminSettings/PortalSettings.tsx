@@ -13,10 +13,10 @@ export default function PortalSettings(props: {
   const id = router.query.id;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
-
   return (
     <Select
       onChange={(v) => {
+        console.log(v);
         props.update({
           goToScene: v.value as Scene,
         });

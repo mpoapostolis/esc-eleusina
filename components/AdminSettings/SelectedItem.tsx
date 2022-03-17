@@ -46,7 +46,7 @@ const Component = (props: {
       return <CompassSettings {...p} />;
 
     case "portal":
-      return <PortalSettings {...p} />;
+      return <PortalSettings {...props} />;
 
     default:
       return <ItemSettings {...p} />;
