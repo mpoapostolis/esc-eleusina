@@ -1,7 +1,9 @@
 import { MongoClient, Db } from "mongodb";
 
 
-const URI = process.env["MONGO_URI"] as string
+const URI =
+    process.env["MONGO_URI"] as string
+
 let cachedDb: Db | null = null;
 
 export default async function thriftDb(): Promise<Db> {
@@ -13,3 +15,5 @@ export default async function thriftDb(): Promise<Db> {
     cachedDb = db;
     return db;
 }
+
+
