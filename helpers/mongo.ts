@@ -1,7 +1,7 @@
 import { MongoClient, Db } from "mongodb";
 
 
-const URI = `mongodb+srv://mpoapostolis:${process.env["PASS"]}@cluster0.smfwy.mongodb.net`;
+const URI = process.env["MONGO_URI"] as string
 let cachedDb: Db | null = null;
 
 export default async function thriftDb(): Promise<Db> {
