@@ -153,14 +153,8 @@ export default function JigSaw() {
   useEffect(() => {
     const isDone = position.every((item) => item && item?.x === position[0]?.x);
     if (isDone) {
-      win?.play();
       store.setJigSaw(undefined);
-      store.setEpicItem({
-        name: "cerberous",
-        src: "/images/cerberus.png",
-        scale: 1,
-        scene: "arxaiologikos",
-      });
+      if (store.reward) store.setEpicItem(store.reward);
     }
   }, [position]);
   const store = useStore();

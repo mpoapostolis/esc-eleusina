@@ -58,10 +58,9 @@ function Lexigram() {
       (acc, curr) => acc + curr,
       0
     );
-    if (store.lexigram?.length === total && store.lexigramReward) {
-      win?.play();
-      store.setInventory(store.lexigramReward);
-      store.setLexigram(undefined, undefined);
+    if (store.lexigram?.length === total && store.reward) {
+      store.setLexigram(undefined);
+      store.setEpicItem(store.reward);
     }
   }, [foundTotalLetter]);
 

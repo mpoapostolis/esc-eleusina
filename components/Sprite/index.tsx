@@ -78,12 +78,16 @@ export default function Sprite(
           return;
         }
 
-        if (props.lexigram) {
-          store.setLexigram(props.lexigram.split(","), props.lexigramReward);
+        if (props.type === "lexigram" && props.lexigram) {
+          store.setLexigram(props.lexigram.split(","), props.reward);
         }
+
+        if (props.type === "compass") {
+          store.setCompass(true, props.reward);
+        }
+
         if (props.type === "jigsaw" && props.jigSawUrl) {
-          console.log(props.jigSawUrl);
-          store.setJigSaw(props.jigSawUrl);
+          store.setJigSaw(props.jigSawUrl, props.reward);
         }
 
         if (store.hand && !props.collectableIfHandHas && props.type !== "box") {

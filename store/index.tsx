@@ -64,11 +64,10 @@ export type Item = {
   orderInsideTheBox?: string[];
   scene: Scene;
   rewardDescription?: string;
-  boxReward?: string | null;
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;
-  lexigramReward?: Item | null;
+  reward?: Item | null;
   jigSawUrl?: string;
   hidden?: boolean;
   collectableIfHandHas?: string | null;
@@ -194,15 +193,15 @@ export type Store = {
   level: Level;
   guideLinesVissible?: boolean;
   setguideLinesVissible: (e: boolean) => void;
-  setJigSaw: (e?: string) => void;
   guideLines?: string;
   modal: Modal;
   inventory: Item[];
   epicInventory: Item[];
+
   jigSawUrl?: string;
   lexigram?: string[];
-  lexigramReward?: Item | null;
   compass?: boolean;
+  reward?: Item | null;
 
   inventoryNotf: string[];
   selectItem?: Item;
@@ -212,11 +211,14 @@ export type Store = {
   scene: Scene;
   hand?: string;
   status: Status;
-  setCompass: (p?: boolean) => void;
+
+  setCompass: (p?: boolean, reward?: Item | null) => void;
+  setLexigram: (s?: string[], reward?: Item | null) => void;
+  setJigSaw: (e?: string, reward?: Item | null) => void;
+
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
-  setLexigram: (s?: string[], reward?: Item | null) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
   setEpicItem: (s?: Item) => void;
@@ -238,7 +240,7 @@ const win = loadSound("/sounds/win.wav");
 
 export const useStore = create<Store>((set, get) => ({
   account: {},
-  status: "MODAL",
+  status: "MENU",
   scene: "elaiourgeio",
   level: "Φως-Σκοτάδι",
   inventory: [],
@@ -254,23 +256,36 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  setJigSaw: (e?: string) => {
+  setJigSaw: (e, reward?: Item | null) => {
     if (e) dap?.play();
     set(() => ({
       status: e ? "MODAL" : "RUNNING",
       jigSawUrl: e,
+      reward,
     }));
   },
 
-  setCompass: (compass) => {
+  setCompass: (compass, reward?: Item | null) => {
     dap?.play();
     set(() => ({
       status: compass ? "MODAL" : "RUNNING",
       compass,
+      reward,
     }));
 
     set((s) => {});
   },
+
+  setLexigram: (lexigram?: string[], reward?: Item | null) =>
+    set(() => {
+      dap?.play();
+      return {
+        status: lexigram ? "MODAL" : "RUNNING",
+        lexigram,
+        reward,
+      };
+    }),
+
   setHand: (h?: string) => {
     if (h) dap?.play();
     set((s) => {
@@ -292,23 +307,12 @@ export const useStore = create<Store>((set, get) => ({
       switch (triggerEvent) {
         case "ancientText":
           return s.setAncientText(ancientText);
-        case "compass":
-          return s.setCompass(!s.compass);
 
         case "teletourgeio":
 
         default:
           break;
       }
-    }),
-  setLexigram: (lexigram?: string[], lexigramReward?: Item | null) =>
-    set(() => {
-      dap?.play();
-      return {
-        status: lexigram ? "MODAL" : "RUNNING",
-        lexigram,
-        lexigramReward,
-      };
     }),
 
   setEpicItem: (epicItem?: Item) =>
@@ -320,6 +324,7 @@ export const useStore = create<Store>((set, get) => ({
         win?.play();
         return {
           ...s,
+          reward: null,
           epicItem: epicItem,
           status: "EPIC_ITEM",
           epicInventory: epicItem
