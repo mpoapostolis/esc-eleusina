@@ -214,44 +214,6 @@ export default function SceneSettings(props: {
       >
         {load ? <Load /> : `+ Add Timer Hint`}
       </button>
-      <hr className="my-5 opacity-20" />
-
-      <Select
-        onChange={(v) => {
-          props.update({
-            type: v.value as string,
-          });
-        }}
-        label="Mini Game"
-        options={[undefined, "box", "compass", "jigsaw", "lexigram"].map(
-          (o) => ({
-            label: o === undefined ? "-" : o,
-            value: o,
-          })
-        )}
-      ></Select>
-      <br />
-      <Popover
-        label={
-          <>
-            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-              Reward
-            </label>
-            <div className="border relative p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-              ➕
-            </div>
-          </>
-        }
-      >
-        <AllImage
-          imgs={props.items}
-          onClick={(o) => {
-            props.update({
-              boxReward: o?._id ?? null,
-            });
-          }}
-        />
-      </Popover>
     </div>
   );
 }

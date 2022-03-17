@@ -9,6 +9,39 @@ import Load from "../Load";
 import Popover from "../Popover";
 import Range from "../Range";
 import Select from "../Select";
+import BoxSettings from "./BoxSettings";
+import CompassSettings from "./CompassSettings";
+import ItemSettings from "./ItemSettings";
+import JigSawSettings from "./JigSawSettings";
+import LexigramSettigns from "./LexigramSettigns";
+
+const Component = (props: {
+  getItems: () => void;
+  items: Item[];
+  imgs: Img[];
+  update: (p: Partial<Item>) => void;
+}) => {
+  const router = useRouter();
+  const id = router.query.id;
+  const idx = props.items.findIndex((e) => e._id === id);
+  const selectedItem = { ...props.items[idx] };
+
+  switch (selectedItem.type) {
+    case "box":
+      return <BoxSettings {...props} />;
+    case "jigsaw":
+      return <JigSawSettings {...props} />;
+
+    case "lexigram":
+      return <LexigramSettigns {...props} />;
+
+    case "compass":
+      return <CompassSettings {...props} />;
+
+    default:
+      return <ItemSettings {...props} />;
+  }
+};
 
 export default function SelectedItem(props: {
   getItems: () => void;
@@ -147,46 +180,49 @@ export default function SelectedItem(props: {
             value={selectedItem.scale}
             label="scale"
           />
-          <Checkbox
-            label="Collect to inventory"
-            checked={selectedItem.collectable}
-            onChange={(evt) => {
-              props.update({
-                selectable: evt.target.checked
-                  ? selectedItem.selectable
-                  : false,
-                collectable: evt.target.checked,
-              });
-            }}
-          />
-          <div className="my-1" />
-          <Checkbox
-            label="Select as tool"
-            onChange={(evt) => {
-              props.update({
-                collectable: evt.target.checked
-                  ? true
-                  : selectedItem.collectable,
-                selectable: evt.target.checked,
-              });
-            }}
-            checked={selectedItem.selectable}
-          />{" "}
-          <div className="my-1" />
-          <Checkbox
-            label="Epic Item"
-            onChange={(evt) => {
-              props.update({
-                isEpic: evt.target.checked,
-              });
-            }}
-            checked={selectedItem.isEpic}
-          />
+          {!selectedItem.type && (
+            <>
+              <Checkbox
+                label="Collect to inventory"
+                checked={selectedItem.collectable}
+                onChange={(evt) => {
+                  props.update({
+                    selectable: evt.target.checked
+                      ? selectedItem.selectable
+                      : false,
+                    collectable: evt.target.checked,
+                  });
+                }}
+              />
+              <div className="my-1" />
+              <Checkbox
+                label="Select as tool"
+                onChange={(evt) => {
+                  props.update({
+                    collectable: evt.target.checked
+                      ? true
+                      : selectedItem.collectable,
+                    selectable: evt.target.checked,
+                  });
+                }}
+                checked={selectedItem.selectable}
+              />{" "}
+              <div className="my-1" />
+              <Checkbox
+                label="Epic Item"
+                onChange={(evt) => {
+                  props.update({
+                    isEpic: evt.target.checked,
+                  });
+                }}
+                checked={selectedItem.isEpic}
+              />
+            </>
+          )}
+
           <div className="my-1" />
         </div>
       </div>
-      <hr className="my-5 opacity-20" />
-
       <hr className="my-5 opacity-20" />
 
       {selectedItem.isEpic ? (
@@ -215,131 +251,19 @@ export default function SelectedItem(props: {
             }}
             value={selectedItem.type}
             label="type"
-            options={[
-              undefined,
-              "portal",
-              "box",
-              "compass",
-              "jigsaw",
-              "lexigram",
-            ].map((o) => ({
-              label: o === undefined ? "-" : o,
-              value: o,
-            }))}
+            options={[undefined, "box", "compass", "jigsaw", "lexigram"].map(
+              (o) => ({
+                label: o === undefined ? "-" : o,
+                value: o,
+              })
+            )}
           ></Select>
-          <br />
 
-          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-            Name
-          </label>
-          <input
-            value={selectedItem.name}
-            onChange={(evt) => {
-              props.update({
-                name: evt.currentTarget.value,
-              });
-            }}
-            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
-          ></input>
+          <hr className="my-5 opacity-20" />
+          <Component {...props} />
 
-          <br />
-          {selectedItem.type === "box" ? (
-            <>
-              <hr className="mb-5 opacity-20" />
-
-              <ul className="">
-                {selectedItem.orderInsideTheBox?.map((e, idx) => (
-                  <li
-                    onClick={() => {
-                      updateOrderInBox(e);
-                    }}
-                    key={e}
-                    className={clsx(
-                      "relative flex mb-2 items-center text-gray-400 p-2 h-10  bg-opacity-20 cursor-pointer border border-gray-700 w-full"
-                    )}
-                  >
-                    <span className="mr-5">{idx + 1}:</span>
-                    <img className="h-fit mr-4 w-7" src={idToSrc(e)} alt="" />
-                    <span className="mr-4">{idToName(e)}</span>
-                    <span
-                      className="ml-auto"
-                      onClick={() => updateOrderInBox(e)}
-                    >
-                      ✖️
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <Popover
-                label={
-                  <button className="w-full mt-4 px-3 py-2 text-center bg-white bg-opacity-20">
-                    + Add Item in box
-                  </button>
-                }
-              >
-                <AllImage
-                  imgs={sceneItems}
-                  onClick={(o) => {
-                    updateOrderInBox(`${o?._id}`);
-                  }}
-                />
-              </Popover>
-
-              <hr className="my-4 opacity-20" />
-
-              <div>
-                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  if Order is not correct setError
-                </label>
-                <textarea
-                  className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
-                  rows={5}
-                  value={selectedItem.orderBoxError}
-                  onChange={(evt) => {
-                    props.update({
-                      orderBoxError: evt.currentTarget.value,
-                    });
-                  }}
-                ></textarea>
-              </div>
-              <Popover
-                label={
-                  <>
-                    <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                      Reward
-                    </label>
-                    <div className="border relative p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-                      {selectedItem.boxReward ? (
-                        <div className="">
-                          <img
-                            src={idToSrc(selectedItem.boxReward)}
-                            className="w-20 h-auto"
-                          />
-                          <div className="text-xs w-full  bg-black bg-opacity-20 text-center mt-1">
-                            {idToName(selectedItem.boxReward)}
-                          </div>
-                        </div>
-                      ) : (
-                        "➕"
-                      )}
-                    </div>
-                  </>
-                }
-              >
-                <AllImage
-                  imgs={props.items}
-                  onClick={(o) => {
-                    props.update({
-                      boxReward: o?._id ?? null,
-                    });
-                  }}
-                />
-              </Popover>
-            </>
-          ) : (
-            <>
-              {selectedItem.type === "portal" && (
+          <>
+            {/* {selectedItem.type === "portal" && (
                 <>
                   <Select
                     onChange={(v) => {
@@ -356,220 +280,8 @@ export default function SelectedItem(props: {
                   ></Select>
                   <br />
                 </>
-              )}
-
-              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                jigSaw image url
-              </label>
-              <input
-                value={selectedItem.jigSawUrl}
-                onChange={(evt) => {
-                  props.update({
-                    jigSawUrl: evt.currentTarget.value,
-                  });
-                }}
-                className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
-              ></input>
-
-              <br />
-
-              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                onClick trigger
-              </label>
-              <input
-                value={selectedItem.onClickTrigger}
-                onChange={(evt) => {
-                  props.update({
-                    onClickTrigger: evt.currentTarget.value,
-                  });
-                }}
-                className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
-              ></input>
-
-              <br />
-
-              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                onClick set Lexigram seperated by comma (,)
-              </label>
-              <input
-                value={selectedItem.lexigram}
-                onChange={(evt) => {
-                  props.update({
-                    lexigram: evt.currentTarget.value,
-                  });
-                }}
-                className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
-              ></input>
-
-              <br />
-
-              <Popover
-                label={
-                  <>
-                    <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                      Lexigram reward
-                    </label>
-                    <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-                      {selectedItem.lexigramReward ? (
-                        <div>
-                          <img
-                            src={selectedItem.lexigramReward?.src}
-                            className="w-20 h-auto"
-                          />
-                        </div>
-                      ) : (
-                        "➕"
-                      )}
-                    </div>
-                  </>
-                }
-              >
-                <AllImage
-                  imgs={props.items}
-                  onClick={async (o) => {
-                    props.update({
-                      lexigramReward: o as Item | null,
-                    });
-                  }}
-                />
-              </Popover>
-              <br />
-
-              <Select
-                onChange={(v) => {
-                  props.update({
-                    onClickOpenModal: v.value as
-                      | "hint"
-                      | "guidelines"
-                      | undefined,
-                  });
-                }}
-                value={selectedItem.onClickOpenModal}
-                label="onClick open Guidelines or Hint"
-                options={[undefined, "guidelines", "hint"].map((o) => ({
-                  label: o === undefined ? "-" : o,
-                  value: o,
-                }))}
-              ></Select>
-              <br />
-              <>
-                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  on click set Hint Text
-                </label>
-                <div>
-                  <textarea
-                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                    rows={5}
-                    value={selectedItem.setHint}
-                    onChange={(evt) => {
-                      props.update({
-                        setHint: evt.currentTarget.value,
-                      });
-                    }}
-                  ></textarea>
-                </div>
-                <br />
-                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                  on click set Guidance text
-                </label>
-                <div>
-                  <textarea
-                    className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                    rows={5}
-                    value={selectedItem.setGuidelines}
-                    onChange={(evt) => {
-                      props.update({
-                        setGuidelines: evt.currentTarget.value,
-                      });
-                    }}
-                  ></textarea>
-                </div>
-                <br />
-              </>
-
-              {selectedItem.collectable && (
-                <>
-                  <Popover
-                    label={
-                      <>
-                        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                          inventory image
-                        </label>
-                        <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-                          {selectedItem.inventorySrc ? (
-                            <div>
-                              <img
-                                src={selectedItem.inventorySrc}
-                                className="w-20 h-auto"
-                              />
-                            </div>
-                          ) : (
-                            "➕"
-                          )}
-                        </div>
-                      </>
-                    }
-                  >
-                    <AllImage
-                      imgs={props.imgs}
-                      onClick={(o) => {
-                        props.update({
-                          inventorySrc: o?.src ?? null,
-                        });
-                      }}
-                    />
-                  </Popover>
-                  <br />
-
-                  <Popover
-                    label={
-                      <>
-                        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                          Required tool to colect {selectedItem.name}
-                        </label>
-                        <div className="border w-full  h-28 p-4 text-2xl  border-gray-700 flex items-center justify-center">
-                          {selectedItem.collectableIfHandHas ? (
-                            <img
-                              className="w-20 h-auto"
-                              src={idToSrc(selectedItem.collectableIfHandHas)}
-                            />
-                          ) : (
-                            "➕"
-                          )}
-                        </div>
-                      </>
-                    }
-                  >
-                    <AllImage
-                      imgs={sceneItems}
-                      onClick={(o) => {
-                        props.update({
-                          collectableIfHandHas: o?._id ?? null,
-                        });
-                      }}
-                    />
-                  </Popover>
-                  <br />
-
-                  <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                    Hint text when fail to collect (no required tool selected)
-                  </label>
-                  <div>
-                    <textarea
-                      value={selectedItem.onCollectFail}
-                      onChange={(evt) => {
-                        props.update({
-                          onCollectFail: evt.currentTarget.value,
-                        });
-                      }}
-                      className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
-                      rows={5}
-                    ></textarea>
-                  </div>
-                </>
-              )}
-            </>
-          )}
+              )} */}
+          </>
 
           <hr className="my-5 opacity-20" />
 

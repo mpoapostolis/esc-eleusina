@@ -64,11 +64,10 @@ export type Item = {
   orderInsideTheBox?: string[];
   scene: Scene;
   rewardDescription?: string;
-  boxReward?: string | null;
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;
-  lexigramReward?: Item | null;
+  reward?: Item | null;
   jigSawUrl?: string;
   hidden?: boolean;
   collectableIfHandHas?: string | null;
