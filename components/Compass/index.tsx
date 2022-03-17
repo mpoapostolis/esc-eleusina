@@ -54,7 +54,7 @@ const points = [
   },
 ];
 
-export default function Piksida() {
+export default function Compass() {
   const mapContainer = useRef(null);
   const map = useRef<Map | null>(null);
   const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
@@ -142,14 +142,8 @@ export default function Piksida() {
 
   useEffect(() => {
     if (answers.north && answers.east && answers.west && answers.south) {
-      win?.play();
       store.setCompass(false);
-      store.setEpicItem({
-        name: "cerberous",
-        scale: 1,
-        src: "/images/cerberous.png",
-        scene: "arxaiologikos",
-      });
+      if (store.reward) store.setEpicItem(store.reward);
     }
   }, [answers]);
 

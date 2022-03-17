@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import Menu from "../components/Menu";
 import Ui from "../components/Ui";
-import { useSpring, animated, config } from "@react-spring/three";
 import {
   Canvas,
   extend,
@@ -29,7 +28,7 @@ import useGuideLines from "../Hooks/useGuideLines";
 import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
-import Piksida from "../components/Piksida";
+import Compass from "../components/Compass";
 
 extend({ OrbitControls });
 
@@ -198,7 +197,7 @@ const Home: NextPage = () => {
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div>
-      {store.compass && <Piksida />}
+      {store.compass && <Compass />}
       <JigSaw />
       <GuideLines />
       <AncientText />

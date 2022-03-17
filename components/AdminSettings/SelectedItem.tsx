@@ -14,6 +14,7 @@ import CompassSettings from "./CompassSettings";
 import ItemSettings from "./ItemSettings";
 import JigSawSettings from "./JigSawSettings";
 import LexigramSettigns from "./LexigramSettigns";
+import PortalSettings from "./PortalSettings";
 
 const Component = (props: {
   getItems: () => void;
@@ -25,21 +26,30 @@ const Component = (props: {
   const id = router.query.id;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
+  const _items = props.items?.filter(
+    (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+  );
+
+  const p = { ...props, items: _items };
 
   switch (selectedItem.type) {
     case "box":
-      return <BoxSettings {...props} />;
+      return <BoxSettings {...p} />;
+
     case "jigsaw":
-      return <JigSawSettings {...props} />;
+      return <JigSawSettings {...p} />;
 
     case "lexigram":
-      return <LexigramSettigns {...props} />;
+      return <LexigramSettigns {...p} />;
 
     case "compass":
-      return <CompassSettings {...props} />;
+      return <CompassSettings {...p} />;
+
+    case "portal":
+      return <PortalSettings {...p} />;
 
     default:
-      return <ItemSettings {...props} />;
+      return <ItemSettings {...p} />;
   }
 };
 
@@ -54,19 +64,6 @@ export default function SelectedItem(props: {
   const id = router.query.id;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
-  const store = useStore();
-  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
-
-  const updateOrderInBox = (id: string) => {
-    if (!selectedItem) return;
-    const orderInsideTheBox = selectedItem?.orderInsideTheBox ?? [];
-    const found = orderInsideTheBox?.includes(id);
-    const tmp = found
-      ? orderInsideTheBox?.filter((e) => e !== id)
-      : [...orderInsideTheBox, id];
-    tmp;
-    props.update({ orderInsideTheBox: tmp });
-  };
 
   const updateRequired = (id: string) => {
     if (!selectedItem) return;
@@ -78,16 +75,6 @@ export default function SelectedItem(props: {
     tmp;
     props.update({ requiredItems: tmp });
   };
-
-  const idToName = (id?: string) =>
-    props.items.find((e) => {
-      return e._id === id;
-    })?.name;
-
-  const idToSrc = (id?: string) =>
-    props.items.find((e) => {
-      return e._id === id;
-    })?.src;
 
   return (
     <>
@@ -243,45 +230,30 @@ export default function SelectedItem(props: {
         </>
       ) : (
         <>
-          <Select
-            onChange={(v) => {
-              props.update({
-                type: v.value as string,
-              });
-            }}
-            value={selectedItem.type}
-            label="type"
-            options={[undefined, "box", "compass", "jigsaw", "lexigram"].map(
-              (o) => ({
+          {
+            <Select
+              onChange={(v) => {
+                props.update({
+                  type: v.value as string,
+                });
+              }}
+              value={selectedItem.type}
+              label="type"
+              options={[
+                undefined,
+                "portal",
+                "box",
+                "compass",
+                "jigsaw",
+                "lexigram",
+              ].map((o) => ({
                 label: o === undefined ? "-" : o,
                 value: o,
-              })
-            )}
-          ></Select>
-
+              }))}
+            />
+          }
           <hr className="my-5 opacity-20" />
           <Component {...props} />
-
-          <>
-            {/* {selectedItem.type === "portal" && (
-                <>
-                  <Select
-                    onChange={(v) => {
-                      props.update({
-                        goToScene: v.value as Scene,
-                      });
-                    }}
-                    value={selectedItem.goToScene}
-                    label="onClick go to scene (360)"
-                    options={[undefined, ...scenes].map((o) => ({
-                      label: o === undefined ? "-" : o,
-                      value: o,
-                    }))}
-                  ></Select>
-                  <br />
-                </>
-              )} */}
-          </>
 
           <hr className="my-5 opacity-20" />
 
@@ -289,31 +261,36 @@ export default function SelectedItem(props: {
             Required items in inventory to show {selectedItem.name}
           </label>
           <div className="grid gap-6 grid-cols-4">
-            {props.items.map((i) => {
-              const item = i as Item;
-              return (
-                <div
-                  key={i._id}
-                  onClick={() => {
-                    updateRequired(`${i._id}`);
-                  }}
-                  className={clsx(
-                    "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
-                    {
-                      "bg-green-500": selectedItem.requiredItems?.includes(
-                        `${i._id}`
-                      ),
-                    }
-                  )}
-                >
-                  <img
-                    className="hover:scale-150 w-full p-2"
-                    src={item.src}
-                    alt=""
-                  />
-                </div>
-              );
-            })}
+            {props.items
+              ?.filter(
+                (e) =>
+                  !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+              )
+              .map((i) => {
+                const item = i as Item;
+                return (
+                  <div
+                    key={i._id}
+                    onClick={() => {
+                      updateRequired(`${i._id}`);
+                    }}
+                    className={clsx(
+                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                      {
+                        "bg-green-500": selectedItem.requiredItems?.includes(
+                          `${i._id}`
+                        ),
+                      }
+                    )}
+                  >
+                    <img
+                      className="hover:scale-150 w-full p-2"
+                      src={item.src}
+                      alt=""
+                    />
+                  </div>
+                );
+              })}
           </div>
         </>
       )}

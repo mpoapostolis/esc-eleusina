@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { AllImage } from ".";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
-import Popover from "../Popover";
 import Select from "../Select";
 
 function Row(props: Item & { getItems: () => any }) {
@@ -147,7 +145,6 @@ export default function SceneSettings(props: {
           rows={5}
         />
       </div>
-
       <button
         onClick={async () => {
           setLoadG(true);
@@ -191,7 +188,6 @@ export default function SceneSettings(props: {
         )}
       </button>
       <hr className="my-5 opacity-20" />
-
       {props.items
         .filter((e) => e.type === "timerHint")
         .map((e) => (

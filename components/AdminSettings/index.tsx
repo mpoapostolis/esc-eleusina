@@ -8,7 +8,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
-import Minigame from "./MiniGame";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -68,7 +67,6 @@ const Component = (props: {
 
   const store = useStore();
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
-  const isMiniGame = props.items.find((item) => item.isMiniGame);
 
   useEffect(() => {
     if (id) router.push(`/admin?id=${id}&type=selectedItem`);
@@ -92,14 +90,7 @@ const Component = (props: {
           update={props.update}
         />
       );
-    case "minigame":
-      return (
-        <Minigame
-          update={props.update}
-          getItems={props.getItems}
-          items={sceneItems}
-        />
-      );
+
     default:
       return (
         <>
@@ -134,7 +125,7 @@ const Component = (props: {
 
           <hr className="my-5 opacity-20" />
 
-          <div className="mb-4 grid grid-cols-3 gap-4">
+          <div className="mb-4 grid grid-cols-4 gap-4">
             {props.items
               ?.filter(
                 (e) => !["timerHint", "guidelines"].includes(`${e.type}`)
@@ -217,7 +208,10 @@ export default function AdminSettings(props: {
 }) {
   return (
     <div className="fixed w-screen z-50 h-screen pointer-events-none bg-transparent">
-      <div className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90 w-96 h-screen">
+      <div
+        style={{ width: "460px" }}
+        className="text-gray-300 flex flex-col overflow-auto absolute pointer-events-auto  right-0  border-l px-10 py-5 border-gray-600 bg-black bg-opacity-90  h-screen"
+      >
         <Component {...props} />
       </div>
     </div>
