@@ -107,12 +107,26 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   }
                   if (store.inventoryNotf.length > 0)
                     store.removeInventoryNotf(item.name);
+
+                  if (item.setHint) store.setHint(item.setHint);
+
+                  if (item.setGuidelines)
+                    store.setguideLines(item.setGuidelines);
+
+                  if (item.onClickOpenModal === "hint")
+                    store.setIsHintVisible(true);
+                  if (item.onClickOpenModal === "guidelines")
+                    store.setguideLinesVissible(true);
                 }}
                 className={clsx(
                   "flex bg-black relative bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
                   {
                     "bg-green-900 ": store.hand && store.hand === item?._id,
-                    "cursor-pointer": item.selectable || item?.action,
+                    "cursor-pointer":
+                      item.setHint ||
+                      item.setGuidelines ||
+                      item.selectable ||
+                      item?.action,
                     "rounded-tl-2xl": i === 0,
                     "rounded-tr-2xl": i === 2,
                     "rounded-bl-2xl": i === 6,

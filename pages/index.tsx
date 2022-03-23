@@ -196,7 +196,7 @@ const Home: NextPage = () => {
   }, []);
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
-    <div>
+    <div {...bind()}>
       {store.compass && <Compass />}
       <JigSaw />
       <GuideLines />
