@@ -16,7 +16,6 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
 import axios from "axios";
-import { Img } from "./admin";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
 import AncientText from "../components/AncientText";
@@ -29,6 +28,20 @@ import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
+import MiniGameModal from "../components/MiniGameModal";
+
+export type MiniGame = {
+  scene?: string;
+  requiredItems?: string[] | null;
+  reward?: Reward | null;
+  type?: string;
+} & Record<string, any>;
+
+export interface Reward {
+  _id?: string;
+  src?: string;
+  name?: string;
+}
 
 extend({ OrbitControls });
 
@@ -168,22 +181,33 @@ const Home: NextPage = () => {
   }, [store.status]);
 
   const [items, setItems] = useState<Item[]>([]);
-  const [imgs, setImgs] = useState<Img[]>([]);
-
-  const getImgs = async () =>
-    axios.get("/api/library").then((d) => {
-      setImgs(d.data);
-    });
+  const [miniGames, setMiniGames] = useState<MiniGame[]>([]);
 
   const getItems = async () =>
     axios.get("/api/items").then((d) => {
       setItems(d.data);
     });
 
+  const getMiniGames = async () =>
+    axios.get("/api/miniGames").then((d) => {
+      setMiniGames(d.data);
+    });
+
   useEffect(() => {
     getItems();
-    getImgs();
+    getMiniGames();
   }, []);
+
+  useEffect(() => {
+    const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
+    if (!currMinigames) return;
+    const doIHaveEpicItem = store.epicInvHas(`${currMinigames.reward?._id}`);
+    if (
+      !doIHaveEpicItem &&
+      currMinigames.requiredItems?.map((i) => store.invHas(i)).every(Boolean)
+    )
+      store.setStatus("MINIGAMEMODAL");
+  }, [miniGames, store.scene, store.inventory]);
 
   const [fov, setFov] = useState(75);
 
@@ -204,6 +228,7 @@ const Home: NextPage = () => {
       <AncientText />
       <Lexigram />
       <Ui items={sceneItems} time={timer.time} />
+      <MiniGameModal />
       <Menu />
       <EpicItem />
       <div className="canvas">

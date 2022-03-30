@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import { MiniGame, Reward } from "../../pages";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
@@ -22,7 +23,7 @@ const Component = (
             jigsaw image url
           </label>
           <input
-            value={props.lexigram}
+            value={props.jigSawUrl}
             onChange={(evt) => {
               props.update({
                 jigSawUrl: evt.currentTarget.value,
@@ -144,13 +145,6 @@ function Row(props: Item & { getItems: () => any }) {
   );
 }
 
-export type MiniGame = {
-  type?: "jigsaw" | "lexigram";
-  reward?: Item | null;
-  lexigram?: string;
-  jigSawUrl?: string;
-  requiredItems?: string[];
-};
 export default function SceneSettings(props: {
   getItems: () => void;
   update: (p: Partial<Item>) => void;
@@ -182,9 +176,18 @@ export default function SceneSettings(props: {
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
   }, [props.items]);
 
-  const items = props.items?.filter(
-    (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
-  );
+  const getMiniGames = async () =>
+    axios.get("/api/miniGames").then((d) => {
+      const [currMinigames] = d.data.filter(
+        (e: MiniGame) => e.scene === store.scene
+      );
+      const { _id, ...rest } = currMinigames;
+      setMiniGame(rest);
+    });
+
+  useEffect(() => {
+    getMiniGames();
+  }, []);
 
   function update(o: MiniGame) {
     setMiniGame((s) => ({ ...s, ...o }));
@@ -326,7 +329,7 @@ export default function SceneSettings(props: {
           imgs={props.imgs}
           onClick={async (o) => {
             update({
-              reward: o as Item | null,
+              reward: o,
             });
           }}
         />
@@ -371,7 +374,7 @@ export default function SceneSettings(props: {
         onClick={() => {
           setMiniGameLoad(true);
           axios
-            .post("/api/miniGame", {
+            .post("/api/miniGames", {
               scene: store.scene,
               ...miniGame,
             })

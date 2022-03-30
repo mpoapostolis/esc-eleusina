@@ -1,6 +1,7 @@
 import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { ancientText } from "../components/AncientText";
+import { Reward } from "../pages";
 import { loadSound } from "../utils";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
@@ -172,6 +173,10 @@ export type HelpKey =
 export type Status =
   | "MENU"
   | "LOGIN"
+  | "MINIGAMEMODAL"
+  | "JIGSAW"
+  | "LEXIGRAM"
+  | "COMPASS"
   | "REGISTER"
   | "SELECT_LEVEL"
   | "ACHIEVEMENTS"
@@ -196,32 +201,32 @@ export type Store = {
   guideLines?: string;
   modal: Modal;
   inventory: Item[];
-  epicInventory: Item[];
+  epicInventory: Reward[];
 
   jigSawUrl?: string;
   lexigram?: string[];
   compass?: boolean;
-  reward?: Item | null;
+  reward?: Reward | null;
 
   inventoryNotf: string[];
   selectItem?: Item;
-  epicItem?: Item;
+  epicItem?: Reward;
   usedItems: Record<string, boolean>;
 
   scene: Scene;
   hand?: string;
   status: Status;
 
-  setCompass: (p?: boolean, reward?: Item | null) => void;
-  setLexigram: (s?: string[], reward?: Item | null) => void;
-  setJigSaw: (e?: string, reward?: Item | null) => void;
+  setCompass: (p?: boolean, reward?: Reward | null) => void;
+  setLexigram: (s?: string[], reward?: Reward | null) => void;
+  setJigSaw: (e?: string, reward?: Reward | null) => void;
 
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
-  setEpicItem: (s?: Item) => void;
+  setEpicItem: (s?: Reward) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
   invHas: (e?: string) => boolean;
@@ -256,19 +261,19 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  setJigSaw: (e, reward?: Item | null) => {
+  setJigSaw: (e, reward) => {
     if (e) dap?.play();
     set(() => ({
-      status: e ? "MODAL" : "RUNNING",
+      status: e ? "JIGSAW" : "RUNNING",
       jigSawUrl: e,
       reward,
     }));
   },
 
-  setCompass: (compass, reward?: Item | null) => {
+  setCompass: (compass, reward?: Reward | null) => {
     dap?.play();
     set(() => ({
-      status: compass ? "MODAL" : "RUNNING",
+      status: compass ? "COMPASS" : "RUNNING",
       compass,
       reward,
     }));
@@ -276,11 +281,11 @@ export const useStore = create<Store>((set, get) => ({
     set((s) => {});
   },
 
-  setLexigram: (lexigram?: string[], reward?: Item | null) =>
+  setLexigram: (lexigram?: string[], reward?: Reward | null) =>
     set(() => {
       dap?.play();
       return {
-        status: lexigram ? "MODAL" : "RUNNING",
+        status: lexigram ? "LEXIGRAM" : "RUNNING",
         lexigram,
         reward,
       };
@@ -315,10 +320,12 @@ export const useStore = create<Store>((set, get) => ({
       }
     }),
 
-  setEpicItem: (epicItem?: Item) =>
+  setEpicItem: (epicItem) =>
     set((s) => {
       if (!epicItem) return { ...s, epicItem, status: "RUNNING" };
-      const found = s.epicInventory.map((o) => o.name).includes(epicItem.name);
+      const found = s.epicInventory
+        .map((o) => o.name)
+        .includes(`${epicItem._id}`);
       if (found) return s;
       else {
         win?.play();

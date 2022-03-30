@@ -164,7 +164,7 @@ export default function JigSaw() {
       className={clsx(
         "w-screen fixed z-50 flex bg-black select-none  justify-center items-center bg-opacity-90   h-screen p-0 m-0",
         {
-          hidden: store.status !== "MODAL" || !store.jigSawUrl,
+          hidden: store.status !== "JIGSAW" || !store.jigSawUrl,
         }
       )}
     >

@@ -3,26 +3,15 @@ import { Item, Scene, useStore } from "../../store";
 import clsx from "clsx";
 import Hint from "../Hint";
 
-export const sceneItems: Record<Scene, string[]> = {
-  intro: ["stone"],
-  karnagio: ["wing", "key", "lingerie", "wing1"],
-  teletourgeio: ["scythe", "doxeio1", "doxeio2", "dafni"],
-  elaiourgeio: ["mirror1", "mirror2", "dog"],
-  arxaiologikos: [],
-  eleusina: [],
-  pangal: [],
-};
-
 export default function Ui(props: { items: Item[]; time: number }) {
   const sound = loadSound("/sounds/hint.wav");
   const store = useStore();
 
   const transform = { transform: "skewX(-20deg)" };
 
-  const currInv: Item[] = store.inventory.filter((item) =>
-    props.items.map((i) => i.id).includes(item.id)
+  const currInv: Item[] = store.inventory.filter(
+    (item) => item.scene === store.scene
   );
-  //  sceneItems[store.scene];
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
     name: "",
     src: "",

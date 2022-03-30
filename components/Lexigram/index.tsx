@@ -69,7 +69,7 @@ function Lexigram() {
       className={clsx(
         "fixed bg-black select-none bg-opacity-90  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "MODAL" || !store.lexigram,
+          hidden: store.status !== "LEXIGRAM" || !store.lexigram,
         }
       )}
     >

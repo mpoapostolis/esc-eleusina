@@ -180,7 +180,7 @@ export default function Compass() {
       className={clsx(
         "fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen",
         {
-          hidden: store.status !== "MODAL" || !store.compass,
+          hidden: store.status !== "COMPASS" || !store.compass,
         }
       )}
     >
