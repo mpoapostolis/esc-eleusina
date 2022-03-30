@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
@@ -154,6 +155,7 @@ export default function SceneSettings(props: {
   getItems: () => void;
   update: (p: Partial<Item>) => void;
   items: Item[];
+  imgs: Img[];
 }) {
   const store = useStore();
   const [load, setLoad] = useState(false);
@@ -321,7 +323,7 @@ export default function SceneSettings(props: {
         }
       >
         <AllImage
-          imgs={items}
+          imgs={props.imgs}
           onClick={async (o) => {
             update({
               reward: o as Item | null,

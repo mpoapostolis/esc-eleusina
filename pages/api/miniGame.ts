@@ -1,5 +1,7 @@
 import myDb from "../../helpers/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { ObjectId } from "mongodb";
+import { ObjectID } from "bson";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const db = await myDb();
@@ -16,10 +18,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         $set: req.body,
       }
     );
-    return res.status(201).send("resource updated successfully");
+    return res.status(200).send("resource updated successfully");
   } else {
-    console.log("not found");
-    const id = await collection.insertOne(req.body);
+    const reward = {
+      _id: new ObjectID(),
+      ...req.body.reward,
+    };
+    const body = {
+      ...req.body,
+      reward,
+    };
+    const id = await collection.insertOne(body);
     return res.status(201).json({ id: id.insertedId });
   }
 };

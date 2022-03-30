@@ -79,6 +79,7 @@ const Component = (props: {
           update={props.update}
           getItems={props.getItems}
           items={sceneItems}
+          imgs={props.imgs}
         />
       );
     case "selectedItem":

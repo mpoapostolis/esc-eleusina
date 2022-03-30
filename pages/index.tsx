@@ -194,6 +194,7 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
+
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
   return (
     <div {...bind()}>
