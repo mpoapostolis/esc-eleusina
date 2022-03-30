@@ -3,11 +3,58 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import minigame from "../../pages/api/minigame";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
 import Select from "../Select";
 
+const Component = (
+  props: MiniGame & {
+    update: (p: Record<string, any>) => void;
+  }
+) => {
+  switch (props.type) {
+    case "jigsaw":
+      return (
+        <div className="mt-4">
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            jigsaw image url
+          </label>
+          <input
+            value={props.lexigram}
+            onChange={(evt) => {
+              props.update({
+                jigSawUrl: evt.currentTarget.value,
+              });
+            }}
+            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+        </div>
+      );
+
+    case "lexigram":
+      return (
+        <div className="mt-4">
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            onClick set Lexigram seperated by comma (,)
+          </label>
+          <input
+            value={props.lexigram}
+            onChange={(evt) => {
+              props.update({
+                lexigram: evt.currentTarget.value,
+              });
+            }}
+            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+        </div>
+      );
+
+    default:
+      return null;
+  }
+};
 function Row(props: Item & { getItems: () => any }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
@@ -100,6 +147,8 @@ function Row(props: Item & { getItems: () => any }) {
 export type MiniGame = {
   type?: "jigsaw" | "lexigram";
   reward?: Item | null;
+  lexigram?: string;
+  jigSawUrl?: string;
   requiredItems?: string[];
 };
 export default function SceneSettings(props: {
@@ -114,6 +163,7 @@ export default function SceneSettings(props: {
   const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
   const doIHaveGuideLines = props.items.find((e) => e.type === "guidelines");
+  const [miniGameLoad, setMiniGameLoad] = useState(false);
 
   const updateRequired = (id: string) => {
     if (!miniGame) return;
@@ -251,7 +301,7 @@ export default function SceneSettings(props: {
           value: o,
         }))}
       />
-
+      <Component {...miniGame} update={update} />
       <br />
       <Popover
         label={
@@ -318,19 +368,19 @@ export default function SceneSettings(props: {
       </div>
       <button
         onClick={() => {
-          setLoad(true);
+          setMiniGameLoad(true);
           axios
-            .post("/api/items", {
+            .post("/api/miniGame", {
               scene: store.scene,
-              type: "timerHint",
+              ...minigame,
             })
             .then(() => {
-              props.getItems();
-              setLoad(false);
+              setMiniGameLoad(false);
             });
         }}
         className="mt-4 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
       >
+        {miniGameLoad && <Load />}
         Save
       </button>
     </div>

@@ -9,11 +9,7 @@ import Load from "../Load";
 import Popover from "../Popover";
 import Range from "../Range";
 import Select from "../Select";
-import BoxSettings from "./BoxSettings";
-import CompassSettings from "./CompassSettings";
 import ItemSettings from "./ItemSettings";
-import JigSawSettings from "./JigSawSettings";
-import LexigramSettigns from "./LexigramSettigns";
 import PortalSettings from "./PortalSettings";
 
 const Component = (props: {
@@ -33,21 +29,8 @@ const Component = (props: {
   const p = { ...props, items: _items };
 
   switch (selectedItem.type) {
-    case "box":
-      return <BoxSettings {...p} />;
-
-    case "jigsaw":
-      return <JigSawSettings {...p} />;
-
-    case "lexigram":
-      return <LexigramSettigns {...p} />;
-
-    case "compass":
-      return <CompassSettings {...p} />;
-
     case "portal":
       return <PortalSettings {...props} />;
-    // a
     default:
       return <ItemSettings {...p} />;
   }
