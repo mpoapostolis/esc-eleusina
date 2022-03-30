@@ -1,8 +1,11 @@
 import axios from "axios";
+import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { AllImage } from ".";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
+import Popover from "../Popover";
 import Select from "../Select";
 
 function Row(props: Item & { getItems: () => any }) {
@@ -94,24 +97,47 @@ function Row(props: Item & { getItems: () => any }) {
   );
 }
 
+export type MiniGame = {
+  type?: "jigsaw" | "lexigram";
+  reward?: Item | null;
+  requiredItems?: string[];
+};
 export default function SceneSettings(props: {
   getItems: () => void;
   update: (p: Partial<Item>) => void;
-
   items: Item[];
 }) {
   const store = useStore();
   const [load, setLoad] = useState(false);
   const [loadG, setLoadG] = useState(false);
   const router = useRouter();
+  const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
   const doIHaveGuideLines = props.items.find((e) => e.type === "guidelines");
-  useEffect(() => {}, [doIHaveGuideLines]);
+
+  const updateRequired = (id: string) => {
+    if (!miniGame) return;
+    const requiredItems = miniGame?.requiredItems ?? [];
+    const found = requiredItems?.includes(id);
+    const tmp = found
+      ? requiredItems?.filter((e) => e !== id)
+      : [...requiredItems, id];
+    tmp;
+    update({ requiredItems: tmp });
+  };
 
   useEffect(() => {
     const doIHaveGuideLines = props.items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
   }, [props.items]);
+
+  const items = props.items?.filter(
+    (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+  );
+
+  function update(o: MiniGame) {
+    setMiniGame((s) => ({ ...s, ...o }));
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -209,6 +235,103 @@ export default function SceneSettings(props: {
         className="mt-3 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
       >
         {load ? <Load /> : `+ Add Timer Hint`}
+      </button>
+      <hr className="my-5 opacity-20" />
+
+      <Select
+        onChange={(v) => {
+          update({
+            type: v.value as any,
+          });
+        }}
+        value={miniGame.type}
+        label="Mini Game"
+        options={[undefined, "compass", "jigsaw", "lexigram"].map((o) => ({
+          label: o === undefined ? "-" : o,
+          value: o,
+        }))}
+      />
+
+      <br />
+      <Popover
+        label={
+          <>
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              Reward
+            </label>
+            <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+              {miniGame.reward ? (
+                <div>
+                  <img src={miniGame.reward?.src} className="w-20 h-auto" />
+                </div>
+              ) : (
+                "➕"
+              )}
+            </div>
+          </>
+        }
+      >
+        <AllImage
+          imgs={items}
+          onClick={async (o) => {
+            update({
+              reward: o as Item | null,
+            });
+          }}
+        />
+      </Popover>
+      <br />
+
+      <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
+        Required items in inventory for mini game
+      </label>
+      <div className="grid gap-6 grid-cols-4">
+        {props.items
+          ?.filter(
+            (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+          )
+          .map((i) => {
+            const item = i as Item;
+            return (
+              <div
+                key={i._id}
+                onClick={() => {
+                  updateRequired(`${i._id}`);
+                }}
+                className={clsx(
+                  "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                  {
+                    "bg-green-500": miniGame.requiredItems?.includes(
+                      `${i._id}`
+                    ),
+                  }
+                )}
+              >
+                <img
+                  className="hover:scale-150 w-full p-2"
+                  src={item.src}
+                  alt=""
+                />
+              </div>
+            );
+          })}
+      </div>
+      <button
+        onClick={() => {
+          setLoad(true);
+          axios
+            .post("/api/items", {
+              scene: store.scene,
+              type: "timerHint",
+            })
+            .then(() => {
+              props.getItems();
+              setLoad(false);
+            });
+        }}
+        className="mt-4 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
+      >
+        Save
       </button>
     </div>
   );
