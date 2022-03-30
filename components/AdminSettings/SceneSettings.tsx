@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
-import minigame from "../../pages/api/minigame";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
@@ -372,7 +371,7 @@ export default function SceneSettings(props: {
           axios
             .post("/api/miniGame", {
               scene: store.scene,
-              ...minigame,
+              ...miniGame,
             })
             .then(() => {
               setMiniGameLoad(false);
