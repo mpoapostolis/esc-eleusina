@@ -240,6 +240,7 @@ const Home: NextPage = () => {
     setItems(tmp);
   };
 
+  console.log(items);
   const sceneItems = items.filter((e) => e.scene === store.scene);
   return (
     <div className="canvas">

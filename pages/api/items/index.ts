@@ -20,7 +20,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           name: idToImg[x.imgId]?.name,
           src: idToImg[x.imgId]?.src,
         }))
-        .filter((e) => e.src);
 
       return res.status(200).json(data);
 
