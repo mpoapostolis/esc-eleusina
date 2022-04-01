@@ -248,7 +248,7 @@ function Select() {
     src: "",
   });
 
-  const inv: Item[] = [...ach, ...tmpInv];
+  const inv = [...ach, ...tmpInv];
 
   switch (store.status) {
     case "MENU":
