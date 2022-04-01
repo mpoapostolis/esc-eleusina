@@ -172,6 +172,7 @@ export type HelpKey =
 
 export type Status =
   | "MENU"
+  | "UNITY"
   | "LOGIN"
   | "MINIGAMEMODAL"
   | "JIGSAW"
@@ -202,6 +203,7 @@ export type Store = {
   modal: Modal;
   inventory: Item[];
   epicInventory: Reward[];
+  unity?: string;
 
   jigSawUrl?: string;
   lexigram?: string[];
@@ -220,6 +222,7 @@ export type Store = {
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
   setJigSaw: (e?: string, reward?: Reward | null) => void;
+  setUnity: (e?: string, reward?: Reward | null) => void;
 
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
@@ -287,6 +290,16 @@ export const useStore = create<Store>((set, get) => ({
       return {
         status: lexigram ? "LEXIGRAM" : "RUNNING",
         lexigram,
+        reward,
+      };
+    }),
+
+  setUnity: (unity, reward) =>
+    set(() => {
+      dap?.play();
+      return {
+        status: unity ? "UNITY" : "RUNNING",
+        unity,
         reward,
       };
     }),
