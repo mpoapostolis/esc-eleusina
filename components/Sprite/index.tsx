@@ -17,7 +17,6 @@ export default function Sprite(
   const [insideBox, setInsideBox] = useState<string[]>([]);
   const store = useStore();
   const isUsed = store.usedItems[`${props._id}`];
-
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
