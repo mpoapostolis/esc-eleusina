@@ -300,10 +300,12 @@ export default function SceneSettings(props: {
         }}
         value={miniGame.type}
         label="Mini Game"
-        options={[undefined, "compass", "jigsaw", "lexigram"].map((o) => ({
-          label: o === undefined ? "-" : o,
-          value: o,
-        }))}
+        options={[undefined, "compass", "jigsaw", "lexigram", "cerberus"].map(
+          (o) => ({
+            label: o === undefined ? "-" : o,
+            value: o,
+          })
+        )}
       />
       <Component {...miniGame} update={update} />
       <br />

@@ -29,6 +29,7 @@ import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import MiniGameModal from "../components/MiniGameModal";
+import UnityMiniGame from "../components/UnityMiniGame";
 
 export type MiniGame = {
   scene?: string;
@@ -232,6 +233,7 @@ const Home: NextPage = () => {
       <MiniGameModal />
       <Menu />
       <EpicItem />
+      <UnityMiniGame />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
