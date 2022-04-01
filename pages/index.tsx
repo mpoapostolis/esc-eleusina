@@ -41,6 +41,7 @@ export interface Reward {
   _id?: string;
   src?: string;
   name?: string;
+  description?: string;
 }
 
 extend({ OrbitControls });

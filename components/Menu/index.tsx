@@ -241,9 +241,9 @@ function SceneSelect() {
 
 function Select() {
   const store = useStore();
-  const ach: Item[] = store.epicInventory;
+  const ach = store.epicInventory;
 
-  const tmpInv: Item[] = Array(16 - ach.length).fill({
+  const tmpInv = Array(16 - ach.length).fill({
     name: "",
     src: "",
   });
