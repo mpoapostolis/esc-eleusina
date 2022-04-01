@@ -243,9 +243,9 @@ const Home: NextPage = () => {
                 return <TimerHint key={p._id} {...p} />;
               if (p.type === "guidelines")
                 return <GuideLineItem key={p._id} {...p} />;
-              else if (p.type === "portal")
-                return <Portal key={p._id} {...item} />;
-              else if (p.src)
+              if (p.type === "portal") return <Portal key={p._id} {...item} />;
+
+              if (p.src)
                 return (
                   <Sprite
                     key={p._id}

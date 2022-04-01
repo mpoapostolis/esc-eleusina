@@ -267,12 +267,24 @@ const Home: NextPage = () => {
             ?.map((o, idx) => {
               if (o.type === "timerHint") return <TimerHint key={o._id} />;
               if (o.type === "guidelines") return <TimerHint key={o._id} />;
+              if (o.type === "portal")
+                return (
+                  <Portal
+                    {...o}
+                    key={idx}
+                    update={(p) => updateItem(p, o._id)}
+                  />
+                );
 
-              return o.type === "portal" ? (
-                <Portal {...o} key={idx} update={(p) => updateItem(p, o._id)} />
-              ) : (
-                <Sprite update={(p) => updateItem(p, o._id)} key={idx} {...o} />
-              );
+              if (o.src)
+                return (
+                  <Sprite
+                    update={(p) => updateItem(p, o._id)}
+                    key={idx}
+                    {...o}
+                  />
+                );
+              else return null;
             })}
         </Suspense>
 
