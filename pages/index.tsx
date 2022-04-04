@@ -125,8 +125,15 @@ function Portal(props: Item) {
   }, [props.position, ref.current]);
 
   const store = useStore();
+  const show = props?.requiredItems
+    ? props?.requiredItems
+        ?.map((v) => {
+          return store.invHas(v) || store.epicInvHas(v) || store.usedItems[v];
+        })
+        .every((e) => e)
+    : true;
 
-  return (
+  return show ? (
     <mesh
       onClick={() => {
         if (props.goToScene) store.setScene(props.goToScene);
@@ -144,7 +151,7 @@ function Portal(props: Item) {
         map={texture}
       />
     </mesh>
-  );
+  ) : null;
 }
 
 function TimerHint(props: Item) {

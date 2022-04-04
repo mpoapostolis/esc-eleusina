@@ -167,7 +167,6 @@ export default function SceneSettings(props: {
     const tmp = found
       ? requiredItems?.filter((e) => e !== id)
       : [...requiredItems, id];
-    tmp;
     update({ requiredItems: tmp });
   };
 
