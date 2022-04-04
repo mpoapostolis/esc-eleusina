@@ -160,7 +160,7 @@ function TimerHint(props: Item) {
 }
 
 function GuideLineItem(props?: Item) {
-  useGuideLines(`${props?.text}`, 2000);
+  useGuideLines(`${props?.text}`);
   return null;
 }
 
