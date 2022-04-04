@@ -19,7 +19,7 @@ export default function GuideLines() {
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "MODAL" || !store.guideLinesVissible,
+          hidden: store.status !== "GUIDELINES" || !store.guideLinesVissible,
         }
       )}
     >

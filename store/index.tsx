@@ -182,6 +182,7 @@ export type Status =
   | "SELECT_LEVEL"
   | "ACHIEVEMENTS"
   | "MODAL"
+  | "GUIDELINES"
   | "HISTORY"
   | "EPIC_ITEM"
   | "RUNNING";
@@ -314,7 +315,7 @@ export const useStore = create<Store>((set, get) => ({
   setguideLinesVissible: (b: boolean) => {
     dap?.play();
     set(() => ({
-      status: b ? "MODAL" : "RUNNING",
+      status: b ? "GUIDELINES" : "RUNNING",
       guideLinesVissible: b,
     }));
   },
@@ -366,7 +367,7 @@ export const useStore = create<Store>((set, get) => ({
   setLevel: (l: Level) => set(() => ({ level: l })),
   setguideLines: (guideLines?: string) =>
     set(() => {
-      return { guideLines };
+      return { status: guideLines ? "GUIDELINES" : "RUNNING", guideLines };
     }),
   setAncientText: (ancientText?: AncientText) =>
     set(() => {
