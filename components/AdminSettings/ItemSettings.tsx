@@ -64,7 +64,7 @@ export default function ItemSettings(props: {
         label="onClick open Guidelines or Hint"
         options={[undefined, "guidelines", "hint"].map((o) => ({
           label: o === undefined ? "-" : o,
-          value: o,
+          value: o === undefined ? null : o,
         }))}
       ></Select>
       <br />
