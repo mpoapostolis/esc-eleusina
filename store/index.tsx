@@ -80,7 +80,7 @@ export type Item = {
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
-  onClickOpenModal?: "hint" | "guidelines" | "timerHint" | undefined;
+  onClickOpenModal?: "hint" | "guidelines" | undefined;
   setGuidelines?: string;
   setHint?: string;
   onCollectFail?: string;

@@ -188,9 +188,6 @@ export type Img = {
 };
 export type Conf = Item[];
 
-function TimerHint() {
-  return null;
-}
 const Home: NextPage = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [imgs, setImgs] = useState<Img[]>([]);
@@ -265,8 +262,7 @@ const Home: NextPage = () => {
           {sceneItems
             .filter((e) => !e.isEpic)
             ?.map((o, idx) => {
-              if (o.type === "timerHint") return <TimerHint key={o._id} />;
-              if (o.type === "guidelines") return <TimerHint key={o._id} />;
+              if (["hint", "guidelines"].includes(`${o.type}`)) return null;
               if (o.type === "portal")
                 return (
                   <Portal
