@@ -8,7 +8,6 @@ export default function useGuideLines(str: string, time: number = 2) {
     initialTime: time,
     timerType: "DECREMENTAL",
     step: 1,
-    endTime: -1,
   });
 
   useEffect(() => {

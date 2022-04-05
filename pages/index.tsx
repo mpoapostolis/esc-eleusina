@@ -252,36 +252,42 @@ const Home: NextPage = () => {
       <Menu />
       <EpicItem />
       <UnityMiniGame />
+      {sceneItems
+        .filter((e) => ["hint", "guideLines"].includes(`${e.type}`))
+        .map((p) => {
+          if (p.type === "hint")
+            return p.hintType === "conditional" ? (
+              <ConditionalHint key={p._id} {...p} />
+            ) : (
+              <TimerHint key={p._id} {...p} />
+            );
+          if (p.type === "guidelines")
+            return <GuideLineItem key={p._id} {...p} />;
+        })}
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
           <Suspense fallback={<CustomLoader />}>
-            {sceneItems?.map((p, idx) => {
-              const item = p as Item;
+            {sceneItems
+              .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
+              ?.map((p, idx) => {
+                const item = p as Item;
+                if (p.type === "portal")
+                  return <Portal key={p._id} {...item} />;
 
-              if (p.type === "hint")
-                return p.hintType === "conditional" ? (
-                  <ConditionalHint key={p._id} {...p} />
-                ) : (
-                  <TimerHint key={p._id} {...p} />
-                );
-              if (p.type === "guidelines")
-                return <GuideLineItem key={p._id} {...p} />;
-              if (p.type === "portal") return <Portal key={p._id} {...item} />;
-
-              if (p.src)
-                return (
-                  <Sprite
-                    key={p._id}
-                    giveReward={(i) => {
-                      const found = items.find((e) => e._id === i);
-                      if (found) store.setEpicItem(found);
-                    }}
-                    {...item}
-                  />
-                );
-              else return null;
-            })}
+                if (p.src)
+                  return (
+                    <Sprite
+                      key={p._id}
+                      giveReward={(i) => {
+                        const found = items.find((e) => e._id === i);
+                        if (found) store.setEpicItem(found);
+                      }}
+                      {...item}
+                    />
+                  );
+                else return null;
+              })}
             <Environment />
             <Scenes />
           </Suspense>
