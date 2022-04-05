@@ -12,6 +12,15 @@ export default function MiniGameModal() {
   const store = useStore();
   const [miniGames, setMiniGames] = useState<MiniGame>();
 
+  useEffect(() => {
+    const type = miniGames?.type;
+    if (!["cerberus"].includes(`${type}`)) return;
+    axios.get(`/unity/${type}.loader.js`);
+    axios.get(`/unity/${type}.data.unityweb`);
+    axios.get(`/unity/${type}.framework.js.unityweb`);
+    axios.get(`/unity/${type}.wasm.unityweb`);
+  }, [miniGames]);
+
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
 
