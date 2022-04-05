@@ -253,7 +253,7 @@ const Home: NextPage = () => {
       <EpicItem />
       <UnityMiniGame />
       {sceneItems
-        .filter((e) => ["hint", "guideLines"].includes(`${e.type}`))
+        .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
         .map((p) => {
           if (p.type === "hint")
             return p.hintType === "conditional" ? (
