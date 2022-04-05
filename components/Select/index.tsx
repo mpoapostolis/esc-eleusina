@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { ReactNode, useEffect, useState } from "react";
-import { images } from "../../utils";
 import Popover from "../Popover";
 
 type Option = {
@@ -18,11 +17,6 @@ type Props = {
   value?: string | undefined;
   error?: string;
 };
-
-const arr = images.map((o) => [
-  `${o.name}: on hand`,
-  `${o.name}: in inventory`,
-]);
 
 export default function Select(props: Props) {
   const [internalError, setInternalError] = useState<string>();

@@ -23,7 +23,7 @@ const Component = (props: {
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
   const _items = props.items?.filter(
-    (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+    (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
   );
 
   const p = { ...props, items: _items };
@@ -222,14 +222,7 @@ export default function SelectedItem(props: {
               }}
               value={selectedItem.type}
               label="type"
-              options={[
-                undefined,
-                "portal",
-                "box",
-                "compass",
-                "jigsaw",
-                "lexigram",
-              ].map((o) => ({
+              options={[undefined, "portal", "box"].map((o) => ({
                 label: o === undefined ? "-" : o,
                 value: o,
               }))}
@@ -243,11 +236,10 @@ export default function SelectedItem(props: {
           <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
             Required items in inventory to show {selectedItem.name}
           </label>
-          <div className="grid gap-6 grid-cols-4">
+          <div className="grid gap-2 grid-cols-6">
             {props.items
               ?.filter(
-                (e) =>
-                  !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+                (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
               )
               .map((i) => {
                 const item = i as Item;

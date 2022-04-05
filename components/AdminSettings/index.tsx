@@ -128,9 +128,7 @@ const Component = (props: {
 
           <div className="mb-4 grid grid-cols-4 gap-4">
             {props.items
-              ?.filter(
-                (e) => !["timerHint", "guidelines"].includes(`${e.type}`)
-              )
+              ?.filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((i, idx) => {
                 return (
                   <div
