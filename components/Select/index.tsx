@@ -5,7 +5,7 @@ import Popover from "../Popover";
 
 type Option = {
   src?: string;
-  value: string | number | undefined;
+  value: string | number | undefined | null;
   label: string;
 };
 type Props = {

@@ -1,5 +1,6 @@
 import { Euler, Vector3 } from "three";
 import create from "zustand";
+import { HintType } from "../components/AdminSettings/SceneSettings";
 import { ancientText } from "../components/AncientText";
 import { Reward } from "../pages";
 import { loadSound } from "../utils";
@@ -59,6 +60,7 @@ export type Item = {
   _id?: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
+  hintType?: HintType;
   disappearIfIdExist?: string | null;
   rotation?: Euler;
   inventorySrc?: string | null;

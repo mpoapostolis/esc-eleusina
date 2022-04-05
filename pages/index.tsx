@@ -159,6 +159,17 @@ function TimerHint(props: Item) {
   return null;
 }
 
+function ConditionalHint(props: Item) {
+  const store = useStore();
+  useEffect(() => {
+    if (props.requiredItems?.map((e) => store.invHas(e)).every(Boolean)) {
+      store.setIsHintVisible(true);
+      store.setHint(props.text);
+    }
+  }, [store.inventory]);
+  return null;
+}
+
 function GuideLineItem(props?: Item) {
   useGuideLines(`${props?.text}`);
   return null;
@@ -248,8 +259,12 @@ const Home: NextPage = () => {
             {sceneItems?.map((p, idx) => {
               const item = p as Item;
 
-              if (p.type === "timerHint")
-                return <TimerHint key={p._id} {...p} />;
+              if (p.type === "hint")
+                return p.hintType === "conditional" ? (
+                  <ConditionalHint key={p._id} {...p} />
+                ) : (
+                  <TimerHint key={p._id} {...p} />
+                );
               if (p.type === "guidelines")
                 return <GuideLineItem key={p._id} {...p} />;
               if (p.type === "portal") return <Portal key={p._id} {...item} />;

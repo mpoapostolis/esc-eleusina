@@ -56,9 +56,14 @@ const Component = (
       return null;
   }
 };
-function Row(props: Item & { getItems: () => any }) {
+
+export type HintType = "conditional" | "timer";
+
+function Row(props: Item & { getItems: () => any; sceneItems: Item[] }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
+  const [type, setType] = useState<HintType>("timer");
+  const [requiredItems, setRequiredItems] = useState<string[]>([]);
   const [deleteLoad, setDeleteLoad] = useState(false);
   const [load, setLoad] = useState(false);
 
@@ -67,61 +72,90 @@ function Row(props: Item & { getItems: () => any }) {
     setTime(props.delayTimeHint);
   }, [props.items]);
 
-  return (
-    <div className="flex  items-end mb-4">
-      <div className="mr-2 ">
-        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-          Hint
-        </label>
+  const updateRequired = (id: string) => {
+    const found = requiredItems?.includes(id);
+    const tmp = found
+      ? requiredItems?.filter((e) => e !== id)
+      : [...requiredItems, id];
+    setRequiredItems(tmp);
+  };
 
-        <input
-          value={hint}
-          onChange={(e) => setHint(e.currentTarget.value)}
-          className="bg-transparent h-9  w-full text-sm focus:outline-none p-2 border border-gray-500"
-        />
-      </div>
-      <div className="w-40">
+  return (
+    <div className="p-4 my-1  border border-gray-500 bg-gray-500 bg-opacity-5">
+      <div className="grid gap-x-4 grid-cols-2 mb-4">
         <Select
-          value={`${time}`}
-          onChange={(e) => setTime(+`${e.value}`)}
-          label="Delay seconds"
-          options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
+          value={type}
+          onChange={(e) => {
+            if (type === "conditional") setTime(undefined);
+            if (type === "timer") setRequiredItems([]);
+            setType(e.value as HintType);
+          }}
+          label="Hint Type"
+          options={["timer", "conditional"].map((x) => ({
             label: `${x}`,
             value: x,
           }))}
         />
+
+        {type === "timer" && (
+          <Select
+            value={`${time}`}
+            onChange={(e) => setTime(+`${e.value}`)}
+            label="Delay seconds"
+            options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
+              label: `${x}`,
+              value: x,
+            }))}
+          />
+        )}
       </div>
-      <div className="grid  grid-cols-2 w-1/2 gap-x-1 ml-2">
-        <button className="flex justify-center">
-          {load ? (
-            <Load />
-          ) : (
-            <img
-              onClick={async () => {
-                setLoad(true);
-                await axios
-                  .put(
-                    `/api/items/${props._id}`,
-                    JSON.stringify({
-                      text: hint,
-                      delayTimeHint: time,
-                    }),
-                    {
-                      headers: {
-                        "Content-Type": "application/json; charset=UTF-8",
-                      },
-                    }
-                  )
-                  .then(() => setLoad(false));
-              }}
-              src="https://s2.svgbox.net/materialui.svg?ic=save&color=777"
-              width="26"
-              height="26"
-            />
-          )}
-        </button>
+      <textarea
+        rows={3}
+        placeholder="hint"
+        value={hint}
+        onChange={(e) => setHint(e.currentTarget.value)}
+        className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
+      />
+
+      {type === "conditional" && (
+        <>
+          <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
+            Required items to display hint
+          </label>
+          <div className="grid gap-2 grid-cols-6">
+            {props.sceneItems
+              ?.filter(
+                (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
+              )
+              .map((i) => {
+                const item = i as Item;
+                return (
+                  <div
+                    key={i._id}
+                    onClick={() => {
+                      updateRequired(`${i._id}`);
+                    }}
+                    className={clsx(
+                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                      {
+                        "bg-green-500": requiredItems?.includes(`${i._id}`),
+                      }
+                    )}
+                  >
+                    <img
+                      className="hover:scale-150 w-full p-2"
+                      src={item.src}
+                      alt=""
+                    />
+                  </div>
+                );
+              })}
+          </div>
+        </>
+      )}
+      <div className="grid mt-4 grid-cols-2 gap-x-1">
         <button
-          className="flex justify-center"
+          className="flex justify-center border border-gray-500 p-2"
           onClick={async () => {
             setDeleteLoad(true);
             await axios.delete(`/api/items/${props._id}`).then(() => {
@@ -135,6 +169,38 @@ function Row(props: Item & { getItems: () => any }) {
           ) : (
             <img
               src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
+              width="26"
+              height="26"
+            />
+          )}
+        </button>
+        <button
+          onClick={async () => {
+            setLoad(true);
+            await axios
+              .put(
+                `/api/items/${props._id}`,
+                JSON.stringify({
+                  hintType: type,
+                  text: hint,
+                  delayTimeHint: time,
+                  requiredItems,
+                }),
+                {
+                  headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                  },
+                }
+              )
+              .then(() => setLoad(false));
+          }}
+          className="flex justify-center border border-gray-500 p-2"
+        >
+          {load ? (
+            <Load />
+          ) : (
+            <img
+              src="https://s2.svgbox.net/materialui.svg?ic=save&color=777"
               width="26"
               height="26"
             />
@@ -268,9 +334,16 @@ export default function SceneSettings(props: {
       </button>
       <hr className="my-5 opacity-20" />
       {props.items
-        .filter((e) => e.type === "timerHint")
+        .filter((e) => e.type === "hint")
         .map((e) => (
-          <Row key={e._id} getItems={props.getItems} {...e} />
+          <Row
+            sceneItems={props.items?.filter(
+              (e) => !["portal", "guidelines"].includes(`${e.type}`)
+            )}
+            key={e._id}
+            getItems={props.getItems}
+            {...e}
+          />
         ))}
       <button
         onClick={() => {
@@ -278,7 +351,7 @@ export default function SceneSettings(props: {
           axios
             .post("/api/items", {
               scene: store.scene,
-              type: "timerHint",
+              type: "hint",
             })
             .then(() => {
               props.getItems();
@@ -287,7 +360,7 @@ export default function SceneSettings(props: {
         }}
         className="mt-3 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
       >
-        {load ? <Load /> : `+ Add Timer Hint`}
+        {load ? <Load /> : `+ Add Hint`}
       </button>
       <hr className="my-5 opacity-20" />
 
@@ -340,10 +413,10 @@ export default function SceneSettings(props: {
       <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
         Required items in inventory for mini game
       </label>
-      <div className="grid gap-6 grid-cols-4">
+      <div className="grid gap-2 grid-cols-6">
         {props.items
           ?.filter(
-            (e) => !["timerHint", "portal", "guidelines"].includes(`${e.type}`)
+            (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
           )
           .map((i) => {
             const item = i as Item;
