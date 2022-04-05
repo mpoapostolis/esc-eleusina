@@ -16,7 +16,7 @@ export default function EpicItem() {
         store.setEpicItem(undefined);
       }}
       className={clsx(
-        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
+        "fixed  h-screen select-none  w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
           hidden: store.status !== "EPIC_ITEM" || !store.epicItem,
         }
@@ -33,7 +33,7 @@ export default function EpicItem() {
             <img src={store.epicItem?.src} />
           </div>
           <div className="mt-8" style={shadow}>
-            {store.epicItem?.description}
+            {store.epicItem?.name}
           </div>
         </div>
       </div>
