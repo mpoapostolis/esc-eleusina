@@ -23,7 +23,7 @@ export default function MiniGameModal() {
 
   useEffect(() => {
     getMiniGames();
-  }, []);
+  }, [store.scene]);
 
   const accept = () => {
     switch (miniGames?.type) {
