@@ -28,6 +28,7 @@ export default function UnityMiniGame() {
     if (!unityContext) return;
     unityContext.on("Win", win);
   }, [unityContext]);
+
   return (
     <div
       className={clsx(
