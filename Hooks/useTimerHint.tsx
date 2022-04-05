@@ -8,7 +8,6 @@ export default function useTimerHint(str: string, time: number = 0) {
     initialTime: time,
     timerType: "DECREMENTAL",
     step: 1,
-    endTime: 0,
   });
 
   useEffect(() => {
