@@ -291,7 +291,7 @@ export const useStore = create<Store>((set, get) => ({
     set(() => {
       dap?.play();
       return {
-        status: lexigram ? "LEXIGRAM" : "RUNNING",
+        status: lexigram ? "UNITY" : "RUNNING",
         lexigram,
         reward,
       };

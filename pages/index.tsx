@@ -246,7 +246,7 @@ const Home: NextPage = () => {
       <JigSaw />
       <GuideLines />
       <AncientText />
-      <Lexigram />
+      {/* <Lexigram /> */}
       <Ui items={sceneItems} time={timer.time} />
       <MiniGameModal />
       <Menu />
