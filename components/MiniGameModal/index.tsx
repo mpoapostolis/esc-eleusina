@@ -36,6 +36,7 @@ export default function MiniGameModal() {
         break;
 
       case "lexigram":
+        store.setUnity("Lexigram", miniGames?.reward);
         store.setLexigram(miniGames.lexigram.split(","), miniGames.reward);
         break;
       case "cerberus":

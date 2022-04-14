@@ -8,9 +8,9 @@ const getUnity = (s?: string) =>
   s
     ? new UnityContext({
         loaderUrl: `/unity/${s}.loader.js`,
-        dataUrl: `/unity/${s}.data.unityweb`,
-        frameworkUrl: `/unity/${s}.framework.js.unityweb`,
-        codeUrl: `/unity/${s}.wasm.unityweb`,
+        dataUrl: `/unity/${s}.data`,
+        frameworkUrl: `/unity/${s}.framework.js`,
+        codeUrl: `/unity/${s}.wasm`,
       })
     : null;
 
