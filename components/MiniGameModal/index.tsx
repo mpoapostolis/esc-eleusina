@@ -36,6 +36,7 @@ export default function MiniGameModal() {
         break;
 
       case "flowerBox":
+      case "caseBox":
         store.setUnity("flowerBox", miniGames.reward);
         break;
 

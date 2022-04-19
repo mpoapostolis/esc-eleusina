@@ -378,6 +378,7 @@ export default function SceneSettings(props: {
           "jigsaw",
           "lexigram",
           "flowerBox",
+          "caseBox",
           "cerberus",
         ].map((o) => ({
           label: o === undefined ? "-" : o,
