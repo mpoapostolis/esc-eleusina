@@ -283,8 +283,6 @@ export const useStore = create<Store>((set, get) => ({
       compass,
       reward,
     }));
-
-    set((s) => {});
   },
 
   setLexigram: (lexigram?: string[], reward?: Reward | null) =>
