@@ -14,7 +14,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
-import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
+import {
+  DoubleSide,
+  MathUtils,
+  Mesh,
+  Sprite as SpriteType,
+  Vector3,
+} from "three";
 import axios from "axios";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
@@ -71,6 +77,15 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
+const FocusOn = (p: { focusItem?: Item }) => {
+  const { x, z } = p.focusItem?.position ?? {};
+  const v3 = new Vector3(x, -0, z).multiplyScalar(-1);
+  useFrame((t) => {
+    if (x && z) t.camera.position.copy(t.camera.position).lerp(v3, 0.001);
+  });
+  return null;
+};
+
 function Environment() {
   const { scene } = useThree();
   const store = useStore();
@@ -80,12 +95,20 @@ function Environment() {
   scene.background = texture;
   return null;
 }
-function CustomLoader() {
+
+export function CustomLoader() {
   const { progress } = useProgress();
   return (
-    <Html center>
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
-      <span style={{ color: "white" }}>{progress.toFixed(0)} % loaded</span>
+    <Html
+      center
+      className="w-screen h-screen bg-opacity-50 bg-black flex justify-center items-center"
+    >
+      <div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-8 border-white"></div>
+        <span className="text-white  font-bold text-xl">
+          {progress.toFixed(0)} % loaded
+        </span>
+      </div>
     </Html>
   );
 }
@@ -135,10 +158,7 @@ function Portal(props: Item) {
 
   return show ? (
     <mesh
-      onClick={() => {
-        if (props.goToScene) store.setScene(props.goToScene);
-        if (props.collectable) store.setInventory(props);
-      }}
+      onClick={props.onClick}
       ref={ref}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
@@ -173,6 +193,10 @@ function ConditionalHint(props: Item) {
 function GuideLineItem(props?: Item) {
   useGuideLines(`${props?.text}`);
   return null;
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const Home: NextPage = () => {
@@ -240,6 +264,8 @@ const Home: NextPage = () => {
   }, []);
 
   const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
+  const [focusItem, setFocusItem] = useState<Item>();
+
   return (
     <div {...bind()}>
       {store.compass && <Compass />}
@@ -267,13 +293,34 @@ const Home: NextPage = () => {
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
+          <FocusOn focusItem={focusItem} />
+
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
               .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((p, idx) => {
                 const item = p as Item;
                 if (p.type === "portal")
-                  return <Portal key={p._id} {...item} />;
+                  return (
+                    <Portal
+                      onClick={() => {
+                        const goTo = p.goToScene;
+                        if (goTo) {
+                          Promise.resolve()
+                            .then(() => setFocusItem(p))
+                            .then(() => sleep(250))
+                            .then(() => setFov(0))
+                            .then(() => sleep(250))
+                            .then(() => store.setScene(goTo))
+                            .then(() => setFov(75))
+                            .then(() => setFocusItem(undefined));
+                        }
+                        if (p.collectable) store.setInventory(p);
+                      }}
+                      key={p._id}
+                      {...item}
+                    />
+                  );
 
                 if (p.src)
                   return (
