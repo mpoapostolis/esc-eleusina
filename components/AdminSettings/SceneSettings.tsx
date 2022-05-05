@@ -9,6 +9,7 @@ import { Item, useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
 import Select from "../Select";
+import BoxSettings from "./BoxSettings";
 
 const Component = (
   props: MiniGame & {
@@ -49,6 +50,12 @@ const Component = (
             }}
             className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
           ></input>
+        </div>
+      );
+    case "box":
+      return (
+        <div className="mt-4">
+          <BoxSettings {...props} />
         </div>
       );
 
@@ -372,18 +379,12 @@ export default function SceneSettings(props: {
         }}
         value={miniGame.type}
         label="Mini Game"
-        options={[
-          undefined,
-          "compass",
-          "jigsaw",
-          "lexigram",
-          "flowerBox",
-          "caseBox",
-          "cerberus",
-        ].map((o) => ({
-          label: o === undefined ? "-" : o,
-          value: o,
-        }))}
+        options={[undefined, "box", "jigsaw", "lexigram", "cerberus"].map(
+          (o) => ({
+            label: o === undefined ? "-" : o,
+            value: o,
+          })
+        )}
       />
       <Component {...miniGame} update={update} />
       <br />
