@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import { Img } from "../../pages/admin";
+import { updateItem } from "../../queries/items";
 import { Item, useStore } from "../../store";
 import Popover from "../Popover";
 import Select from "../Select";
@@ -10,19 +12,59 @@ export default function ItemSettings(props: {
   getItems: () => void;
   items: Item[];
   imgs: Img[];
-  update: (p: Partial<Item>) => void;
 }) {
   const store = useStore();
   const router = useRouter();
-  const id = router.query.id;
+  const id = `${router.query.id}`;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+  const [s, $S] = useState<Record<string, string>>({
+    name: "",
+    onClickTrigger: "",
+    onClickOpenModal: "",
+    setHint: "",
+    setGuidelines: "",
+    inventorySrc: "",
+    collectableIfHandHas: "",
+    onCollectFail: "",
+  });
+
+  useEffect(() => {
+    const selectedItem = { ...props.items[idx] };
+    const {
+      name,
+      onClickTrigger,
+      onClickOpenModal,
+      setHint,
+      setGuidelines,
+      inventorySrc,
+      collectableIfHandHas,
+      onCollectFail,
+    } = selectedItem;
+    setS({
+      name,
+      onClickTrigger,
+      onClickOpenModal,
+      setHint,
+      setGuidelines,
+      inventorySrc,
+      collectableIfHandHas,
+      onCollectFail,
+    });
+  }, [props.items, idx]);
+
+  const setS = (y: Partial<Item>) => $S((s) => ({ ...s, ...y }));
 
   const idToSrc = (id?: string) =>
     props.items.find((e) => {
       return e._id === id;
     })?.src;
+
+  const onBlur = (key: string) =>
+    updateItem(id, {
+      [key]: s[key],
+    });
 
   return (
     <>
@@ -30,37 +72,39 @@ export default function ItemSettings(props: {
         Name
       </label>
       <input
-        value={selectedItem.name}
+        value={s.name}
+        onBlur={() => onBlur("name")}
         onChange={(evt) => {
-          props.update({
+          setS({
             name: evt.currentTarget.value,
           });
         }}
-        className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+        className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
       ></input>
       <br />
       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
         onClick trigger
       </label>
       <input
-        value={selectedItem.onClickTrigger}
+        value={s.onClickTrigger}
+        onBlur={() => onBlur("onClickTrigger")}
         onChange={(evt) => {
-          props.update({
+          setS({
             onClickTrigger: evt.currentTarget.value,
           });
         }}
-        className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+        className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
       ></input>
 
       <br />
 
       <Select
         onChange={(v) => {
-          props.update({
+          updateItem(id, {
             onClickOpenModal: v.value as "hint" | "guidelines" | undefined,
           });
         }}
-        value={selectedItem.onClickOpenModal}
+        value={s.onClickOpenModal}
         label="onClick open Guidelines or Hint"
         options={[undefined, "guidelines", "hint"].map((o) => ({
           label: o === undefined ? "-" : o,
@@ -75,9 +119,10 @@ export default function ItemSettings(props: {
         <textarea
           className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={selectedItem.setHint}
+          value={s.setHint}
+          onBlur={() => onBlur("setHint")}
           onChange={(evt) => {
-            props.update({
+            setS({
               setHint: evt.currentTarget.value,
             });
           }}
@@ -89,11 +134,12 @@ export default function ItemSettings(props: {
       </label>
       <div>
         <textarea
-          className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={selectedItem.setGuidelines}
+          onBlur={() => onBlur("setGuidelines")}
+          value={s.setGuidelines}
           onChange={(evt) => {
-            props.update({
+            setS({
               setGuidelines: evt.currentTarget.value,
             });
           }}
@@ -126,7 +172,7 @@ export default function ItemSettings(props: {
             <AllImage
               imgs={props.imgs}
               onClick={(o) => {
-                props.update({
+                updateItem(id, {
                   inventorySrc: o?.src ?? null,
                 });
               }}
@@ -156,7 +202,7 @@ export default function ItemSettings(props: {
             <AllImage
               imgs={sceneItems}
               onClick={(o) => {
-                props.update({
+                updateItem(id, {
                   collectableIfHandHas: o?._id ?? null,
                 });
               }}
@@ -169,9 +215,10 @@ export default function ItemSettings(props: {
           </label>
           <div>
             <textarea
-              value={selectedItem.onCollectFail}
+              value={s.onCollectFail}
+              onBlur={() => onBlur("onCollectFail")}
               onChange={(evt) => {
-                props.update({
+                setS({
                   onCollectFail: evt.currentTarget.value,
                 });
               }}

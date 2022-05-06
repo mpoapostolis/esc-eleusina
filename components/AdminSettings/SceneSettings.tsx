@@ -52,12 +52,6 @@ const Component = (
           ></input>
         </div>
       );
-    case "box":
-      return (
-        <div className="mt-4">
-          <BoxSettings {...props} />
-        </div>
-      );
 
     default:
       return null;
@@ -379,12 +373,10 @@ export default function SceneSettings(props: {
         }}
         value={miniGame.type}
         label="Mini Game"
-        options={[undefined, "box", "jigsaw", "lexigram", "cerberus"].map(
-          (o) => ({
-            label: o === undefined ? "-" : o,
-            value: o,
-          })
-        )}
+        options={[undefined, "jigsaw", "lexigram", "cerberus"].map((o) => ({
+          label: o === undefined ? "-" : o,
+          value: o,
+        }))}
       />
       <Component {...miniGame} update={update} />
       <br />

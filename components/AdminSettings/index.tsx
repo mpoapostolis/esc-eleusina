@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
+import { addItem } from "../../queries/items";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -43,10 +44,10 @@ export function AllImage(props: {
         </div>
       ))}
       <button
-        className="p-2 h-full hover:scale-150 w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
+        className="p-2 h-full  w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
         onClick={() => props.onClick(null)}
       >
-        ✖️
+        ❌
       </button>
     </div>
   );
@@ -166,21 +167,17 @@ const Component = (props: {
             <AllImage
               imgs={props.imgs}
               onClick={(id) => {
-                axios
-                  .post("/api/items", {
-                    scene: store.scene,
-                    imgId: id?._id,
-                    scale: 0.5,
-                  })
-                  .then((d) => {
-                    props.getItems();
-                    router.push({
-                      query: {
-                        type: "selectedItem",
-                        id: d.data.id,
-                      },
-                    });
+                addItem({
+                  scene: store.scene,
+                  imgId: `${id?._id}`,
+                }).then((d) => {
+                  router.push({
+                    query: {
+                      type: "selectedItem",
+                      id: d.id,
+                    },
                   });
+                });
               }}
             />
           </Popover>

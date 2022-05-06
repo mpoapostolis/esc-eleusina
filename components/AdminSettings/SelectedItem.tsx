@@ -2,13 +2,13 @@ import axios from "axios";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { AllImage, Checkbox } from ".";
+import { Checkbox } from ".";
 import { Img } from "../../pages/admin";
-import { Item, Scene, scenes, useStore } from "../../store";
-import Load from "../Load";
-import Popover from "../Popover";
+import { updateItem } from "../../queries/items";
+import { Item } from "../../store";
 import Range from "../Range";
 import Select from "../Select";
+import BoxSettings from "./BoxSettings";
 import ItemSettings from "./ItemSettings";
 import PortalSettings from "./PortalSettings";
 
@@ -31,6 +31,9 @@ const Component = (props: {
   switch (selectedItem.type) {
     case "portal":
       return <PortalSettings {...props} />;
+    case "box":
+      return <BoxSettings />;
+
     default:
       return <ItemSettings {...p} />;
   }
@@ -42,21 +45,20 @@ export default function SelectedItem(props: {
   imgs: Img[];
   update: (p: Partial<Item>) => void;
 }) {
-  const [load, setLoad] = useState(false);
+  const [range, setRange] = useState(0.5);
   const router = useRouter();
-  const id = router.query.id;
+  const id = `${router.query.id}`;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
 
-  const updateRequired = (id: string) => {
+  const updateRequired = (_id: string) => {
     if (!selectedItem) return;
     const requiredItems = selectedItem?.requiredItems ?? [];
-    const found = requiredItems?.includes(id);
+    const found = requiredItems?.includes(_id);
     const tmp = found
-      ? requiredItems?.filter((e) => e !== id)
-      : [...requiredItems, id];
-    tmp;
-    props.update({ requiredItems: tmp });
+      ? requiredItems?.filter((e) => e !== _id)
+      : [...requiredItems, _id];
+    updateItem(id, { requiredItems: tmp });
   };
 
   return (
@@ -78,7 +80,7 @@ export default function SelectedItem(props: {
           />
         </button>
         <button
-          className="ml-auto mr-4"
+          className="ml-auto"
           onClick={() =>
             router.push({
               query: {
@@ -90,44 +92,12 @@ export default function SelectedItem(props: {
           <img
             onClick={async () => {
               router.push("/admin");
-              await axios
-                .delete(`/api/items/${id}`)
-                .then(() => props.getItems());
+              await axios.delete(`/api/items/${id}`);
             }}
             src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
             width="32"
             height="32"
           />
-        </button>
-        <button
-          onClick={async () => {
-            const { _id, v3, e3, ...rest } = selectedItem;
-            setLoad(true);
-            await axios.put(
-              `/api/items/${selectedItem._id}`,
-              JSON.stringify({
-                ...rest,
-                position: v3,
-                rotation: e3,
-              }),
-              {
-                headers: {
-                  "Content-Type": "application/json; charset=UTF-8",
-                },
-              }
-            );
-            setLoad(false);
-          }}
-        >
-          {load ? (
-            <Load />
-          ) : (
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=save&color=777"
-              width="32"
-              height="32"
-            />
-          )}
         </button>
       </div>
 
@@ -145,9 +115,12 @@ export default function SelectedItem(props: {
             step={0.01}
             onChange={(evt) => {
               const value = +evt.target.value;
-              props.update({ scale: value });
+              setRange(value);
             }}
-            value={selectedItem.scale}
+            onPointerUp={() => {
+              updateItem(id, { scale: range });
+            }}
+            value={range}
             label="scale"
           />
           {!selectedItem.type && (
@@ -156,7 +129,7 @@ export default function SelectedItem(props: {
                 label="Collect to inventory"
                 checked={selectedItem.collectable}
                 onChange={(evt) => {
-                  props.update({
+                  updateItem(id, {
                     selectable: evt.target.checked
                       ? selectedItem.selectable
                       : false,
@@ -168,7 +141,7 @@ export default function SelectedItem(props: {
               <Checkbox
                 label="Select as tool"
                 onChange={(evt) => {
-                  props.update({
+                  updateItem(id, {
                     collectable: evt.target.checked
                       ? true
                       : selectedItem.collectable,
@@ -181,7 +154,7 @@ export default function SelectedItem(props: {
               <Checkbox
                 label="Epic Item"
                 onChange={(evt) => {
-                  props.update({
+                  updateItem(id, {
                     isEpic: evt.target.checked,
                   });
                 }}
@@ -205,7 +178,7 @@ export default function SelectedItem(props: {
             rows={5}
             value={selectedItem.description}
             onChange={(evt) => {
-              props.update({
+              updateItem(id, {
                 description: evt.currentTarget.value,
               });
             }}
@@ -216,14 +189,14 @@ export default function SelectedItem(props: {
           {
             <Select
               onChange={(v) => {
-                props.update({
+                updateItem(id, {
                   type: v.value as string,
                 });
               }}
               value={selectedItem.type}
               label="type"
-              options={[undefined, "portal", "box"].map((o) => ({
-                label: o === undefined ? "-" : o,
+              options={[null, "portal", "box"].map((o) => ({
+                label: o === null ? "-" : o,
                 value: o,
               }))}
             />
