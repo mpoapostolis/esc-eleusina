@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { Img } from "../../pages/admin";
+import { updateItem } from "../../queries/items";
 import { Item, Scene, scenes } from "../../store";
 import Select from "../Select";
 
@@ -7,7 +8,6 @@ export default function PortalSettings(props: {
   getItems: () => void;
   items: Item[];
   imgs: Img[];
-  update: (p: Partial<Item>) => void;
 }) {
   const router = useRouter();
   const id = router.query.id;
@@ -16,15 +16,14 @@ export default function PortalSettings(props: {
   return (
     <Select
       onChange={(v) => {
-        console.log(v);
-        props.update({
+        updateItem(`${id}`, {
           goToScene: v.value as Scene,
         });
       }}
       value={selectedItem.goToScene}
       label="onClick go to scene (360)"
-      options={[undefined, ...scenes].map((o) => ({
-        label: o === undefined ? "-" : o,
+      options={[null, ...scenes].map((o) => ({
+        label: o === null ? "-" : o,
         value: o,
       }))}
     ></Select>

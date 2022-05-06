@@ -117,7 +117,7 @@ function Portal(props: Item) {
   const countX = 4;
   const countY = 6;
   const fps = 25;
-  const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  const texture = useLoader(THREE.TextureLoader, "/images/portal.png");
   const [hovered, setHovered] = useState(false);
   useEffect(() => {
     if (typeof document !== "undefined")
@@ -136,7 +136,7 @@ function Portal(props: Item) {
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
 
-    ref.current.scale.set(props.scale / 4, props.scale / 6, 1);
+    ref.current.scale.set(props.scale / 2, props.scale / 3, 1);
   });
 
   const ref = useRef<Mesh>();
@@ -246,8 +246,11 @@ const Home: NextPage = () => {
     const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
     if (!currMinigames) return;
     const doIHaveEpicItem = store.epicInvHas(`${currMinigames.reward?._id}`);
+    const arr = (currMinigames.requiredItems ?? [])?.length > 0;
+
     if (
       !doIHaveEpicItem &&
+      arr &&
       currMinigames.requiredItems?.map((i) => store.invHas(i)).every(Boolean)
     )
       store.setStatus("MINIGAMEMODAL");

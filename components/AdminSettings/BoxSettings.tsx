@@ -1,33 +1,33 @@
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
-import { MiniGame } from "../../pages";
-import { getItems, getMiniGames, updateMiniGame } from "../../queries";
+import { getItems, updateItem } from "../../queries/items";
 import { useStore } from "../../store";
+import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 
-export default function BoxSettings(props: MiniGame) {
+export default function BoxSettings() {
   const { data: items } = getItems();
-  const { data: miniGames } = getMiniGames();
   const [v, setV] = useState<string>();
-
+  const router = useRouter();
+  const id = `${router.query.id}`;
   const store = useStore();
-  const idx = miniGames.findIndex((e) => e.scene === store.scene);
-  const miniGame = { ...miniGames[idx] };
+  const idx = items.findIndex((e) => e._id === id);
+  const selectedItem = { ...items[idx] };
   const sceneItems = items.filter((item) => store?.scene === item.scene);
-
   useEffect(() => {
-    if (miniGame.orderBoxError) setV(miniGame.orderBoxError);
-  }, [miniGame.orderBoxError]);
+    if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
+  }, [selectedItem.orderBoxError]);
 
-  const updateOrderInBox = (id: string) => {
-    if (!miniGame) return;
-    const orderInsideTheBox = miniGame?.orderInsideTheBox ?? [];
-    const found = orderInsideTheBox?.includes(id);
+  const updateOrderInBox = (_id: string) => {
+    if (!selectedItem) return;
+    const orderInsideTheBox = selectedItem?.orderInsideTheBox ?? [];
+    const found = orderInsideTheBox?.includes(_id);
     const tmp = found
-      ? orderInsideTheBox?.filter((e) => e !== id)
-      : [...orderInsideTheBox, id];
-    updateMiniGame({ ...props, orderInsideTheBox: tmp });
+      ? orderInsideTheBox?.filter((e) => e !== _id)
+      : [...orderInsideTheBox, _id];
+    updateItem(id, { orderInsideTheBox: tmp });
   };
 
   const idToName = (id?: string) =>
@@ -43,7 +43,7 @@ export default function BoxSettings(props: MiniGame) {
   return (
     <>
       <ul className="">
-        {miniGame.orderInsideTheBox?.map((e, idx) => (
+        {selectedItem.orderInsideTheBox?.map((e, idx) => (
           <li
             onClick={() => {
               updateOrderInBox(e);
@@ -71,9 +71,9 @@ export default function BoxSettings(props: MiniGame) {
         }
       >
         <AllImage
-          imgs={sceneItems}
+          imgs={getOnlyItems(sceneItems)}
           onClick={(o) => {
-            updateOrderInBox(`${o?._id}`);
+            if (o) updateOrderInBox(`${o?._id}`);
           }}
         />
       </Popover>
@@ -92,12 +92,41 @@ export default function BoxSettings(props: MiniGame) {
             setV(evt.currentTarget.value);
           }}
           onBlur={() => {
-            updateMiniGame({
-              ...props,
+            updateItem(id, {
               orderBoxError: v,
             });
           }}
         ></textarea>
+        <Popover
+          label={
+            <>
+              <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+                Reward
+              </label>
+              <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                {selectedItem.reward ? (
+                  <div>
+                    <img
+                      src={selectedItem.reward?.src}
+                      className="w-20 h-auto"
+                    />
+                  </div>
+                ) : (
+                  "➕"
+                )}
+              </div>
+            </>
+          }
+        >
+          <AllImage
+            imgs={getOnlyItems(items)}
+            onClick={async (o) => {
+              updateItem(id, {
+                reward: o,
+              });
+            }}
+          />
+        </Popover>
       </div>
     </>
   );

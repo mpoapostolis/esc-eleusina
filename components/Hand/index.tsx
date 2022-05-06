@@ -35,7 +35,7 @@ export function Hand() {
   const texture = useLoader(TextureLoader, src ?? "/images/empty.png");
 
   const { scale } = useSpring({
-    scale: vissible ? 0.5 : 0,
+    scale: vissible ? 0.1 : 0,
     config: config.wobbly,
   });
 

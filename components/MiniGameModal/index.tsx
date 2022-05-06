@@ -35,11 +35,6 @@ export default function MiniGameModal() {
         store.setCompass(true, miniGames.reward);
         break;
 
-      case "flowerBox":
-      case "caseBox":
-        store.setUnity("flowerBox", miniGames.reward);
-        break;
-
       case "lexigram":
         store.setUnity("Lexigram", miniGames?.reward);
         store.setLexigram(miniGames.lexigram.split(","), miniGames.reward);

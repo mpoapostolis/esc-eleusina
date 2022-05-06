@@ -57,7 +57,6 @@ export default function Sprite(
 
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
-  console.log(props.type);
   return (
     <animated.mesh
       onPointerEnter={() => setHovered(true)}
