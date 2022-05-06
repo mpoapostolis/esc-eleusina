@@ -311,9 +311,9 @@ const Home: NextPage = () => {
                         if (goTo) {
                           Promise.resolve()
                             .then(() => setFocusItem(p))
-                            .then(() => sleep(250))
+                            .then(() => sleep(300))
                             .then(() => setFov(0))
-                            .then(() => sleep(250))
+                            .then(() => sleep(300))
                             .then(() => store.setScene(goTo))
                             .then(() => setFov(75))
                             .then(() => setFocusItem(undefined));
