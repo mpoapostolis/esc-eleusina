@@ -1,6 +1,6 @@
 import { Item, useStore } from "../../store";
 import { useSpring, animated, config } from "@react-spring/three";
-import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
+import { DoubleSide, Sprite as SpriteType } from "three";
 
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
@@ -49,8 +49,8 @@ export default function Sprite(
           return x === insideBox[idx];
         })
         .every(Boolean);
-      if (isSame && props.boxReward) {
-        props.giveReward(props.boxReward);
+      if (isSame && props.reward) {
+        props.giveReward(`${props.reward._id}`);
       }
     }
   }, [insideBox, props.orderInsideTheBox]);
