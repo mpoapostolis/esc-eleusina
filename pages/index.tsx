@@ -78,8 +78,8 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
 }
 
 const FocusOn = (p: { focusItem?: Item }) => {
-  const { x, z } = p.focusItem?.position ?? {};
-  const v3 = new Vector3(x, -0, z).multiplyScalar(-1);
+  const { x, y, z } = p.focusItem?.position ?? {};
+  const v3 = new Vector3(x, y, z).multiplyScalar(-1);
   useFrame((t) => {
     if (x && z) t.camera.position.copy(t.camera.position).lerp(v3, 0.001);
   });
