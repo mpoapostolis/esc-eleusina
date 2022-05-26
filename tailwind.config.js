@@ -347,6 +347,7 @@ module.exports = {
     },
     fontFamily: {
       sans: [
+        "Myriad Pro",
         'ui-sans-serif',
         'system-ui',
         '-apple-system',

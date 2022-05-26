@@ -1,0 +1,1 @@
+<script type="application/javascript" src="https://whatever.test/assets/tag-abc-123.js"></script>

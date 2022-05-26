@@ -31,31 +31,32 @@ export default function AncientText() {
       setWords([]);
     }
   }, [words]);
+
   return (
     <div
       className={clsx(
-        "fixed bg-black bg-opacity-70  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
+        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "MODAL" || !store.ancientText,
+          hidden: !store.ancientText,
         }
       )}
     >
       <div>
-        <div className="w-full p-2  relative border-2 border-dashed rounded-2xl   m-auto  text-3xl font-bold  text-white text-left">
-          <div className="px-20 bg-black bg-opacity-90 opacity-90 border py-10 rounded-2xl">
+        <div className="w-full  p-2  relative border-2 border-dashed rounded-2xl   m-auto  text-3xl font-bold  text-white text-left">
+          <div className="px-20  bg-opacity-90 opacity-90 border py-10 rounded-2xl">
             {store.ancientText?.text.split(" ").map((k, idx) =>
               k === `nl\n` ? (
                 <br key={idx} />
               ) : (
                 <span
-                  onClick={() =>
+                  onClick={() => {
                     store.ancientText?.keys.includes(k) &&
-                    setWords(() => {
-                      const set = new Set(words);
-                      set.add(k);
-                      return Array.from(set);
-                    })
-                  }
+                      setWords(() => {
+                        const set = new Set(words);
+                        set.add(k);
+                        return Array.from(set);
+                      });
+                  }}
                   key={idx}
                   className={clsx({
                     "font-bold cursor-pointer hover:text-yellow-200":

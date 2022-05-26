@@ -46,9 +46,7 @@ export default function Hint() {
           style={transform}
           className="m-2 px-4 py-4 min-h-fit  text-2xl rounded-lg  border-2 border-black -skew-x-12  w-full bg-white bg-opacity-40"
         >
-          <div className="text-white font-bold text-2xl" style={shadow}>
-            {store.hint}
-          </div>
+          <div className="text-white font-bold text-2xl">{store.hint}</div>
         </div>
         <hr className="border-dashed  border border-black w-3/4" />
       </div>
