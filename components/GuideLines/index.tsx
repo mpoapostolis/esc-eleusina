@@ -8,7 +8,7 @@ const shadow = {
 export default function GuideLines() {
   const store = useStore();
   const getMaxW =
-    (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
+    (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-2xl";
 
   return (
     <div
@@ -25,18 +25,18 @@ export default function GuideLines() {
     >
       <div
         className={clsx(
-          "w-full p-1 max-h-screen  relative border-2 border-dashed rounded-2xl m-auto  text-3xl font-bold  text-white text-center",
+          "w-full p-1 max-h-screen  relative border-2 border-dashed rounded-2xl m-auto  text-2xl font-bold  text-white text-center",
           getMaxW
         )}
       >
-        <div className="px-20 bg-opacity-80 bg-black border py-10 rounded-2xl">
+        <div className="px-20 bg-opacity-90 bg-black border py-10 rounded-2xl">
           <img
             src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
             role="button"
             className=" w-10 m-3 h-10 z-50 pointer-events-auto absolute right-0 top-0"
             alt=""
           />
-          <div style={shadow}>{store.guideLines}</div>
+          <div>{store.guideLines}</div>
         </div>
       </div>
     </div>

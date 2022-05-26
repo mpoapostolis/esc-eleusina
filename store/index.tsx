@@ -186,6 +186,7 @@ export type Status =
   | "MODAL"
   | "GUIDELINES"
   | "HISTORY"
+  | "ANCIENT_TEXT"
   | "EPIC_ITEM"
   | "RUNNING";
 
@@ -372,7 +373,7 @@ export const useStore = create<Store>((set, get) => ({
   setAncientText: (ancientText?: AncientText) =>
     set(() => {
       dap?.play();
-      return { status: ancientText ? "MODAL" : "RUNNING", ancientText };
+      return { status: ancientText ? "ANCIENT_TEXT" : "RUNNING", ancientText };
     }),
   inventoryNotf: [],
   modal: undefined,
