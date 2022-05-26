@@ -252,7 +252,7 @@ const win = loadSound("/sounds/win.wav");
 export const useStore = create<Store>((set, get) => ({
   account: {},
   status: "MENU",
-  scene: "elaiourgeio",
+  scene: "intro",
   level: "Φως-Σκοτάδι",
   inventory: [],
   epicInventory: [],
