@@ -34,6 +34,9 @@ export default function AncientText() {
 
   return (
     <div
+      style={{
+        fontFamily: "STIX Two Text",
+      }}
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
@@ -42,8 +45,8 @@ export default function AncientText() {
       )}
     >
       <div>
-        <div className="w-full  p-2  relative border-2 border-dashed rounded-2xl   m-auto  text-3xl font-bold  text-white text-left">
-          <div className="px-20  bg-opacity-90 opacity-90 border py-10 rounded-2xl">
+        <div className="ancientText  w-full bg-[#fffcd2] bg-opacity-50 text-black  p-2  relative border-2 border-dashed rounded-2xl   m-auto  text-3xl font-bold  text-left">
+          <div className="px-20  bg-opacity-90 text-center opacity-90 border py-10 rounded-2xl">
             {store.ancientText?.text.split(" ").map((k, idx) =>
               k === `nl\n` ? (
                 <br key={idx} />
@@ -73,10 +76,13 @@ export default function AncientText() {
               onClick={() => {
                 store.setAncientText(undefined);
               }}
-              src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
+              src="https://s2.svgbox.net/materialui.svg?ic=close&color=000"
               role="button"
               className=" w-10 m-5 h-10 z-50 pointer-events-auto absolute right-0 top-0"
             />
+            <div className="w-full text-zinc-800 mt-10 text-right">
+              <span className="text-sm">KAPOIOS</span>
+            </div>
           </div>
         </div>
       </div>

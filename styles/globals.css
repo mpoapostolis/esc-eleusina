@@ -1,15 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('http://fonts.cdnfonts.com/css/myriad-pro');
-@import url('https://fonts.googleapis.com/css2?family=STIX+Two+Text&display=swap');
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: 'Myriad Pro', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'Myriad Pro';
 }
 
 a {
@@ -18,11 +15,10 @@ a {
 }
 
 * {
-  font-family: 'Myriad Pro' !important;
   box-sizing: border-box;
 }
 
-.xxx {
+.ancientText {
   font-family: 'STIX Two Text', !important
 }
 

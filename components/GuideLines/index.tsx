@@ -29,7 +29,7 @@ export default function GuideLines() {
           getMaxW
         )}
       >
-        <div className="px-20 bg-opacity-90 bg-black border py-10 rounded-2xl">
+        <div className="px-20 bg-opacity-50 bg-black border py-10 rounded-2xl">
           <img
             src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
             role="button"
