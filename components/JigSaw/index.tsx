@@ -143,8 +143,6 @@ function Piece(p: {
   );
 }
 
-const arr = [...Array(16).fill("")];
-
 export default function JigSaw() {
   const [shuffle, setShuffle] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number }[]>(

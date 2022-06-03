@@ -28,7 +28,6 @@ import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
 import EpicItem from "../components/EpicItem";
-import Lexigram from "../components/Lexigram";
 import useGuideLines from "../Hooks/useGuideLines";
 import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
@@ -36,6 +35,8 @@ import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import MiniGameModal from "../components/MiniGameModal";
 import UnityMiniGame from "../components/UnityMiniGame";
+import { getItems } from "../queries/items";
+import { getMiniGames } from "../queries";
 
 export type MiniGame = {
   scene?: string;
@@ -224,23 +225,8 @@ const Home: NextPage = () => {
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
 
-  const [items, setItems] = useState<Item[]>([]);
-  const [miniGames, setMiniGames] = useState<MiniGame[]>([]);
-
-  const getItems = async () =>
-    axios.get("/api/items").then((d) => {
-      setItems(d.data);
-    });
-
-  const getMiniGames = async () =>
-    axios.get("/api/miniGames").then((d) => {
-      setMiniGames(d.data);
-    });
-
-  useEffect(() => {
-    getItems();
-    getMiniGames();
-  }, []);
+  const { data: miniGames } = getMiniGames();
+  const { data: items } = getItems();
 
   useEffect(() => {
     const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
