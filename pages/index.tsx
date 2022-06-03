@@ -91,7 +91,7 @@ function Environment() {
   const { scene } = useThree();
   const store = useStore();
   const texture = useLoader(THREE.TextureLoader, `/scenes/${store.scene}.jpg`);
-
+  texture.onUpdate = () => console.log("----");
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = texture;
   return null;
@@ -267,24 +267,25 @@ const Home: NextPage = () => {
       <Menu />
       <EpicItem />
       <UnityMiniGame />
-      {sceneItems
-        .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
-        .map((p) => {
-          if (p.type === "hint")
-            return p.hintType === "conditional" ? (
-              <ConditionalHint key={p._id} {...p} />
-            ) : (
-              <TimerHint key={p._id} {...p} />
-            );
-          if (p.type === "guidelines")
-            return <GuideLineItem key={p._id} {...p} />;
-        })}
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
           <FocusOn focusItem={focusItem} />
 
           <Suspense fallback={<CustomLoader />}>
+            {sceneItems
+              .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
+              .map((p) => {
+                if (p.type === "hint")
+                  return p.hintType === "conditional" ? (
+                    <ConditionalHint key={p._id} {...p} />
+                  ) : (
+                    <TimerHint key={p._id} {...p} />
+                  );
+                if (p.type === "guidelines")
+                  return <GuideLineItem key={p._id} {...p} />;
+              })}
+            <Environment />
             {sceneItems
               .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((p, idx) => {
@@ -324,7 +325,6 @@ const Home: NextPage = () => {
                   );
                 else return null;
               })}
-            <Environment />
             <Scenes />
           </Suspense>
 
