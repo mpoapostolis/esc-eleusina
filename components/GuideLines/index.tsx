@@ -1,17 +1,22 @@
 import clsx from "clsx";
 import { useStore } from "../../store";
-
-const shadow = {
-  WebkitTextStroke: "1px black",
-};
+import { motion } from "framer-motion";
 
 export default function GuideLines() {
   const store = useStore();
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-2xl";
-
+  const show = store.status === "GUIDELINES" && store.guideLinesVissible;
   return (
-    <div
+    <motion.div
+      animate={{
+        translateY: show ? 0 : 250,
+        scale: show ? 1 : 0,
+        opacity: show ? 1 : 0,
+      }}
+      transition={{
+        duration: 0.35,
+      }}
       onClick={() => {
         store.setguideLinesVissible(false);
         store.setStatus("RUNNING");
@@ -19,7 +24,7 @@ export default function GuideLines() {
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "GUIDELINES" || !store.guideLinesVissible,
+          // hidden: store.status !== "GUIDELINES" || !store.guideLinesVissible,
         }
       )}
     >
@@ -39,6 +44,6 @@ export default function GuideLines() {
           <div>{store.guideLines}</div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

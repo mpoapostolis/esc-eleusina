@@ -1,5 +1,6 @@
 import axios from "axios";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MiniGame } from "../../pages";
 import { useStore } from "../../store";
@@ -49,12 +50,17 @@ export default function MiniGameModal() {
   };
 
   return (
-    <div
+    <motion.div
+      animate={{
+        translateY: store.status === "MINIGAMEMODAL" ? 0 : 250,
+        scale: store.status === "MINIGAMEMODAL" ? 1 : 0,
+        opacity: store.status === "MINIGAMEMODAL" ? 1 : 0,
+      }}
+      transition={{
+        duration: 0.35,
+      }}
       className={clsx(
-        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
-        {
-          hidden: store.status !== "MINIGAMEMODAL",
-        }
+        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50"
       )}
     >
       <div
@@ -83,6 +89,6 @@ export default function MiniGameModal() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

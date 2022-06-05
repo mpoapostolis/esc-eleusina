@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useStore } from "../../store";
+import { motion } from "framer-motion";
 
 export const ancientText = {
   text: `
@@ -33,15 +34,20 @@ export default function AncientText() {
   }, [words]);
 
   return (
-    <div
+    <motion.div
+      animate={{
+        translateX: store.ancientText ? 0 : 750,
+        scale: store.ancientText ? 1 : 0,
+        opacity: store.ancientText ? 1 : 0,
+      }}
+      transition={{
+        duration: 0.35,
+      }}
       style={{
         fontFamily: "STIX Two Text",
       }}
       className={clsx(
-        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
-        {
-          hidden: !store.ancientText,
-        }
+        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50"
       )}
     >
       <div>
@@ -86,6 +92,6 @@ export default function AncientText() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
