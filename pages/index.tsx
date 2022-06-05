@@ -37,6 +37,7 @@ import MiniGameModal from "../components/MiniGameModal";
 import UnityMiniGame from "../components/UnityMiniGame";
 import { getItems } from "../queries/items";
 import { getMiniGames } from "../queries";
+import { motion } from "framer-motion";
 
 export type MiniGame = {
   scene?: string;
@@ -200,6 +201,58 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function FadeOut() {
+  const store = useStore();
+
+  useEffect(() => {
+    const ss = store.screenShot;
+    if (ss) setTimeout(() => store.setScene(ss as any), 125);
+  }, [store.fadeOutImg]);
+
+  return (
+    <motion.img
+      style={{
+        zIndex: 40,
+      }}
+      key={store.scene}
+      animate={{
+        scale: [1, 2],
+        opacity: [1, 0],
+      }}
+      transition={{
+        duration: 1,
+      }}
+      src={store.fadeOutImg}
+      className="fixed  h-50 pointer-events-none"
+      alt=""
+    />
+  );
+}
+
+function Screenshot() {
+  const store = useStore();
+  const { gl, scene, camera } = useThree();
+
+  const changeScene = () => {
+    gl.render(scene, camera);
+    gl.domElement.toBlob(
+      function (blob) {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        store.setFadeOutImg(url);
+      },
+      "image/jpg",
+      1.0
+    );
+  };
+
+  useEffect(() => {
+    if (store.screenShot) changeScene();
+  }, [store.screenShot]);
+
+  return null;
+}
+
 const Home: NextPage = () => {
   const store = useStore();
 
@@ -257,6 +310,7 @@ const Home: NextPage = () => {
 
   return (
     <div {...bind()}>
+      <FadeOut />
       {store.compass && <Compass />}
       <JigSaw />
       <GuideLines />
@@ -296,14 +350,7 @@ const Home: NextPage = () => {
                       onClick={() => {
                         const goTo = p.goToScene;
                         if (goTo) {
-                          Promise.resolve()
-                            .then(() => setFocusItem(p))
-                            .then(() => sleep(400))
-                            .then(() => setFov(0))
-                            .then(() => sleep(400))
-                            .then(() => store.setScene(goTo))
-                            .then(() => setFov(75))
-                            .then(() => setFocusItem(undefined));
+                          store.takeScreenShot(goTo);
                         }
                         if (p.collectable) store.setInventory(p);
                       }}
@@ -328,6 +375,7 @@ const Home: NextPage = () => {
             <Scenes />
           </Suspense>
 
+          <Screenshot />
           <Suspense fallback={<CustomLoader />}>
             <Hand />
           </Suspense>

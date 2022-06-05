@@ -228,6 +228,10 @@ export type Store = {
   setJigSaw: (e?: string, reward?: Reward | null) => void;
   setUnity: (e?: string, reward?: Reward | null) => void;
 
+  screenShot?: string;
+  takeScreenShot: (src: string) => void;
+  fadeOutImg?: string;
+  setFadeOutImg: (src: string) => void;
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
@@ -260,6 +264,16 @@ export const useStore = create<Store>((set, get) => ({
   hint: undefined,
   isHintVisible: false,
   usedItems: {},
+  takeScreenShot: (src: string) =>
+    set(() => ({
+      screenShot: src,
+    })),
+
+  setFadeOutImg: (obj) =>
+    set(() => ({
+      fadeOutImg: obj,
+    })),
+
   setStatus: (status) => set(() => ({ status })),
   setUsedItem: (id: string) =>
     set((s) => ({
