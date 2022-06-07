@@ -10,8 +10,6 @@ export default function useTimerHint(str: string, time: number = 0) {
   const { data: miniGames } = getMiniGames();
   const currScene = miniGames.find((e) => e.scene === store.scene);
 
-  console.log(store.inventory);
-
   const timer = useTimer({
     initialTime: time,
     timerType: "DECREMENTAL",

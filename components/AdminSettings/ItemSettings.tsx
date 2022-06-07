@@ -21,10 +21,13 @@ export default function ItemSettings(props: {
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
   const [s, $S] = useState<Record<string, string>>({
     name: "",
+    clickableWords: "",
+    author: "",
     onClickTrigger: "",
     onClickOpenModal: "",
     setHint: "",
     setGuidelines: "",
+    ancientText: "",
     inventorySrc: "",
     collectableIfHandHas: "",
     onCollectFail: "",
@@ -34,19 +37,25 @@ export default function ItemSettings(props: {
     const selectedItem = { ...props.items[idx] };
     const {
       name,
+      author,
+      ancientText,
       onClickTrigger,
       onClickOpenModal,
       setHint,
       setGuidelines,
+      clickableWords,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
     } = selectedItem;
     setS({
       name,
+      ancientText,
       onClickTrigger,
       onClickOpenModal,
+      author,
       setHint,
+      clickableWords,
       setGuidelines,
       inventorySrc,
       collectableIfHandHas,
@@ -81,37 +90,81 @@ export default function ItemSettings(props: {
         }}
         className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
       ></input>
-      <br />
-      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-        onClick trigger
-      </label>
-      <input
-        value={s.onClickTrigger}
-        onBlur={() => onBlur("onClickTrigger")}
-        onChange={(evt) => {
-          setS({
-            onClickTrigger: evt.currentTarget.value,
-          });
-        }}
-        className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
-      ></input>
 
       <br />
 
       <Select
         onChange={(v) => {
           updateItem(id, {
-            onClickOpenModal: v.value as "hint" | "guidelines" | undefined,
+            onClickOpenModal: v.value as
+              | "hint"
+              | "guidelines"
+              | "ancientText"
+              | undefined,
           });
         }}
         value={s.onClickOpenModal}
-        label="onClick open Guidelines or Hint"
-        options={[undefined, "guidelines", "hint"].map((o) => ({
+        label="onClick open Guidelines or Hint or AncientText"
+        options={[undefined, "guidelines", "ancientText", "hint"].map((o) => ({
           label: o === undefined ? "-" : o,
           value: o === undefined ? null : o,
         }))}
       ></Select>
+      {selectedItem.onClickOpenModal === "ancientText" && (
+        <>
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            Author
+          </label>
+          <input
+            value={s.author}
+            onBlur={() => onBlur("author")}
+            onChange={(evt) => {
+              setS({
+                author: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            Ancient text clickable words seperated by comma (,)
+          </label>
+          <input
+            value={s.clickableWords}
+            onBlur={() => onBlur("clickableWords")}
+            onChange={(evt) => {
+              setS({
+                clickableWords: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+        </>
+      )}
       <br />
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        on click set Ancient text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          onBlur={() => onBlur("ancientText")}
+          value={s.ancientText}
+          onChange={(evt) => {
+            setS({
+              ancientText: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+        <div className="text-right w-full text-xs text-gray-400">
+          nl = new Line
+        </div>
+      </div>
+      <br />
+
       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
         on click set Hint Text
       </label>

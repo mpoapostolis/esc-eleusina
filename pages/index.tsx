@@ -92,7 +92,6 @@ function Environment() {
   const { scene } = useThree();
   const store = useStore();
   const texture = useLoader(THREE.TextureLoader, `/scenes/${store.scene}.jpg`);
-  texture.onUpdate = () => console.log("----");
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = texture;
   return null;
@@ -195,10 +194,6 @@ function ConditionalHint(props: Item) {
 function GuideLineItem(props?: Item) {
   useGuideLines(`${props?.text}`);
   return null;
-}
-
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function FadeOut() {
@@ -315,7 +310,6 @@ const Home: NextPage = () => {
       <JigSaw />
       <GuideLines />
       <AncientText />
-      {/* <Lexigram /> */}
       <Ui items={sceneItems} time={timer.time} />
       <MiniGameModal />
       <Menu />
