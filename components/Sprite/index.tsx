@@ -113,13 +113,18 @@ export default function Sprite(
         }
 
         if (props.setHint) store.setHint(props.setHint);
-        if (props.onClickTrigger) {
-          store.onTrigger(props.onClickTrigger);
-        }
 
         if (props.setGuidelines) store.setguideLines(props.setGuidelines);
 
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
+        if (props.onClickOpenModal === "ancientText") {
+          if (props.ancientText && props.author)
+            store.setAncientText({
+              text: props.ancientText,
+              keys: props.clickableWords?.split(",") ?? [],
+              author: props.author,
+            });
+        }
         if (props.onClickOpenModal === "guidelines")
           store.setguideLinesVissible(true);
         if (props.onCollectError) props.onCollectError();

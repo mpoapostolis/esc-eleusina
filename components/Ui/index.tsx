@@ -41,9 +41,14 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
         <div className="w-96 bg-white border border-black ">
           <div
-            className="bg-gray-400 h-6"
-            style={{ width: `${(props.time / 600) * 100}%` }}
-          ></div>
+            className="bg-gray-400 flex items-center justify-end h-8"
+            style={{
+              textShadow: "-1px -1px 2px #000, 1px 1px 1px #000",
+              width: `${(props.time / 600) * 100}%`,
+            }}
+          >
+            <div className="relative right-4">{props.time}</div>
+          </div>
         </div>
         <div className="border-b mt-2 border-black w-full border-dashed"></div>
       </div>
@@ -110,6 +115,15 @@ export default function Ui(props: { items: Item[]; time: number }) {
                     store.setIsHintVisible(true);
                   if (item.onClickOpenModal === "guidelines")
                     store.setguideLinesVissible(true);
+
+                  if (item.onClickOpenModal === "ancientText") {
+                    if (item.ancientText && item.author)
+                      store.setAncientText({
+                        text: item.ancientText,
+                        keys: item.clickableWords?.split(",") ?? [],
+                        author: item.author,
+                      });
+                  }
                 }}
                 className={clsx(
                   "flex bg-white relative bg-opacity-40 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-800 p-3 z-50 ",
