@@ -2,23 +2,27 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import { Img } from "../../pages/admin";
 import { getItems, updateItem } from "../../queries/items";
+import { getLibrary } from "../../queries/library";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 
-export default function BoxSettings() {
+export default function BoxSettings(props: { imgs: Img[] }) {
   const { data: items } = getItems();
   const [v, setV] = useState<string>();
+  const [rewardDescription, setRewardDescription] = useState<string>();
   const router = useRouter();
   const id = `${router.query.id}`;
-  const store = useStore();
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };
-  const sceneItems = items.filter((item) => store?.scene === item.scene);
+  const store = useStore();
   useEffect(() => {
     if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
-  }, [selectedItem.orderBoxError]);
+    if (selectedItem.rewardDescription)
+      setRewardDescription(selectedItem.rewardDescription);
+  }, [selectedItem.orderBoxError, selectedItem.rewardDescription]);
 
   const updateOrderInBox = (_id: string) => {
     if (!selectedItem) return;
@@ -29,7 +33,6 @@ export default function BoxSettings() {
       : [...orderInsideTheBox, _id];
     updateItem(id, { orderInsideTheBox: tmp });
   };
-
   const idToName = (id?: string) =>
     items.find((e) => {
       return e._id === id;
@@ -39,6 +42,7 @@ export default function BoxSettings() {
     items.find((e) => {
       return e._id === id;
     })?.src;
+  const sceneItems = items.filter((item) => store?.scene === item.scene);
 
   return (
     <>
@@ -119,7 +123,7 @@ export default function BoxSettings() {
           }
         >
           <AllImage
-            imgs={getOnlyItems(items)}
+            imgs={getOnlyItems(props.imgs)}
             onClick={async (o) => {
               updateItem(id, {
                 reward: o,
@@ -127,6 +131,28 @@ export default function BoxSettings() {
             }}
           />
         </Popover>
+
+        <div>
+          <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+            Reward Msg
+          </label>
+          <textarea
+            className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+            rows={5}
+            value={rewardDescription}
+            onChange={(evt) => {
+              setRewardDescription(evt.currentTarget.value);
+            }}
+            onBlur={() => {
+              updateItem(id, {
+                reward: {
+                  ...selectedItem.reward,
+                  description: rewardDescription,
+                },
+              });
+            }}
+          ></textarea>
+        </div>
       </div>
     </>
   );

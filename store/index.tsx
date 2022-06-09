@@ -2,6 +2,7 @@ import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
 import { Reward } from "../pages";
+import { Img } from "../pages/admin";
 import { loadSound } from "../utils";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
@@ -70,7 +71,7 @@ export type Item = {
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;
-  reward?: Item | null;
+  reward?: Img | null;
   ancientText?: string;
   clickableWords?: string;
   author?: string;
@@ -118,7 +119,6 @@ export type HelpKey =
 
 export type Status =
   | "MENU"
-  | "UNITY"
   | "LOGIN"
   | "MINIGAMEMODAL"
   | "JIGSAW"
@@ -131,7 +131,7 @@ export type Status =
   | "GUIDELINES"
   | "HISTORY"
   | "ANCIENT_TEXT"
-  | "EPIC_ITEM"
+  | "REWARD"
   | "RUNNING";
 
 export type Store = {
@@ -148,18 +148,16 @@ export type Store = {
   setguideLinesVissible: (e: boolean) => void;
   guideLines?: string;
   modal: Modal;
-  inventory: Item[];
-  epicInventory: Reward[];
-  unity?: string;
+  inventory: (Item | Reward)[];
 
   jigSawUrl?: string;
   lexigram?: string[];
   compass?: boolean;
   reward?: Reward | null;
+  setReward: (i: Reward | null) => void;
 
   inventoryNotf: string[];
   selectItem?: Item;
-  epicItem?: Reward;
   usedItems: Record<string, boolean>;
 
   scene: Scene;
@@ -169,7 +167,6 @@ export type Store = {
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
   setJigSaw: (e?: string, reward?: Reward | null) => void;
-  setUnity: (e?: string, reward?: Reward | null) => void;
 
   screenShot?: string;
   takeScreenShot: (src: string) => void;
@@ -180,11 +177,9 @@ export type Store = {
   setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
-  setEpicItem: (s?: Reward) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
   invHas: (e?: string) => boolean;
-  epicInvHas: (e: string) => boolean;
   setInventory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
   setInventoryNotf: (n: string) => void;
@@ -203,7 +198,6 @@ export const useStore = create<Store>((set, get) => ({
   scene: "intro",
   level: "Φως-Σκοτάδι",
   inventory: [],
-  epicInventory: [],
   hint: undefined,
   isHintVisible: false,
   usedItems: {},
@@ -247,18 +241,8 @@ export const useStore = create<Store>((set, get) => ({
     set(() => {
       dap?.play();
       return {
-        status: lexigram ? "UNITY" : "RUNNING",
+        status: lexigram ? "LEXIGRAM" : "RUNNING",
         lexigram,
-        reward,
-      };
-    }),
-
-  setUnity: (unity, reward) =>
-    set(() => {
-      dap?.play();
-      return {
-        status: unity ? "UNITY" : "RUNNING",
-        unity,
         reward,
       };
     }),
@@ -280,31 +264,24 @@ export const useStore = create<Store>((set, get) => ({
 
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
 
-  setEpicItem: (epicItem) =>
-    set((s) => {
-      if (!epicItem) return { ...s, epicItem, status: "RUNNING" };
-      const found = s.epicInventory
-        .map((o) => o.name)
-        .includes(`${epicItem._id}`);
-      if (found) return s;
-      else {
-        win?.play();
-        return {
-          ...s,
-          reward: null,
-          epicItem: epicItem,
-          status: "EPIC_ITEM",
-          epicInventory: epicItem
-            ? [...s.epicInventory, epicItem]
-            : s.epicInventory,
-        };
-      }
-    }),
-
   setHint: (hint?: string) =>
     set(() => ({
       hint: hint,
     })),
+
+  setReward: (reward) => {
+    win?.play();
+    set((s) => {
+      let inv = [...s.inventory];
+      if (reward) inv = [...inv, reward];
+      return {
+        inventory: inv,
+        reward,
+        status: reward ? "REWARD" : "RUNNING",
+      };
+    });
+  },
+
   setIsHintVisible: (isHintVisible) =>
     set(() => {
       hint.play();
@@ -334,10 +311,6 @@ export const useStore = create<Store>((set, get) => ({
   invHas: (e?: string) =>
     get()
       .inventory.map((i) => i._id)
-      .includes(e),
-  epicInvHas: (e: string) =>
-    get()
-      .epicInventory.map((i) => i._id)
       .includes(e),
 
   setInventory: (i: Item) => {

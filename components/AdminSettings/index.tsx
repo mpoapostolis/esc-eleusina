@@ -56,7 +56,6 @@ export function AllImage(props: {
 const Component = (props: {
   items: Item[];
   imgs: Img[];
-  getItems: () => void;
   update: (p: Partial<Item>) => void;
   portal: boolean;
   setScene: (s: Scene) => void;
@@ -78,7 +77,6 @@ const Component = (props: {
       return (
         <SceneSettings
           update={props.update}
-          getItems={props.getItems}
           items={sceneItems}
           imgs={props.imgs}
         />
@@ -86,7 +84,6 @@ const Component = (props: {
     case "selectedItem":
       return (
         <SelectedItem
-          getItems={props.getItems}
           imgs={props.imgs}
           items={props.items}
           update={props.update}
@@ -196,7 +193,6 @@ const Component = (props: {
 export default function AdminSettings(props: {
   items: Item[];
   imgs: Img[];
-  getItems: () => void;
   update: (p: Partial<Item>) => void;
   portal: boolean;
   setScene: (s: Scene) => void;

@@ -1,8 +1,6 @@
-import axios from "axios";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { MiniGame } from "../../pages";
+import { getMiniGames } from "../../queries";
 import { useStore } from "../../store";
 
 const shadow = {
@@ -11,44 +9,31 @@ const shadow = {
 
 export default function MiniGameModal() {
   const store = useStore();
-  const [miniGames, setMiniGames] = useState<MiniGame>();
 
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
 
-  const getMiniGames = async () =>
-    axios.get("/api/miniGames").then((d) => {
-      const [game] = d.data.filter((e: any) => e.scene === store.scene);
-      setMiniGames(game);
-    });
-
-  useEffect(() => {
-    getMiniGames();
-  }, [store.scene]);
+  const { data: miniGames } = getMiniGames();
+  const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
 
   const accept = () => {
-    switch (miniGames?.type) {
+    switch (miniGame?.type) {
       case "jigsaw":
-        store.setJigSaw(miniGames.jigSawUrl, miniGames.reward);
+        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward);
         break;
 
       case "compass":
-        store.setCompass(true, miniGames.reward);
+        store.setCompass(true, miniGame.reward);
         break;
 
       case "lexigram":
-        store.setUnity("Lexigram", miniGames?.reward);
-        store.setLexigram(miniGames.lexigram.split(","), miniGames.reward);
-        break;
-      case "cerberus":
-        store.setUnity("cerberus", miniGames?.reward);
+        store.setLexigram(miniGame?.lexigram?.split(","), miniGame.reward);
         break;
 
       default:
         break;
     }
   };
-
   return (
     <motion.div
       animate={{

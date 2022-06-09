@@ -1,6 +1,5 @@
 import myDb from "../../helpers/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ObjectID } from "bson";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const db = await myDb();

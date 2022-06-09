@@ -14,21 +14,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       imgs.forEach((o) => {
         idToImg[`${o._id}`] = o;
       });
-      const data = items
-        .map((x) => ({
-          ...x,
-          name: idToImg[x.imgId]?.name,
-          src: idToImg[x.imgId]?.src,
-        }))
+      const data = items.map((x) => ({
+        ...x,
+        name: idToImg[x.imgId]?.name,
+        src: idToImg[x.imgId]?.src,
+      }));
 
       return res.status(200).json(data);
 
     case "POST":
-      const { imgId, collectableIfHandHas, inventorySrc, ...rest } = req.body;
+      const { imgId, collectableIfHandHas, reward, inventorySrc, ...rest } =
+        req.body;
       const ids: Record<string, any> = {};
       if (imgId) ids.imgId = new ObjectId(imgId);
       if (collectableIfHandHas)
         ids.collectableIfHandHas = new ObjectId(collectableIfHandHas);
+      if (req.body.reward) req.body.reward._id = new ObjectId();
       if (inventorySrc) ids.inventorySrc = new ObjectId(inventorySrc);
       const id = await collection.insertOne({
         ...rest,

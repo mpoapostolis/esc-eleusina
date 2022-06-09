@@ -8,11 +8,7 @@ import { Item, useStore } from "../../store";
 import Popover from "../Popover";
 import Select from "../Select";
 
-export default function ItemSettings(props: {
-  getItems: () => void;
-  items: Item[];
-  imgs: Img[];
-}) {
+export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
   const store = useStore();
   const router = useRouter();
   const id = `${router.query.id}`;

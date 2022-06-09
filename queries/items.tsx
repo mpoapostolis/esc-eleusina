@@ -29,3 +29,5 @@ export async function addItem(props: { scene: Scene; imgId: string }) {
   mutate("/api/items");
   return d.data;
 }
+
+export const invalidateItems = () => mutate("/api/items");
