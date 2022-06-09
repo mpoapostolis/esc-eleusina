@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import { MiniGame, Reward } from "../../pages";
 import { Img } from "../../pages/admin";
+import { invalidateItems } from "../../queries/items";
 import { Item, useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
 import Select from "../Select";
-import BoxSettings from "./BoxSettings";
 
 const Component = (
   props: MiniGame & {
@@ -60,7 +60,7 @@ const Component = (
 
 export type HintType = "conditional" | "timer";
 
-function Row(props: Item & { getItems: () => any; sceneItems: Item[] }) {
+function Row(props: Item & { sceneItems: Item[] }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
   const [type, setType] = useState<HintType>("timer");
@@ -159,10 +159,12 @@ function Row(props: Item & { getItems: () => any; sceneItems: Item[] }) {
           className="flex justify-center border border-gray-500 p-2"
           onClick={async () => {
             setDeleteLoad(true);
-            await axios.delete(`/api/items/${props._id}`).then(() => {
-              props.getItems();
-              setDeleteLoad(false);
-            });
+            await axios
+              .delete(`/api/items/${props._id}`)
+              .then(() => {
+                setDeleteLoad(false);
+              })
+              .then(invalidateItems);
           }}
         >
           {deleteLoad ? (
@@ -193,7 +195,8 @@ function Row(props: Item & { getItems: () => any; sceneItems: Item[] }) {
                   },
                 }
               )
-              .then(() => setLoad(false));
+              .then(() => setLoad(false))
+              .then(invalidateItems);
           }}
           className="flex justify-center border border-gray-500 p-2"
         >
@@ -213,7 +216,6 @@ function Row(props: Item & { getItems: () => any; sceneItems: Item[] }) {
 }
 
 export default function SceneSettings(props: {
-  getItems: () => void;
   update: (p: Partial<Item>) => void;
   items: Item[];
   imgs: Img[];
@@ -247,7 +249,7 @@ export default function SceneSettings(props: {
       const [currMinigames] = d.data.filter(
         (e: MiniGame) => e.scene === store.scene
       );
-      const { _id, ...rest } = currMinigames;
+      const { _id, ...rest } = currMinigames ?? {};
       setMiniGame(rest);
     });
 
@@ -306,7 +308,6 @@ export default function SceneSettings(props: {
                 }
               )
               .then(() => {
-                props.getItems();
                 setLoadG(false);
               });
           else
@@ -317,7 +318,6 @@ export default function SceneSettings(props: {
                 text: guideLines,
               })
               .then(() => {
-                props.getItems();
                 setLoadG(false);
               });
         }}
@@ -342,7 +342,6 @@ export default function SceneSettings(props: {
               (e) => !["portal", "guidelines"].includes(`${e.type}`)
             )}
             key={e._id}
-            getItems={props.getItems}
             {...e}
           />
         ))}
@@ -355,9 +354,9 @@ export default function SceneSettings(props: {
               type: "hint",
             })
             .then(() => {
-              props.getItems();
               setLoad(false);
-            });
+            })
+            .then(invalidateItems);
         }}
         className="mt-3 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
       >
@@ -402,11 +401,31 @@ export default function SceneSettings(props: {
           imgs={props.imgs}
           onClick={async (o) => {
             update({
-              reward: o,
+              reward: o as Img | null,
             });
           }}
         />
       </Popover>
+      <div>
+        <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+          Reward Msg
+        </label>
+        <textarea
+          className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          value={miniGame.reward?.description}
+          onChange={(evt) => {
+            const r = miniGame.reward;
+            if (r)
+              update({
+                reward: {
+                  ...r,
+                  description: evt.currentTarget.value,
+                },
+              });
+          }}
+        />
+      </div>
       <br />
 
       <label className="block  text-left text-xs font-medium mb-4 text-gray-300">

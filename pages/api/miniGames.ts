@@ -10,29 +10,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const data = await db.collection("scenes").find({}).toArray();
     return res.status(200).json(data);
   } else {
-    const found = await collection.count({
-      scene: req.body.scene,
-    });
-    // @ts-ignore
-    if (found > 0) {
-      await collection.updateOne(
-        { scene: req.body.scene },
-        {
-          $set: req.body,
-        }
-      );
-      return res.status(200).send("resource updated successfully");
-    } else {
-      const reward = {
+    try {
+      const yh = await collection.deleteOne({
+        scene: req.body.scene,
+      });
+      const id = await collection.insertOne({
         _id: new ObjectID(),
-        ...req.body.reward,
-      };
-      const body = {
         ...req.body,
-        reward,
-      };
-      const id = await collection.insertOne(body);
+      });
+
       return res.status(201).json({ id: id.insertedId });
-    }
+    } catch (error) {}
   }
 };

@@ -14,30 +14,24 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
-import {
-  DoubleSide,
-  MathUtils,
-  Mesh,
-  Sprite as SpriteType,
-  Vector3,
-} from "three";
-import axios from "axios";
+import { MathUtils, Mesh, Vector3 } from "three";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
 import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
-import EpicItem from "../components/EpicItem";
+import Reward from "../components/Reward";
 import useGuideLines from "../Hooks/useGuideLines";
 import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import MiniGameModal from "../components/MiniGameModal";
-import UnityMiniGame from "../components/UnityMiniGame";
 import { getItems } from "../queries/items";
 import { getMiniGames } from "../queries";
 import { motion } from "framer-motion";
+import { Img } from "./admin";
+import Lexigram from "../components/Lexigram";
 
 export type MiniGame = {
   scene?: string;
@@ -46,12 +40,9 @@ export type MiniGame = {
   type?: string;
 } & Record<string, any>;
 
-export interface Reward {
-  _id?: string;
-  src?: string;
-  name?: string;
+export type Reward = Img & {
   description?: string;
-}
+};
 
 extend({ OrbitControls });
 
@@ -78,15 +69,6 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
     />
   );
 }
-
-const FocusOn = (p: { focusItem?: Item }) => {
-  const { x, y, z } = p.focusItem?.position ?? {};
-  const v3 = new Vector3(x, y, z).multiplyScalar(-1);
-  useFrame((t) => {
-    if (x && z) t.camera.position.copy(t.camera.position).lerp(v3, 0.001);
-  });
-  return null;
-};
 
 function Environment() {
   const { scene } = useThree();
@@ -152,7 +134,7 @@ function Portal(props: Item) {
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return store.invHas(v) || store.epicInvHas(v) || store.usedItems[v];
+          return store.invHas(v) || store.usedItems[v];
         })
         .every((e) => e)
     : true;
@@ -275,15 +257,14 @@ const Home: NextPage = () => {
 
   const { data: miniGames } = getMiniGames();
   const { data: items } = getItems();
+  const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
 
   useEffect(() => {
     const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
     if (!currMinigames) return;
-    const doIHaveEpicItem = store.epicInvHas(`${currMinigames.reward?._id}`);
     const arr = (currMinigames.requiredItems ?? [])?.length > 0;
-
     if (
-      !doIHaveEpicItem &&
+      !store.invHas(currMinigames.reward?._id) &&
       arr &&
       currMinigames.requiredItems?.map((i) => store.invHas(i)).every(Boolean)
     )
@@ -299,29 +280,34 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
+  useEffect(() => {
+    store.setHand(undefined);
+  }, [store.scene]);
 
-  const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
-  const [focusItem, setFocusItem] = useState<Item>();
-
+  const sceneItems = items.filter((e) => e.scene === store.scene);
+  const [boxItem] = items.filter(
+    (e) => e.scene === store.scene && e.type === "box"
+  );
   return (
     <div {...bind()}>
       <FadeOut />
       {store.compass && <Compass />}
       <JigSaw />
       <GuideLines />
+      <Lexigram />
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
       <MiniGameModal />
       <Menu />
-      <EpicItem />
-      <UnityMiniGame />
+      <Reward />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
-          <FocusOn focusItem={focusItem} />
 
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
+              .filter(() => !store?.invHas(currMinigames?.reward?._id))
+              .filter(() => !store?.invHas(boxItem?.reward?._id))
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
               .map((p) => {
                 if (p.type === "hint")
@@ -336,7 +322,7 @@ const Home: NextPage = () => {
             <Environment />
             {sceneItems
               .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
-              ?.map((p, idx) => {
+              ?.map((p, _idx) => {
                 const item = p as Item;
                 if (p.type === "portal")
                   return (
@@ -353,17 +339,7 @@ const Home: NextPage = () => {
                     />
                   );
 
-                if (p.src)
-                  return (
-                    <Sprite
-                      key={p._id}
-                      giveReward={(i) => {
-                        const found = items.find((e) => e._id === i);
-                        if (found) store.setEpicItem(found);
-                      }}
-                      {...item}
-                    />
-                  );
+                if (p.src) return <Sprite key={p._id} {...item} />;
                 else return null;
               })}
             <Scenes />

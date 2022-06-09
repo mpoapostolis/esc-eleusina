@@ -13,7 +13,6 @@ import ItemSettings from "./ItemSettings";
 import PortalSettings from "./PortalSettings";
 
 const Component = (props: {
-  getItems: () => void;
   items: Item[];
   imgs: Img[];
   update: (p: Partial<Item>) => void;
@@ -32,7 +31,7 @@ const Component = (props: {
     case "portal":
       return <PortalSettings {...props} />;
     case "box":
-      return <BoxSettings />;
+      return <BoxSettings imgs={props.imgs} />;
 
     default:
       return <ItemSettings {...p} />;
@@ -40,7 +39,6 @@ const Component = (props: {
 };
 
 export default function SelectedItem(props: {
-  getItems: () => void;
   items: Item[];
   imgs: Img[];
   update: (p: Partial<Item>) => void;
@@ -149,16 +147,6 @@ export default function SelectedItem(props: {
                   });
                 }}
                 checked={selectedItem.selectable}
-              />{" "}
-              <div className="my-1" />
-              <Checkbox
-                label="Epic Item"
-                onChange={(evt) => {
-                  updateItem(id, {
-                    isEpic: evt.target.checked,
-                  });
-                }}
-                checked={selectedItem.isEpic}
               />
             </>
           )}

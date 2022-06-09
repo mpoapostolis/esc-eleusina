@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../store";
 import { loadSound } from "../../utils";
 import Keyboard from "../Keyboard";
-const win = loadSound("/sounds/win.wav");
 
 function Lexigram() {
   // const [lexigram, setLexigram] = useState<string[]>([]);
@@ -59,8 +58,7 @@ function Lexigram() {
       0
     );
     if (store.lexigram?.length === total && store.reward) {
-      store.setLexigram(undefined);
-      store.setEpicItem(store.reward);
+      store.setReward(store.reward);
     }
   }, [foundTotalLetter]);
 
@@ -69,13 +67,13 @@ function Lexigram() {
       className={clsx(
         "fixed bg-black select-none bg-opacity-90  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
-          hidden: store.status !== "LEXIGRAM" || !store.lexigram,
+          hidden: store.status !== "LEXIGRAM",
         }
       )}
     >
       <img
         onClick={() => {
-          store.setLexigram(undefined);
+          store.setStatus("RUNNING");
         }}
         src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
         role="button"

@@ -6,11 +6,7 @@ import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 
-export default function Sprite(
-  props: Item & {
-    giveReward: (s: string) => void;
-  }
-) {
+export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
@@ -20,7 +16,7 @@ export default function Sprite(
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return store.invHas(v) || store.epicInvHas(v) || store.usedItems[v];
+          return store.invHas(v) || store.usedItems[v];
         })
         .every((e) => e)
     : true;
@@ -41,7 +37,6 @@ export default function Sprite(
     scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
   });
-
   useEffect(() => {
     if (props.orderInsideTheBox) {
       const isSame = props.orderInsideTheBox
@@ -50,7 +45,10 @@ export default function Sprite(
         })
         .every(Boolean);
       if (isSame && props.reward) {
-        props.giveReward(`${props.reward._id}`);
+        store.setReward({
+          ...props.reward,
+          description: props.rewardDescription,
+        });
       }
     }
   }, [insideBox, props.orderInsideTheBox]);
@@ -75,18 +73,6 @@ export default function Sprite(
             store.setIsHintVisible(true);
           }
           return;
-        }
-
-        if (props.type === "lexigram" && props.lexigram) {
-          store.setLexigram(props.lexigram.split(","), props.reward);
-        }
-
-        if (props.type === "compass") {
-          store.setCompass(true, props.reward);
-        }
-
-        if (props.type === "jigsaw" && props.jigSawUrl) {
-          store.setJigSaw(props.jigSawUrl, props.reward);
         }
 
         if (store.hand && !props.collectableIfHandHas && props.type !== "box") {

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useStore } from "../../store";
 import { motion } from "framer-motion";
 
+import { generateUUID } from "three/src/math/MathUtils";
+
 export default function AncientText() {
   const store = useStore();
   const [words, setWords] = useState<string[]>([]);
@@ -21,7 +23,6 @@ export default function AncientText() {
       setWords([]);
     }
   }, [words]);
-  console.log(words);
 
   return (
     <motion.div
@@ -44,7 +45,7 @@ export default function AncientText() {
         <div className="ancientText  w-full bg-[#fffcd2] bg-opacity-50 text-black  p-2  relative border-2 border-dashed rounded-2xl   m-auto  text-3xl font-bold  text-left">
           <div className="px-20  bg-opacity-90  opacity-90 border py-10 rounded-2xl text-center">
             {store.ancientText?.text.split("nl").map((k, idx) => (
-              <div key={idx}>
+              <div key={generateUUID()}>
                 {k
                   .split(" ")
                   .filter((e) => e)
@@ -60,7 +61,7 @@ export default function AncientText() {
                           "font-bold cursor-pointer text-red-500 hover:text-red-500":
                             words.includes(str),
                         })}
-                        key={x + idx}
+                        key={generateUUID()}
                         onClick={() => {
                           store.ancientText?.keys.includes(str) &&
                             setWords(() => {
@@ -73,7 +74,7 @@ export default function AncientText() {
                         {x}
                       </button>
                     ) : (
-                      <span className="mr-2" key={x + idx}>
+                      <span className="mr-2" key={generateUUID()}>
                         {x}
                       </span>
                     );

@@ -152,7 +152,7 @@ export default function JigSaw() {
     const isDone = position.every((item) => item && item?.x === position[0]?.x);
     if (isDone) {
       store.setJigSaw(undefined);
-      if (store.reward) store.setEpicItem(store.reward);
+      if (store.reward) store.setReward(store.reward);
     }
   }, [position]);
   const store = useStore();

@@ -238,7 +238,6 @@ const Home: NextPage = () => {
       {!library ? (
         <AdminSettings
           imgs={imgs}
-          getItems={() => getItems()}
           items={sceneItems}
           update={(p) => updateItem(p)}
           portal={portal}

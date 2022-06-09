@@ -4,11 +4,7 @@ import { updateItem } from "../../queries/items";
 import { Item, Scene, scenes } from "../../store";
 import Select from "../Select";
 
-export default function PortalSettings(props: {
-  getItems: () => void;
-  items: Item[];
-  imgs: Img[];
-}) {
+export default function PortalSettings(props: { items: Item[]; imgs: Img[] }) {
   const router = useRouter();
   const id = router.query.id;
   const idx = props.items.findIndex((e) => e._id === id);
