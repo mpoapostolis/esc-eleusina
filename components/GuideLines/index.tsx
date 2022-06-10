@@ -17,10 +17,6 @@ export default function GuideLines() {
       transition={{
         duration: 0.35,
       }}
-      onClick={() => {
-        store.setguideLinesVissible(false);
-        store.setStatus("RUNNING");
-      }}
       className={clsx(
         "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
         {
@@ -36,6 +32,10 @@ export default function GuideLines() {
       >
         <div className="px-20 bg-opacity-50 bg-black border py-10 rounded-2xl">
           <img
+            onClick={() => {
+              store.setguideLinesVissible(false);
+              store.setStatus("RUNNING");
+            }}
             src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
             role="button"
             className=" w-10 m-3 h-10 z-50 pointer-events-auto absolute right-0 top-0"
