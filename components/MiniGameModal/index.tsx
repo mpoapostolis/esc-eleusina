@@ -36,6 +36,7 @@ export default function MiniGameModal() {
   };
   return (
     <motion.div
+      initial={{ scale: 0 }}
       animate={{
         translateY: store.status === "MINIGAMEMODAL" ? 0 : 250,
         scale: store.status === "MINIGAMEMODAL" ? 1 : 0,

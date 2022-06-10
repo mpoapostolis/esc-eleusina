@@ -9,6 +9,7 @@ export default function GuideLines() {
   const show = store.status === "GUIDELINES" && store.guideLinesVissible;
   return (
     <motion.div
+      initial={{ scale: 0 }}
       animate={{
         translateY: show ? 0 : 250,
         scale: show ? 1 : 0,

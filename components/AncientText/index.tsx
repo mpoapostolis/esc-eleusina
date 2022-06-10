@@ -26,6 +26,7 @@ export default function AncientText() {
 
   return (
     <motion.div
+      initial={{ scale: 0 }}
       animate={{
         translateX: store.status === "ANCIENT_TEXT" ? 0 : 750,
         scale: store.status === "ANCIENT_TEXT" ? 1 : 0,
