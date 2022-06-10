@@ -20,9 +20,9 @@ export default function BoxSettings(props: { imgs: Img[] }) {
   const store = useStore();
   useEffect(() => {
     if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
-    if (selectedItem.rewardDescription)
-      setRewardDescription(selectedItem.rewardDescription);
-  }, [selectedItem.orderBoxError, selectedItem.rewardDescription]);
+    if (selectedItem.reward?.description)
+      setRewardDescription(selectedItem.reward?.description);
+  }, [selectedItem.orderBoxError, selectedItem.reward]);
 
   const updateOrderInBox = (_id: string) => {
     if (!selectedItem) return;
@@ -151,7 +151,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
                 },
               });
             }}
-          ></textarea>
+          />
         </div>
       </div>
     </>

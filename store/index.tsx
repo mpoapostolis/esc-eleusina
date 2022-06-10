@@ -71,7 +71,7 @@ export type Item = {
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;
-  reward?: Img | null;
+  reward?: Reward | null;
   ancientText?: string;
   clickableWords?: string;
   author?: string;

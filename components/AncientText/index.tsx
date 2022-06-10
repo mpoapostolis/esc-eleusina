@@ -91,7 +91,7 @@ export default function AncientText() {
               className=" w-10 m-5 h-10 z-50 pointer-events-auto absolute right-0 top-0"
             />
             <div className="w-full text-zinc-800 mt-10 text-right">
-              <span className="text-sm">{store.ancientText?.author}</span>
+              <span className="text-base">{store.ancientText?.author}</span>
             </div>
           </div>
         </div>

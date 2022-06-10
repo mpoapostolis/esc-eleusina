@@ -10,8 +10,9 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const transform = { transform: "skewX(-20deg)" };
 
   const currInv: Item[] = store.inventory.filter(
-    (item) => item.scene === store.scene
-  );
+    // @ts-ignore
+    (item) => item?.scene === store.scene
+  ) as Item[];
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
     name: "",
     src: "",

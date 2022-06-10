@@ -47,7 +47,7 @@ export default function Sprite(props: Item) {
       if (isSame && props.reward) {
         store.setReward({
           ...props.reward,
-          description: props.rewardDescription,
+          description: props.reward?.description,
         });
       }
     }
