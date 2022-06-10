@@ -104,8 +104,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   if (item?.action) {
                     item?.action();
                   }
-                  if (store.inventoryNotf.length > 0)
-                    store.removeInventoryNotf(item.name);
 
                   if (item.setHint) store.setHint(item.setHint);
 

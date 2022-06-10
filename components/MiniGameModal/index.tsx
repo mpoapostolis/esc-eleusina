@@ -69,7 +69,6 @@ export default function MiniGameModal() {
             </button>
             <button
               onClick={() => {
-                console.log("karkino sto xris");
                 accept();
               }}
               className="w-full bg-white border-dashed pb-4 hover:bg-opacity-10 bg-opacity-5 rounded py-3 flex items-center justify-center border-gray-700 border"

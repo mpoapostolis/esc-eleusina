@@ -8,6 +8,12 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
+
+  const texture1 = useLoader(
+    THREE.TextureLoader,
+    props?.replaceImg ?? "/images/empty.png"
+  );
+  const [t, setT] = useState(false);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
@@ -75,17 +81,25 @@ export default function Sprite(props: Item) {
           return;
         }
 
-        if (store.hand && !props.collectableIfHandHas && props.type !== "box") {
+        if (
+          store.hand &&
+          !props.collectableIfHandHas &&
+          props.type !== "box" &&
+          !props.replaceImg
+        ) {
           store.setHint("Nothing happened...");
           store.setIsHintVisible(true);
           return;
         }
 
+        if (store.hand === props.requiredToolToReplace?._id) {
+          setT(true);
+          store.removeInvItem(store.hand);
+          store.setHand(undefined);
+        }
+
         if (props.collectableIfHandHas) {
           if (store.hand === props.collectableIfHandHas) {
-            store.setUsedItem(store.hand);
-            store.removeInvItem(store.hand);
-            store.setHand(undefined);
             store.setIsHintVisible(false);
           } else {
             store.setHint(props.onCollectFail);
@@ -124,7 +138,7 @@ export default function Sprite(props: Item) {
         transparent
         side={DoubleSide}
         attach="material"
-        map={texture}
+        map={t ? texture1 : texture}
       />
     </animated.mesh>
   );

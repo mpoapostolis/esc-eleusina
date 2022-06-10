@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import { Img } from "../../pages/admin";
 import { getItems, updateItem } from "../../queries/items";
-import { getLibrary } from "../../queries/library";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";

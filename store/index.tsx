@@ -73,6 +73,8 @@ export type Item = {
   lexigram?: string;
   reward?: Reward | null;
   ancientText?: string;
+  requiredToolToReplace?: Img;
+  replaceImg?: string;
   clickableWords?: string;
   author?: string;
   jigSawUrl?: string;

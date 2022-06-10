@@ -288,6 +288,7 @@ const Home: NextPage = () => {
   const [boxItem] = items.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
+
   return (
     <div {...bind()}>
       <FadeOut />
