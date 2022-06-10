@@ -13,6 +13,7 @@ export default function Hint() {
 
   return (
     <motion.div
+      initial={{ scale: 0 }}
       animate={{
         translateX: visible ? 0 : 750,
         scale: visible ? 1 : 0,
