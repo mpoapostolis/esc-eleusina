@@ -1,7 +1,8 @@
 import { Euler, Vector3 } from "three";
 import create from "zustand";
-import { ancientText } from "../components/AncientText";
+import { HintType } from "../components/AdminSettings/SceneSettings";
 import { Reward } from "../pages";
+import { Img } from "../pages/admin";
 import { loadSound } from "../utils";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
@@ -52,6 +53,7 @@ export type Account = {
 
 export type AncientText = {
   text: string;
+  author: string;
   keys: string[];
 };
 
@@ -59,6 +61,7 @@ export type Item = {
   _id?: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
+  hintType?: HintType;
   disappearIfIdExist?: string | null;
   rotation?: Euler;
   inventorySrc?: string | null;
@@ -68,7 +71,12 @@ export type Item = {
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;
-  reward?: Item | null;
+  reward?: Reward | null;
+  ancientText?: string;
+  requiredToolToReplace?: Img;
+  replaceImg?: string;
+  clickableWords?: string;
+  author?: string;
   jigSawUrl?: string;
   hidden?: boolean;
   collectableIfHandHas?: string | null;
@@ -78,7 +86,7 @@ export type Item = {
   position?: Vector3;
   selectable?: boolean;
   collectable?: boolean;
-  onClickOpenModal?: "hint" | "guidelines" | "timerHint" | undefined;
+  onClickOpenModal?: "hint" | "guidelines" | "ancientText" | undefined;
   setGuidelines?: string;
   setHint?: string;
   onCollectFail?: string;
@@ -91,65 +99,6 @@ export type Item = {
   description?: string;
   action?: () => void;
 } & Record<string, any>;
-
-// @ts-ignore
-export const guideLines: Record<string | Scene, string> = {
-  intro: `Ώρα να περιπλανηθείς στο φως και να βυθιστείς στο σκοτάδι. Μάζεψε αντικείμενα-κλειδιά  και με αυτά ξεκλείδωσε τις σκοτεινές και φωτεινές εσοχές του δωματίου. 
-    Για να δούμε.... Θα αντέξουν τα μάτια σου το φως; Θα προσαρμοστούν στο σκοτάδι; Θα καταφέρεις να ξεκλειδώσεις το δωμάτιο; `,
-  archeologikos: `Αναζήτησε το κρυμμένο κείμενο. Βρες το "Ρολόι των γραμμάτων" και σχημάτισε σε αυτό τις 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων «ομιλία και σιωπή». Ποιο είναι το μυστικό που είναι φυλακισμένο μέσα στον χρόνο;`,
-  teletourgeio: `Διάβασε το κρυμμένο  κείμενο και βρες τα αντικείμενα που θα σε βοηθήσουν να τελέσεις το μυστήριο. Ποιο είναι το μυστικό που κρύβεται στις δάφνες; `,
-  karnagio: `Πάτησε πάνω στη θήκη του ταξιδιώτη για να διαβάσεις το κείμενο. Γέμισέ την με το βιος των ξεριζωμένων που περιγράφεται σε αυτό. Σε τι θα γυρίσει η μνήμη αν τους βοηθήσεις να την κουβαλήσουν; `,
-  teletourgeioLogotexnikoKeimeno: `Ακούς και τ’ άλογα στο στάβλο, και το νερό που πέφτει
-  καθώς υψώνουν οι προσκυνητές δυο πήλινα δοχεία,
-  το ’να προς την ανατολή και τ’ άλλο προς τη δύση, χύνοντας υδρομέλι
-  ή κριθαρόνερο ανακατεμένο με άγρια μέντα
-  πάνω στο λάκκο με τις δάφνες, ενώ μουρμουρίζουν
-  διφορούμενα λόγια, παρακλήσεις και ξόρκια.
-  Περσεφόνη, Γ. Ρίτσος`,
-  karnakioLogotexniko: `Αλήθεια σου λέω, — ήμουν καλά εκεί πέρα. Συνήθισα. Εδώ δεν αντέχω·
-  είναι πολύ το φως —μ’ αρρωσταίνει— απογυμνωτικό, απροσπέλαστο·
-  όλα τα δείχνει και τα κρύβει· αλλάζει κάθε τόσο — δεν προφταίνεις· αλλάζεις·
-  αισθάνεσαι το χρόνο που φεύγει — μια ατέλειωτη, κουραστική μετακίνηση·
-  σπάζουν τα γυαλικά στη μετακόμιση, μένουν στο δρόμο, αστράφτουν·
-  άλλοι πηδούν στη στεριά, άλλοι ανεβαίνουν στα πλοία· — όπως τότε,
-  έρχονταν, φεύγαν οι επισκέπτες μας, έρχονταν άλλοι·
-  μέναν για λίγο στους διαδρόμους οι μεγάλες βαλίτσες τους —
-  μια ξένη μυρωδιά, ξένες χώρες, ξένα ονόματα, — το σπίτι
-  δε μας ανήκε· — ήταν κι αυτό μια βαλίτσα μ’ εσώρουχα καινούρια, άγνωστά μας —
-  μπορούσε κάποιος να την πάρει απ’ το πέτσινο χερούλι και να φύγει.
-  Περσεφόνη, Γ. Ρίτσος`,
-  elaiourgeio: `Βρες το κρυμμένο κείμενο,  εντόπισε τα χαρακτηριστικά του ζώου που περιγράφονται σε αυτό και χρησιμοποίησέ τα για να λύσεις το "Κρυπτόλεξο του μυθικού τέρατος". Το διπλό καθρέφτισμά του φτιάχνει το μυθικό τέρας που φύλαγε τις πύλες του Άδη.`,
-};
-
-export const helps: Record<string, string> = {
-  intro1:
-    "Ψάξε και βρες την πέτρινη πλάκα με τον Όρκο του Μύστη. Στο κείμενο, δείξε το ζευγάρι των αντίθετων λέξεων που θα φωτίσει τις πύλες μύησης στο σκοτεινό δωμάτιο.",
-  portals: `Διάλεξε τη σφαίρα που θα σε οδηγήσει στο δωμάτιο.`,
-  archPortalHover: `Και συ, από κει αναδύθηκες, σκοτεινέ σύζυγε,
-  με τη σιωπή γραμμένη στο πρόσωπο…`,
-  elaiourgeioPortalHover: `Κει πέρα
-  τίποτα δεν ταράζει τη σιωπή. Μονάχα ένας σκύλος (κι αυτός δε γαβγίζει),
-  άσκημος σκύλος…`,
-  planoEleusPortalHover: `Γίνεται τότε μια μεγάλη ησυχία, μαλακή, ευγενική, νοτισμένη,
-  ως πέρα απ’ τον κήπο, ως την άκρη της θύμησης, σα να ’χει μεμιάς φθινοπωριάσει.`,
-  telestirioPortalHover: `Ακούς και τ’ άλογα στο στάβλο, και το νερό που πέφτει
-  καθώς υψώνουν οι προσκυνητές δυο πήλινα δοχεία…`,
-  kampinaPloiouPortalHover: `Έχει γυρίσει, όπως κάθε καλοκαίρι, απ’ την ξένη σκοτεινή χώρα, στο μεγάλο, εξοχικό, πατρικό της σπίτι…`,
-  karnagioPortalHover: `μια ατέλειωτη, κουραστική μετακίνηση·
-  σπάζουν τα γυαλικά στη μετακόμιση, μένουν στο δρόμο, αστράφτουν·
-  άλλοι πηδούν στη στεριά, άλλοι ανεβαίνουν στα πλοία·`,
-  archeologikos1: `Σχημάτισε τις λέξεις ενώνοντας τα γράμματα με συνεχόμενη γραμμή`,
-  teletourgeio1: `Πρέπει να βρεις το εργαλείο για να κόψεις τις δάφνες.`,
-  teletourgeio2: `Μπορείς να το χρησιμοποιήσεις για να κόψεις το φυτό που αναφέρεται στο κείμενο`,
-  notCollectable: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στο αποθετήριο`,
-  karnagioXerouli1: `Ουπς! Αυτό το αντικείμενο δεν μπορεί να μπει στη βαλίτσα`,
-  metaforaValitsas: `Πρέπει να βρεις κάποιο τρόπο για να μεταφέρεις τη βαλίτσα`,
-  search: `ψαξε τα υπόλοιπα αντικειμενα`,
-  karnagioCaseFull: `Πρέπει να βρεις κάποιο τρόπο για να μεταφέρεις τη βαλίτσα`,
-  karnagioSeira: `Σειρά: γυάλινο μυροδοχείο, γυάλινο κηροπήγιο, εσώρουχο`,
-  teletourgeioGrifos: `Βάλε τη δάφνη και τα δοχεία στο κουτί`,
-  teletourgeioGrifosErr1: `Πρώτα πρέπει να μπουν οι δάφνες`,
-};
 
 export type HelpKey =
   | "intro1"
@@ -181,8 +130,10 @@ export type Status =
   | "SELECT_LEVEL"
   | "ACHIEVEMENTS"
   | "MODAL"
+  | "GUIDELINES"
   | "HISTORY"
-  | "EPIC_ITEM"
+  | "ANCIENT_TEXT"
+  | "REWARD"
   | "RUNNING";
 
 export type Store = {
@@ -194,23 +145,21 @@ export type Store = {
   tmpHint?: string;
   setIsHintVisible: (b: boolean) => void;
   setAncientText: (s?: AncientText) => void;
-  onTrigger: (s?: string) => void;
   level: Level;
   guideLinesVissible?: boolean;
   setguideLinesVissible: (e: boolean) => void;
   guideLines?: string;
   modal: Modal;
-  inventory: Item[];
-  epicInventory: Reward[];
+  inventory: (Item | Reward)[];
 
   jigSawUrl?: string;
   lexigram?: string[];
   compass?: boolean;
   reward?: Reward | null;
+  setReward: (i: Reward | null) => void;
 
   inventoryNotf: string[];
   selectItem?: Item;
-  epicItem?: Reward;
   usedItems: Record<string, boolean>;
 
   scene: Scene;
@@ -221,16 +170,18 @@ export type Store = {
   setLexigram: (s?: string[], reward?: Reward | null) => void;
   setJigSaw: (e?: string, reward?: Reward | null) => void;
 
+  screenShot?: string;
+  takeScreenShot: (src: string) => void;
+  fadeOutImg?: string;
+  setFadeOutImg: (src: string) => void;
   setUsedItem: (id: string) => void;
   setSelectItem: (i: Item) => void;
   setHand: (s?: string) => void;
   setEmail: (s: string) => void;
   setguideLines: (s?: string) => void;
-  setEpicItem: (s?: Reward) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
   invHas: (e?: string) => boolean;
-  epicInvHas: (e: string) => boolean;
   setInventory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
   setInventoryNotf: (n: string) => void;
@@ -246,13 +197,22 @@ const win = loadSound("/sounds/win.wav");
 export const useStore = create<Store>((set, get) => ({
   account: {},
   status: "MENU",
-  scene: "elaiourgeio",
+  scene: "intro",
   level: "Φως-Σκοτάδι",
   inventory: [],
-  epicInventory: [],
   hint: undefined,
   isHintVisible: false,
   usedItems: {},
+  takeScreenShot: (src: string) =>
+    set(() => ({
+      screenShot: src,
+    })),
+
+  setFadeOutImg: (obj) =>
+    set(() => ({
+      fadeOutImg: obj,
+    })),
+
   setStatus: (status) => set(() => ({ status })),
   setUsedItem: (id: string) =>
     set((s) => ({
@@ -277,8 +237,6 @@ export const useStore = create<Store>((set, get) => ({
       compass,
       reward,
     }));
-
-    set((s) => {});
   },
 
   setLexigram: (lexigram?: string[], reward?: Reward | null) =>
@@ -301,50 +259,31 @@ export const useStore = create<Store>((set, get) => ({
   setguideLinesVissible: (b: boolean) => {
     dap?.play();
     set(() => ({
-      status: b ? "MODAL" : "RUNNING",
+      status: b ? "GUIDELINES" : "RUNNING",
       guideLinesVissible: b,
     }));
   },
 
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
-  onTrigger: (triggerEvent?: string) =>
-    set((s) => {
-      switch (triggerEvent) {
-        case "ancientText":
-          return s.setAncientText(ancientText);
-
-        case "teletourgeio":
-
-        default:
-          break;
-      }
-    }),
-
-  setEpicItem: (epicItem) =>
-    set((s) => {
-      if (!epicItem) return { ...s, epicItem, status: "RUNNING" };
-      const found = s.epicInventory
-        .map((o) => o.name)
-        .includes(`${epicItem._id}`);
-      if (found) return s;
-      else {
-        win?.play();
-        return {
-          ...s,
-          reward: null,
-          epicItem: epicItem,
-          status: "EPIC_ITEM",
-          epicInventory: epicItem
-            ? [...s.epicInventory, epicItem]
-            : s.epicInventory,
-        };
-      }
-    }),
 
   setHint: (hint?: string) =>
     set(() => ({
       hint: hint,
     })),
+
+  setReward: (reward) => {
+    win?.play();
+    set((s) => {
+      let inv = [...s.inventory];
+      if (reward) inv = [...inv, reward];
+      return {
+        inventory: inv,
+        reward,
+        status: reward ? "REWARD" : "RUNNING",
+      };
+    });
+  },
+
   setIsHintVisible: (isHintVisible) =>
     set(() => {
       hint.play();
@@ -353,12 +292,12 @@ export const useStore = create<Store>((set, get) => ({
   setLevel: (l: Level) => set(() => ({ level: l })),
   setguideLines: (guideLines?: string) =>
     set(() => {
-      return { guideLines };
+      return { status: guideLines ? "GUIDELINES" : "RUNNING", guideLines };
     }),
   setAncientText: (ancientText?: AncientText) =>
     set(() => {
       dap?.play();
-      return { status: ancientText ? "MODAL" : "RUNNING", ancientText };
+      return { status: ancientText ? "ANCIENT_TEXT" : "RUNNING", ancientText };
     }),
   inventoryNotf: [],
   modal: undefined,
@@ -374,10 +313,6 @@ export const useStore = create<Store>((set, get) => ({
   invHas: (e?: string) =>
     get()
       .inventory.map((i) => i._id)
-      .includes(e),
-  epicInvHas: (e: string) =>
-    get()
-      .epicInventory.map((i) => i._id)
       .includes(e),
 
   setInventory: (i: Item) => {
@@ -401,6 +336,11 @@ export const useStore = create<Store>((set, get) => ({
       return {
         hand,
         inventory: state.inventory.filter((item) => item._id !== s),
+
+        usedItems: {
+          ...state.usedItems,
+          [s]: true,
+        },
       };
     }),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),

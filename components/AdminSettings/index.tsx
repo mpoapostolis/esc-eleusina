@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
+import { addItem } from "../../queries/items";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -43,10 +44,10 @@ export function AllImage(props: {
         </div>
       ))}
       <button
-        className="p-2 h-full hover:scale-150 w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
+        className="p-2 h-full  w-full justify-center items-center border  border-gray-700  bg-black hover:bg-slate-800 flex"
         onClick={() => props.onClick(null)}
       >
-        ✖️
+        ❌
       </button>
     </div>
   );
@@ -55,7 +56,6 @@ export function AllImage(props: {
 const Component = (props: {
   items: Item[];
   imgs: Img[];
-  getItems: () => void;
   update: (p: Partial<Item>) => void;
   portal: boolean;
   setScene: (s: Scene) => void;
@@ -77,7 +77,6 @@ const Component = (props: {
       return (
         <SceneSettings
           update={props.update}
-          getItems={props.getItems}
           items={sceneItems}
           imgs={props.imgs}
         />
@@ -85,7 +84,6 @@ const Component = (props: {
     case "selectedItem":
       return (
         <SelectedItem
-          getItems={props.getItems}
           imgs={props.imgs}
           items={props.items}
           update={props.update}
@@ -128,9 +126,7 @@ const Component = (props: {
 
           <div className="mb-4 grid grid-cols-4 gap-4">
             {props.items
-              ?.filter(
-                (e) => !["timerHint", "guidelines"].includes(`${e.type}`)
-              )
+              ?.filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((i, idx) => {
                 return (
                   <div
@@ -168,21 +164,17 @@ const Component = (props: {
             <AllImage
               imgs={props.imgs}
               onClick={(id) => {
-                axios
-                  .post("/api/items", {
-                    scene: store.scene,
-                    imgId: id?._id,
-                    scale: 0.5,
-                  })
-                  .then((d) => {
-                    props.getItems();
-                    router.push({
-                      query: {
-                        type: "selectedItem",
-                        id: d.data.id,
-                      },
-                    });
+                addItem({
+                  scene: store.scene,
+                  imgId: `${id?._id}`,
+                }).then((d) => {
+                  router.push({
+                    query: {
+                      type: "selectedItem",
+                      id: d.id,
+                    },
                   });
+                });
               }}
             />
           </Popover>
@@ -201,7 +193,6 @@ const Component = (props: {
 export default function AdminSettings(props: {
   items: Item[];
   imgs: Img[];
-  getItems: () => void;
   update: (p: Partial<Item>) => void;
   portal: boolean;
   setScene: (s: Scene) => void;

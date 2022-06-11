@@ -143,7 +143,7 @@ export default function Compass() {
   useEffect(() => {
     if (answers.north && answers.east && answers.west && answers.south) {
       store.setCompass(false);
-      if (store.reward) store.setEpicItem(store.reward);
+      if (store.reward) store.setReward(store.reward);
     }
   }, [answers]);
 

@@ -1,43 +1,47 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import { Img } from "../../pages/admin";
-import { Item, useStore } from "../../store";
+import { getItems, updateItem } from "../../queries/items";
+import { useStore } from "../../store";
+import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 
-export default function BoxSettings(props: {
-  getItems: () => void;
-  items: Item[];
-  imgs: Img[];
-  update: (p: Partial<Item>) => void;
-}) {
-  const store = useStore();
+export default function BoxSettings(props: { imgs: Img[] }) {
+  const { data: items } = getItems();
+  const [v, setV] = useState<string>();
+  const [rewardDescription, setRewardDescription] = useState<string>();
   const router = useRouter();
-  const id = router.query.id;
-  const idx = props.items.findIndex((e) => e._id === id);
-  const selectedItem = { ...props.items[idx] };
-  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+  const id = `${router.query.id}`;
+  const idx = items.findIndex((e) => e._id === id);
+  const selectedItem = { ...items[idx] };
+  const store = useStore();
+  useEffect(() => {
+    if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
+    if (selectedItem.reward?.description)
+      setRewardDescription(selectedItem.reward?.description);
+  }, [selectedItem.orderBoxError, selectedItem.reward]);
 
-  const updateOrderInBox = (id: string) => {
+  const updateOrderInBox = (_id: string) => {
     if (!selectedItem) return;
     const orderInsideTheBox = selectedItem?.orderInsideTheBox ?? [];
-    const found = orderInsideTheBox?.includes(id);
+    const found = orderInsideTheBox?.includes(_id);
     const tmp = found
-      ? orderInsideTheBox?.filter((e) => e !== id)
-      : [...orderInsideTheBox, id];
-    tmp;
-    props.update({ orderInsideTheBox: tmp });
+      ? orderInsideTheBox?.filter((e) => e !== _id)
+      : [...orderInsideTheBox, _id];
+    updateItem(id, { orderInsideTheBox: tmp });
   };
-
   const idToName = (id?: string) =>
-    props.items.find((e) => {
+    items.find((e) => {
       return e._id === id;
     })?.name;
 
   const idToSrc = (id?: string) =>
-    props.items.find((e) => {
+    items.find((e) => {
       return e._id === id;
     })?.src;
+  const sceneItems = items.filter((item) => store?.scene === item.scene);
 
   return (
     <>
@@ -56,7 +60,7 @@ export default function BoxSettings(props: {
             <img className="h-fit mr-4 w-7" src={idToSrc(e)} alt="" />
             <span className="mr-4">{idToName(e)}</span>
             <span className="ml-auto" onClick={() => updateOrderInBox(e)}>
-              ✖️
+              ❌
             </span>
           </li>
         ))}
@@ -70,14 +74,14 @@ export default function BoxSettings(props: {
         }
       >
         <AllImage
-          imgs={sceneItems}
+          imgs={getOnlyItems(sceneItems)}
           onClick={(o) => {
-            updateOrderInBox(`${o?._id}`);
+            if (o) updateOrderInBox(`${o?._id}`);
           }}
         />
       </Popover>
 
-      <hr className="my-4 opacity-20" />
+      <hr className="my-4 opacity-10" />
 
       <div>
         <label className="block text-left text-xs font-medium mb-2 text-gray-200">
@@ -86,41 +90,69 @@ export default function BoxSettings(props: {
         <textarea
           className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={selectedItem.orderBoxError}
+          value={v}
           onChange={(evt) => {
-            props.update({
-              orderBoxError: evt.currentTarget.value,
+            setV(evt.currentTarget.value);
+          }}
+          onBlur={() => {
+            updateItem(id, {
+              orderBoxError: v,
             });
           }}
         ></textarea>
+        <Popover
+          label={
+            <>
+              <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+                Reward
+              </label>
+              <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                {selectedItem.reward ? (
+                  <div>
+                    <img
+                      src={selectedItem.reward?.src}
+                      className="w-20 h-auto"
+                    />
+                  </div>
+                ) : (
+                  "➕"
+                )}
+              </div>
+            </>
+          }
+        >
+          <AllImage
+            imgs={getOnlyItems(props.imgs)}
+            onClick={async (o) => {
+              updateItem(id, {
+                reward: o,
+              });
+            }}
+          />
+        </Popover>
+
+        <div>
+          <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+            Reward Msg
+          </label>
+          <textarea
+            className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+            rows={5}
+            value={rewardDescription}
+            onChange={(evt) => {
+              setRewardDescription(evt.currentTarget.value);
+            }}
+            onBlur={() => {
+              updateItem(id, {
+                reward: {
+                  ...selectedItem.reward,
+                  description: rewardDescription,
+                },
+              });
+            }}
+          />
+        </div>
       </div>
-      <Popover
-        label={
-          <>
-            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-              Reward
-            </label>
-            <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-              {selectedItem.reward ? (
-                <div>
-                  <img src={selectedItem.reward?.src} className="w-20 h-auto" />
-                </div>
-              ) : (
-                "➕"
-              )}
-            </div>
-          </>
-        }
-      >
-        <AllImage
-          imgs={props.items}
-          onClick={async (o) => {
-            props.update({
-              reward: o as Item | null,
-            });
-          }}
-        />
-      </Popover>
     </>
   );
 }

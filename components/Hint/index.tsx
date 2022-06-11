@@ -1,5 +1,6 @@
 import clsx from "clsx";
-import { helps, useStore } from "../../store";
+import { motion } from "framer-motion";
+import { useStore } from "../../store";
 
 export default function Hint() {
   const transform = { transform: "skewX(-20deg)" };
@@ -11,13 +12,18 @@ export default function Hint() {
   const visible = store.isHintVisible && store.hint;
 
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{
+        translateX: visible ? 0 : 750,
+        scale: visible ? 1 : 0,
+        opacity: visible ? 1 : 0,
+      }}
+      transition={{
+        duration: 0.35,
+      }}
       className={clsx(
-        "fixed w-full max-w-xl  right-0  mr-4   pointer-events-auto",
-        {
-          "opacity-100": visible,
-          "w-0 opacity-0": !visible,
-        }
+        "fixed w-full max-w-xl  right-0  mr-4   pointer-events-auto"
       )}
     >
       <div
@@ -46,12 +52,10 @@ export default function Hint() {
           style={transform}
           className="m-2 px-4 py-4 min-h-fit  text-2xl rounded-lg  border-2 border-black -skew-x-12  w-full bg-white bg-opacity-40"
         >
-          <div className="text-white font-bold text-2xl" style={shadow}>
-            {store.hint}
-          </div>
+          <div className="text-white font-bold text-2xl">{store.hint}</div>
         </div>
         <hr className="border-dashed  border border-black w-3/4" />
       </div>
-    </div>
+    </motion.div>
   );
 }

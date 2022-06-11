@@ -1,16 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useTimer } from "use-timer";
 import { useStore } from "../store";
 
-export default function useGuideLines(str: string, time: number = 0) {
+export default function useGuideLines(str: string, time: number = 2) {
   const store = useStore();
-  const [appear, setAppear] = useState(false);
+  const timer = useTimer({
+    initialTime: time,
+    timerType: "DECREMENTAL",
+    step: 1,
+  });
+
   useEffect(() => {
-    if (store.status === "RUNNING" && !appear)
-      setTimeout(() => {
-        store.setguideLinesVissible(true);
-        store.setStatus("MODAL");
-        store.setguideLines(str);
-        setAppear(true);
-      }, time);
-  }, [store.status, appear]);
+    if (timer.time === 0) {
+      store.setguideLinesVissible(true);
+      store.setguideLines(str);
+    }
+  }, [timer.time]);
+
+  useEffect(() => {
+    if (store.status === "RUNNING") timer.start();
+    if (store.status !== "RUNNING") timer.pause();
+  }, [store.status]);
+
+  useEffect(() => {
+    store.setguideLines(undefined);
+    timer.reset();
+    timer.start();
+  }, [store.scene]);
 }

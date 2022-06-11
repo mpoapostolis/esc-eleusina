@@ -14,21 +14,24 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
-import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
-import axios from "axios";
+import { MathUtils, Mesh, Vector3 } from "three";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
 import AncientText from "../components/AncientText";
 import Scenes from "../components/Scenes";
 import Hand from "../components/Hand";
-import EpicItem from "../components/EpicItem";
-import Lexigram from "../components/Lexigram";
+import Reward from "../components/Reward";
 import useGuideLines from "../Hooks/useGuideLines";
 import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import MiniGameModal from "../components/MiniGameModal";
+import { getItems } from "../queries/items";
+import { getMiniGames } from "../queries";
+import { motion } from "framer-motion";
+import { Img } from "./admin";
+import Lexigram from "../components/Lexigram";
 
 export type MiniGame = {
   scene?: string;
@@ -37,12 +40,9 @@ export type MiniGame = {
   type?: string;
 } & Record<string, any>;
 
-export interface Reward {
-  _id?: string;
-  src?: string;
-  name?: string;
+export type Reward = Img & {
   description?: string;
-}
+};
 
 extend({ OrbitControls });
 
@@ -74,17 +74,24 @@ function Environment() {
   const { scene } = useThree();
   const store = useStore();
   const texture = useLoader(THREE.TextureLoader, `/scenes/${store.scene}.jpg`);
-
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = texture;
   return null;
 }
-function CustomLoader() {
+
+export function CustomLoader() {
   const { progress } = useProgress();
   return (
-    <Html center>
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
-      <span style={{ color: "white" }}>{progress.toFixed(0)} % loaded</span>
+    <Html
+      center
+      className="w-screen h-screen bg-opacity-50 bg-black flex justify-center items-center"
+    >
+      <div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-8 border-white"></div>
+        <span className="text-white  font-bold text-xl">
+          {progress.toFixed(0)} % loaded
+        </span>
+      </div>
     </Html>
   );
 }
@@ -93,7 +100,7 @@ function Portal(props: Item) {
   const countX = 4;
   const countY = 6;
   const fps = 25;
-  const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  const texture = useLoader(THREE.TextureLoader, "/images/portal.png");
   const [hovered, setHovered] = useState(false);
   useEffect(() => {
     if (typeof document !== "undefined")
@@ -112,7 +119,7 @@ function Portal(props: Item) {
     texture.repeat.x = 1 / countX;
     texture.repeat.y = 1 / countY;
 
-    ref.current.scale.set(props.scale / 4, props.scale / 6, 1);
+    ref.current.scale.set(props.scale / 2, props.scale / 3, 1);
   });
 
   const ref = useRef<Mesh>();
@@ -124,13 +131,17 @@ function Portal(props: Item) {
   }, [props.position, ref.current]);
 
   const store = useStore();
+  const show = props?.requiredItems
+    ? props?.requiredItems
+        ?.map((v) => {
+          return store.invHas(v) || store.usedItems[v];
+        })
+        .every((e) => e)
+    : true;
 
-  return (
+  return show ? (
     <mesh
-      onClick={() => {
-        if (props.goToScene) store.setScene(props.goToScene);
-        if (props.collectable) store.setInventory(props);
-      }}
+      onClick={props.onClick}
       ref={ref}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
@@ -143,7 +154,7 @@ function Portal(props: Item) {
         map={texture}
       />
     </mesh>
-  );
+  ) : null;
 }
 
 function TimerHint(props: Item) {
@@ -151,8 +162,71 @@ function TimerHint(props: Item) {
   return null;
 }
 
+function ConditionalHint(props: Item) {
+  const store = useStore();
+  useEffect(() => {
+    if (props.requiredItems?.map((e) => store.invHas(e)).every(Boolean)) {
+      store.setIsHintVisible(true);
+      store.setHint(props.text);
+    }
+  }, [store.inventory]);
+  return null;
+}
+
 function GuideLineItem(props?: Item) {
-  useGuideLines(`${props?.text}`, 2000);
+  useGuideLines(`${props?.text}`);
+  return null;
+}
+
+function FadeOut() {
+  const store = useStore();
+
+  useEffect(() => {
+    const ss = store.screenShot;
+    if (ss) setTimeout(() => store.setScene(ss as any), 125);
+  }, [store.fadeOutImg]);
+
+  return (
+    <motion.img
+      style={{
+        zIndex: 40,
+      }}
+      key={store.scene}
+      animate={{
+        scale: [1, 2],
+        opacity: [1, 0],
+      }}
+      transition={{
+        duration: 1,
+      }}
+      src={store.fadeOutImg}
+      className="fixed  h-50 pointer-events-none"
+      alt=""
+    />
+  );
+}
+
+function Screenshot() {
+  const store = useStore();
+  const { gl, scene, camera } = useThree();
+
+  const changeScene = () => {
+    gl.render(scene, camera);
+    gl.domElement.toBlob(
+      function (blob) {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        store.setFadeOutImg(url);
+      },
+      "image/jpg",
+      1.0
+    );
+  };
+
+  useEffect(() => {
+    if (store.screenShot) changeScene();
+  }, [store.screenShot]);
+
   return null;
 }
 
@@ -181,30 +255,17 @@ const Home: NextPage = () => {
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
 
-  const [items, setItems] = useState<Item[]>([]);
-  const [miniGames, setMiniGames] = useState<MiniGame[]>([]);
-
-  const getItems = async () =>
-    axios.get("/api/items").then((d) => {
-      setItems(d.data);
-    });
-
-  const getMiniGames = async () =>
-    axios.get("/api/miniGames").then((d) => {
-      setMiniGames(d.data);
-    });
-
-  useEffect(() => {
-    getItems();
-    getMiniGames();
-  }, []);
+  const { data: miniGames } = getMiniGames();
+  const { data: items } = getItems();
+  const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
 
   useEffect(() => {
     const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
     if (!currMinigames) return;
-    const doIHaveEpicItem = store.epicInvHas(`${currMinigames.reward?._id}`);
+    const arr = (currMinigames.requiredItems ?? [])?.length > 0;
     if (
-      !doIHaveEpicItem &&
+      !store.invHas(currMinigames.reward?._id) &&
+      arr &&
       currMinigames.requiredItems?.map((i) => store.invHas(i)).every(Boolean)
     )
       store.setStatus("MINIGAMEMODAL");
@@ -219,49 +280,73 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
+  useEffect(() => {
+    store.setHand(undefined);
+  }, [store.scene]);
 
-  const sceneItems = items.filter((e) => e.scene === store.scene && !e.isEpic);
+  const sceneItems = items.filter((e) => e.scene === store.scene);
+  const [boxItem] = items.filter(
+    (e) => e.scene === store.scene && e.type === "box"
+  );
+
   return (
     <div {...bind()}>
+      <FadeOut />
       {store.compass && <Compass />}
       <JigSaw />
       <GuideLines />
-      <AncientText />
       <Lexigram />
+      <AncientText />
       <Ui items={sceneItems} time={timer.time} />
       <MiniGameModal />
       <Menu />
-      <EpicItem />
+      <Reward />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
+
           <Suspense fallback={<CustomLoader />}>
-            {sceneItems?.map((p, idx) => {
-              const item = p as Item;
-
-              if (p.type === "timerHint")
-                return <TimerHint key={p._id} {...p} />;
-              if (p.type === "guidelines")
-                return <GuideLineItem key={p._id} {...p} />;
-              if (p.type === "portal") return <Portal key={p._id} {...item} />;
-
-              if (p.src)
-                return (
-                  <Sprite
-                    key={p._id}
-                    giveReward={(i) => {
-                      const found = items.find((e) => e._id === i);
-                      if (found) store.setEpicItem(found);
-                    }}
-                    {...item}
-                  />
-                );
-              else return null;
-            })}
+            {sceneItems
+              .filter(() => !store?.invHas(currMinigames?.reward?._id))
+              .filter(() => !store?.invHas(boxItem?.reward?._id))
+              .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
+              .map((p) => {
+                if (p.type === "hint")
+                  return p.hintType === "conditional" ? (
+                    <ConditionalHint key={p._id} {...p} />
+                  ) : (
+                    <TimerHint key={p._id} {...p} />
+                  );
+                if (p.type === "guidelines")
+                  return <GuideLineItem key={p._id} {...p} />;
+              })}
             <Environment />
+            {sceneItems
+              .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
+              ?.map((p, _idx) => {
+                const item = p as Item;
+                if (p.type === "portal")
+                  return (
+                    <Portal
+                      onClick={() => {
+                        const goTo = p.goToScene;
+                        if (goTo) {
+                          store.takeScreenShot(goTo);
+                        }
+                        if (p.collectable) store.setInventory(p);
+                      }}
+                      key={p._id}
+                      {...item}
+                    />
+                  );
+
+                if (p.src) return <Sprite key={p._id} {...item} />;
+                else return null;
+              })}
             <Scenes />
           </Suspense>
 
+          <Screenshot />
           <Suspense fallback={<CustomLoader />}>
             <Hand />
           </Suspense>

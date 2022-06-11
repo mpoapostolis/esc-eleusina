@@ -241,14 +241,13 @@ function SceneSelect() {
 
 function Select() {
   const store = useStore();
-  const ach = store.epicInventory;
 
-  const tmpInv = Array(16 - ach.length).fill({
+  const tmpInv = Array(16).fill({
     name: "",
     src: "",
   });
 
-  const inv: Item[] = [...ach, ...tmpInv];
+  const inv = [...tmpInv];
 
   switch (store.status) {
     case "MENU":

@@ -1,7 +1,6 @@
-import axios from "axios";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
-import { MiniGame } from "../../pages";
+import { motion } from "framer-motion";
+import { getMiniGames } from "../../queries";
 import { useStore } from "../../store";
 
 const shadow = {
@@ -10,47 +9,45 @@ const shadow = {
 
 export default function MiniGameModal() {
   const store = useStore();
-  const [miniGames, setMiniGames] = useState<MiniGame>();
 
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
 
-  const getMiniGames = async () =>
-    axios.get("/api/miniGames").then((d) => {
-      const [game] = d.data.filter((e: any) => e.scene === store.scene);
-      setMiniGames(game);
-    });
-
-  useEffect(() => {
-    getMiniGames();
-  }, []);
-
+  const { data: miniGames } = getMiniGames();
+  const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
   const accept = () => {
-    switch (miniGames?.type) {
+    switch (miniGame?.type) {
       case "jigsaw":
-        store.setJigSaw(miniGames.jigSawUrl, miniGames.reward);
+        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward);
         break;
 
       case "compass":
-        store.setCompass(true, miniGames.reward);
+        store.setCompass(true, miniGame.reward);
         break;
 
       case "lexigram":
-        store.setLexigram(miniGames.lexigram.split(","), miniGames.reward);
+        store.setLexigram(miniGame?.lexigram?.split(","), miniGame.reward);
         break;
 
       default:
         break;
     }
   };
-
+  const isOpen = store.status === "MINIGAMEMODAL";
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{
+        translateY: isOpen ? 0 : 250,
+        scale: isOpen ? 1 : 0,
+        opacity: isOpen ? 1 : 0,
+      }}
+      transition={{
+        duration: 0.35,
+      }}
       className={clsx(
-        "fixed  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
-        {
-          hidden: store.status !== "MINIGAMEMODAL",
-        }
+        { hidden: !isOpen },
+        "fixed  h-screen w-screen flex pointer-events-auto  items-center  justify-center z-50"
       )}
     >
       <div
@@ -71,7 +68,9 @@ export default function MiniGameModal() {
               Άκυρο
             </button>
             <button
-              onClick={() => accept()}
+              onClick={() => {
+                accept();
+              }}
               className="w-full bg-white border-dashed pb-4 hover:bg-opacity-10 bg-opacity-5 rounded py-3 flex items-center justify-center border-gray-700 border"
             >
               Άνοιγμα
@@ -79,6 +78,6 @@ export default function MiniGameModal() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

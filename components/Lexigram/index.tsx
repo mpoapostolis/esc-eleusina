@@ -1,9 +1,8 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../store";
-import { loadSound } from "../../utils";
 import Keyboard from "../Keyboard";
-const win = loadSound("/sounds/win.wav");
+import MiniGameWrapper from "../MiniGameWrapper";
 
 function Lexigram() {
   // const [lexigram, setLexigram] = useState<string[]>([]);
@@ -58,30 +57,15 @@ function Lexigram() {
       (acc, curr) => acc + curr,
       0
     );
+
     if (store.lexigram?.length === total && store.reward) {
-      store.setLexigram(undefined);
-      store.setEpicItem(store.reward);
+      store.setReward(store.reward);
     }
   }, [foundTotalLetter]);
 
   return (
-    <div
-      className={clsx(
-        "fixed bg-black select-none bg-opacity-90  h-screen w-screen flex  pointer-events-auto  items-center  justify-center z-50",
-        {
-          hidden: store.status !== "LEXIGRAM" || !store.lexigram,
-        }
-      )}
-    >
-      <img
-        onClick={() => {
-          store.setLexigram(undefined);
-        }}
-        src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
-        role="button"
-        className=" w-10 m-5 h-10 z-50 pointer-events-auto absolute right-0 top-0"
-      />
-      <div className="md:p-10  rounded-lg p-4 bg-black max-w-2xl w-full shadow-inner  border border-gray-900 flex flex-col h-screen">
+    <MiniGameWrapper status={"LEXIGRAM"}>
+      <div className="md:p-10 h-full rounded-lg p-4  shadow-inner  border border-gray-900 flex flex-col ">
         <div className="grid mt-10 grid-cols-2 gap-4 text-gray-400">
           {Array.from(groups)
             .sort((a, b) => a - b)
@@ -207,7 +191,7 @@ function Lexigram() {
           }}
         />
       </div>
-    </div>
+    </MiniGameWrapper>
   );
 }
 

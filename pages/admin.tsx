@@ -14,20 +14,22 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/AdminSettings/Library";
-import axios from "axios";
 import Menu from "../components/Menu";
 import { useRouter } from "next/router";
+import { getLibrary } from "../queries/library";
+import { getItems, updateItem } from "../queries/items";
 
 extend({ OrbitControls });
 
 type Sprite = Item & {
-  update: (p: { e3: Euler; v3: Vector3 }) => void;
+  setItem: (str: string) => void;
 };
+
 function Portal(props: Sprite) {
   const countX = 4;
   const countY = 6;
   const fps = 25;
-  const texture = useLoader(THREE.TextureLoader, "/images/arrows.png");
+  const texture = useLoader(THREE.TextureLoader, "/images/portal.png");
   const [hovered, setHovered] = useState(false);
   useEffect(() => {
     if (typeof document !== "undefined")
@@ -51,7 +53,7 @@ function Portal(props: Sprite) {
       ref.current.rotation.copy(three.camera.rotation);
     }
     ref.current.scale.set(props.scale, props.scale, props.scale);
-    ref.current.scale.set(props.scale / 4, props.scale / 6, 1);
+    ref.current.scale.set(props.scale / 2, props.scale / 3, 1);
   });
 
   const ref = useRef<Mesh>();
@@ -71,9 +73,11 @@ function Portal(props: Sprite) {
       onDoubleClick={() => {
         if (!ref.current) return;
         if (!ref.current) return;
+        props.setItem(`${props._id}`);
         const v3 = new Vector3().copy(ref.current.position);
         const e3 = new Euler().copy(ref.current.rotation);
-        props.update({ e3, v3 });
+        if (drag) updateItem(`${props._id}`, { rotation: e3, position: v3 });
+
         setDrag(!drag);
       }}
       ref={ref}
@@ -141,9 +145,10 @@ function Sprite(props: Sprite) {
       rotation={props.rotation ?? t.camera.rotation}
       onDoubleClick={() => {
         if (!ref.current) return;
+        props.setItem(`${props._id}`);
         const v3 = new Vector3().copy(ref.current.position);
         const e3 = new Euler().copy(ref.current.rotation);
-        props.update({ e3, v3 });
+        if (drag) updateItem(`${props._id}`, { rotation: e3, position: v3 });
         setDrag(!drag);
       }}
       scale={props.scale}
@@ -188,12 +193,7 @@ export type Img = {
 };
 export type Conf = Item[];
 
-function TimerHint() {
-  return null;
-}
 const Home: NextPage = () => {
-  const [items, setItems] = useState<Item[]>([]);
-  const [imgs, setImgs] = useState<Img[]>([]);
   const store = useStore();
   const setScene = (s: Scene) => store.setScene(s);
   const [portal, _addPortal] = useState(false);
@@ -208,24 +208,17 @@ const Home: NextPage = () => {
       store.setStatus("RUNNING");
     }
   }, []);
-  const getImgs = async () =>
-    axios.get("/api/library").then((d) => {
-      setImgs(d.data);
+
+  const { data: imgs } = getLibrary();
+  const { data: items } = getItems();
+
+  const updateUrl = (_id: string) => {
+    const q = router.query;
+    const id = _id ?? router.query.id;
+    router.push({
+      query: { ...q, id },
     });
-
-  const getItems = async () =>
-    axios.get("/api/items").then((d) => {
-      setItems(d.data);
-    });
-
-  useEffect(() => {
-    getItems();
-    getImgs();
-  }, [library]);
-
-  useEffect(() => {
-    // getItems();
-  }, [id]);
+  };
 
   const updateItem = (i: Partial<Item>, _id?: string) => {
     const q = router.query;
@@ -237,7 +230,6 @@ const Home: NextPage = () => {
     const idx = items.findIndex((e) => e._id === id);
     const tmp = [...items];
     tmp[idx] = { ...tmp[idx], ...i };
-    setItems(tmp);
   };
 
   const sceneItems = items.filter((e) => e.scene === store.scene);
@@ -246,7 +238,6 @@ const Home: NextPage = () => {
       {!library ? (
         <AdminSettings
           imgs={imgs}
-          getItems={() => getItems()}
           items={sceneItems}
           update={(p) => updateItem(p)}
           portal={portal}
@@ -265,25 +256,11 @@ const Home: NextPage = () => {
           {sceneItems
             .filter((e) => !e.isEpic)
             ?.map((o, idx) => {
-              if (o.type === "timerHint") return <TimerHint key={o._id} />;
-              if (o.type === "guidelines") return <TimerHint key={o._id} />;
+              if (["hint", "guidelines"].includes(`${o.type}`)) return null;
               if (o.type === "portal")
-                return (
-                  <Portal
-                    {...o}
-                    key={idx}
-                    update={(p) => updateItem(p, o._id)}
-                  />
-                );
+                return <Portal {...o} key={idx} setItem={updateUrl} />;
 
-              if (o.src)
-                return (
-                  <Sprite
-                    update={(p) => updateItem(p, o._id)}
-                    key={idx}
-                    {...o}
-                  />
-                );
+              if (o.src) return <Sprite setItem={updateUrl} key={idx} {...o} />;
               else return null;
             })}
         </Suspense>

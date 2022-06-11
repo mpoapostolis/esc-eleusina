@@ -1,17 +1,19 @@
 import { Item, useStore } from "../../store";
 import { useSpring, animated, config } from "@react-spring/three";
-import { DoubleSide, MathUtils, Mesh, Sprite as SpriteType } from "three";
+import { DoubleSide, Sprite as SpriteType } from "three";
 
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
 
-export default function Sprite(
-  props: Item & {
-    giveReward: (s: string) => void;
-  }
-) {
+export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
+
+  const texture1 = useLoader(
+    THREE.TextureLoader,
+    props?.replaceImg ?? "/images/empty.png"
+  );
+  const [t, setT] = useState(false);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
@@ -20,7 +22,7 @@ export default function Sprite(
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return store.invHas(v) || store.epicInvHas(v) || store.usedItems[v];
+          return store.invHas(v) || store.usedItems[v];
         })
         .every((e) => e)
     : true;
@@ -41,7 +43,6 @@ export default function Sprite(
     scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
   });
-
   useEffect(() => {
     if (props.orderInsideTheBox) {
       const isSame = props.orderInsideTheBox
@@ -49,8 +50,11 @@ export default function Sprite(
           return x === insideBox[idx];
         })
         .every(Boolean);
-      if (isSame && props.boxReward) {
-        props.giveReward(props.boxReward);
+      if (isSame && props.reward) {
+        store.setReward({
+          ...props.reward,
+          description: props.reward?.description,
+        });
       }
     }
   }, [insideBox, props.orderInsideTheBox]);
@@ -69,7 +73,6 @@ export default function Sprite(
             store.removeInvItem(store.hand);
             store.setHand(undefined);
             store.setIsHintVisible(false);
-            store.setUsedItem(store.hand);
           } else {
             store.setHint(props.orderBoxError);
             store.setIsHintVisible(true);
@@ -77,29 +80,25 @@ export default function Sprite(
           return;
         }
 
-        if (props.type === "lexigram" && props.lexigram) {
-          store.setLexigram(props.lexigram.split(","), props.reward);
-        }
-
-        if (props.type === "compass") {
-          store.setCompass(true, props.reward);
-        }
-
-        if (props.type === "jigsaw" && props.jigSawUrl) {
-          store.setJigSaw(props.jigSawUrl, props.reward);
-        }
-
-        if (store.hand && !props.collectableIfHandHas && props.type !== "box") {
+        if (
+          store.hand &&
+          !props.collectableIfHandHas &&
+          props.type !== "box" &&
+          !props.replaceImg
+        ) {
           store.setHint("Nothing happened...");
           store.setIsHintVisible(true);
           return;
         }
 
+        if (store.hand && store.hand === props.requiredToolToReplace?._id) {
+          setT(true);
+          store.removeInvItem(store.hand);
+          store.setHand(undefined);
+        }
+
         if (props.collectableIfHandHas) {
           if (store.hand === props.collectableIfHandHas) {
-            store.setUsedItem(store.hand);
-            store.removeInvItem(store.hand);
-            store.setHand(undefined);
             store.setIsHintVisible(false);
           } else {
             store.setHint(props.onCollectFail);
@@ -113,13 +112,18 @@ export default function Sprite(
         }
 
         if (props.setHint) store.setHint(props.setHint);
-        if (props.onClickTrigger) {
-          store.onTrigger(props.onClickTrigger);
-        }
 
         if (props.setGuidelines) store.setguideLines(props.setGuidelines);
 
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
+        if (props.onClickOpenModal === "ancientText") {
+          if (props.ancientText && props.author)
+            store.setAncientText({
+              text: props.ancientText,
+              keys: props.clickableWords?.split(",") ?? [],
+              author: props.author,
+            });
+        }
         if (props.onClickOpenModal === "guidelines")
           store.setguideLinesVissible(true);
         if (props.onCollectError) props.onCollectError();
@@ -133,7 +137,7 @@ export default function Sprite(
         transparent
         side={DoubleSide}
         attach="material"
-        map={texture}
+        map={t ? texture1 : texture}
       />
     </animated.mesh>
   );

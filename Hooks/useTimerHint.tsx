@@ -1,14 +1,19 @@
 import { useEffect } from "react";
 import { useTimer } from "use-timer";
+import { getMiniGames } from "../queries";
+import { getItems } from "../queries/items";
 import { useStore } from "../store";
 
 export default function useTimerHint(str: string, time: number = 0) {
   const store = useStore();
+
+  const { data: miniGames } = getMiniGames();
+  const currScene = miniGames.find((e) => e.scene === store.scene);
+
   const timer = useTimer({
     initialTime: time,
     timerType: "DECREMENTAL",
     step: 1,
-    endTime: 0,
   });
 
   useEffect(() => {

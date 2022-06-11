@@ -10,8 +10,9 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const transform = { transform: "skewX(-20deg)" };
 
   const currInv: Item[] = store.inventory.filter(
-    (item) => item.scene === store.scene
-  );
+    // @ts-ignore
+    (item) => item?.scene === store.scene
+  ) as Item[];
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
     name: "",
     src: "",
@@ -28,9 +29,29 @@ export default function Ui(props: { items: Item[]; time: number }) {
     >
       <div
         style={transform}
-        className="stroke text-white drop-shadow-2xl text-5xl p-3"
+        className="stroke text-white relative ml-10 drop-shadow-2xl text-4xl font-bold m-4 w-96"
       >
-        Time: {props.time}
+        <h1
+          style={{
+            textShadow: "-1px -1px 2px #000, 1px 1px 1px #000",
+          }}
+          className="z-50 text-white mb-2 font-bold text-4xl text-right"
+        >
+          time remaining
+        </h1>
+
+        <div className="w-96 bg-white border border-black ">
+          <div
+            className="bg-gray-400 flex items-center justify-end h-8"
+            style={{
+              textShadow: "-1px -1px 2px #000, 1px 1px 1px #000",
+              width: `${(props.time / 600) * 100}%`,
+            }}
+          >
+            <div className="relative right-4">{props.time}</div>
+          </div>
+        </div>
+        <div className="border-b mt-2 border-black w-full border-dashed"></div>
       </div>
 
       <div
@@ -47,20 +68,9 @@ export default function Ui(props: { items: Item[]; time: number }) {
             sound.play();
             store.setStatus("MENU");
           }}
-          className="border-4 p-3 bg-yellow-700 border-yellow-400 cursor-pointer pointer-events-auto"
+          className=" border-dashed rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
         >
-          <svg
-            width="48"
-            height="48"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            stroke="#000"
-            fill="currentColor"
-            color="#ccc"
-          >
-            <path d="M0 0h24v24H0V0z" fill="none"></path>
-            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"></path>
-          </svg>
+          <img src="/images/menu_icon.svg" className="w-20" alt="" />
         </button>
       </div>
 
@@ -84,7 +94,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
           </h1>
         </div>
 
-        <div className="border-2 p-2 rounded-2xl  border-gray-400  border-dashed">
+        <div className="border-2 p-2 rounded-2xl  border-gray-800  border-dashed">
           <div className="grid rounded-xl  pointer-events-auto grid-cols-3">
             {inv.map((item, i) => (
               <div
@@ -94,8 +104,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   if (item?.action) {
                     item?.action();
                   }
-                  if (store.inventoryNotf.length > 0)
-                    store.removeInventoryNotf(item.name);
 
                   if (item.setHint) store.setHint(item.setHint);
 
@@ -106,9 +114,18 @@ export default function Ui(props: { items: Item[]; time: number }) {
                     store.setIsHintVisible(true);
                   if (item.onClickOpenModal === "guidelines")
                     store.setguideLinesVissible(true);
+
+                  if (item.onClickOpenModal === "ancientText") {
+                    if (item.ancientText && item.author)
+                      store.setAncientText({
+                        text: item.ancientText,
+                        keys: item.clickableWords?.split(",") ?? [],
+                        author: item.author,
+                      });
+                  }
                 }}
                 className={clsx(
-                  "flex bg-black relative bg-opacity-70 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-50 p-3 z-50 ",
+                  "flex bg-white relative bg-opacity-40 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-800 p-3 z-50 ",
                   {
                     "bg-green-900 ": store.hand && store.hand === item?._id,
                     "cursor-pointer":
@@ -125,9 +142,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
               >
                 {item && (
                   <>
-                    <div className="text-xs absolute mx-auto w-full bottom-0 bg-black bg-opacity-30  text-center ">
-                      {item.name}
-                    </div>
                     <img
                       className="w-full p-1"
                       src={item.inventorySrc ? item?.inventorySrc : item.src}
