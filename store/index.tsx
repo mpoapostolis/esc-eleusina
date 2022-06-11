@@ -336,6 +336,11 @@ export const useStore = create<Store>((set, get) => ({
       return {
         hand,
         inventory: state.inventory.filter((item) => item._id !== s),
+
+        usedItems: {
+          ...state.usedItems,
+          [s]: true,
+        },
       };
     }),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),

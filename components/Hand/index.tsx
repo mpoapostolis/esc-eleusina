@@ -23,7 +23,6 @@ export function Hand() {
 
   useEffect(() => {
     if (!store.hand || !dispose) return;
-    store.setUsedItem(store.hand);
     store.removeInvItem(store.hand);
     store.setHand(undefined);
   }, [store.inventory, dispose, store.hand]);

@@ -73,7 +73,6 @@ export default function Sprite(props: Item) {
             store.removeInvItem(store.hand);
             store.setHand(undefined);
             store.setIsHintVisible(false);
-            store.setUsedItem(store.hand);
           } else {
             store.setHint(props.orderBoxError);
             store.setIsHintVisible(true);
@@ -92,7 +91,7 @@ export default function Sprite(props: Item) {
           return;
         }
 
-        if (store.hand === props.requiredToolToReplace?._id) {
+        if (store.hand && store.hand === props.requiredToolToReplace?._id) {
           setT(true);
           store.removeInvItem(store.hand);
           store.setHand(undefined);
