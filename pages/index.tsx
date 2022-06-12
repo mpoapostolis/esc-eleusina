@@ -12,7 +12,7 @@ import { Item, loadKey, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Fragment, Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 import { MathUtils, Mesh, Vector3 } from "three";
 import { useTimer } from "use-timer";
@@ -230,6 +230,15 @@ function Screenshot() {
   return null;
 }
 
+function Loader(props: { src?: string }) {
+  useLoader(
+    THREE.TextureLoader,
+    `/scenes/${props.src}.jpg` ?? "/images/empty.png"
+  );
+
+  return null;
+}
+
 const Home: NextPage = () => {
   const store = useStore();
 
@@ -327,17 +336,19 @@ const Home: NextPage = () => {
                 const item = p as Item;
                 if (p.type === "portal")
                   return (
-                    <Portal
-                      onClick={() => {
-                        const goTo = p.goToScene;
-                        if (goTo) {
-                          store.takeScreenShot(goTo);
-                        }
-                        if (p.collectable) store.setInventory(p);
-                      }}
-                      key={p._id}
-                      {...item}
-                    />
+                    <Fragment key={p._id}>
+                      <Loader src={p.goToScene} />
+                      <Portal
+                        onClick={() => {
+                          const goTo = p.goToScene;
+                          if (goTo) {
+                            store.takeScreenShot(goTo);
+                          }
+                          if (p.collectable) store.setInventory(p);
+                        }}
+                        {...item}
+                      />
+                    </Fragment>
                   );
 
                 if (p.src) return <Sprite key={p._id} {...item} />;
