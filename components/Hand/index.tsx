@@ -5,8 +5,6 @@ import { Mesh, TextureLoader } from "three";
 import { getItems } from "../../queries/items";
 import { useStore } from "../../store";
 
-function H(props: { src: string }) {}
-
 export function Hand() {
   const store = useStore();
   const found = store.inventory.find((s) => store.hand === s._id);

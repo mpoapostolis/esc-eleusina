@@ -5,6 +5,7 @@ import { AllImage } from ".";
 import { Img } from "../../pages/admin";
 import { updateItem } from "../../queries/items";
 import { Item, useStore } from "../../store";
+import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
 
@@ -228,36 +229,70 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       <br />
 
       {selectedItem.replaceImg && (
-        <Popover
-          label={
-            <>
-              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-                Required tool to replace
-              </label>
-              <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-                {selectedItem.requiredToolToReplace ? (
-                  <div>
-                    <img
-                      src={selectedItem.requiredToolToReplace?.src}
-                      className="w-20 h-auto"
-                    />
-                  </div>
-                ) : (
-                  "➕"
-                )}
-              </div>
-            </>
-          }
-        >
-          <AllImage
-            imgs={sceneItems}
-            onClick={(o) => {
-              updateItem(id, {
-                requiredToolToReplace: o ?? null,
-              });
-            }}
-          />
-        </Popover>
+        <>
+          <Popover
+            label={
+              <>
+                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                  Required tool to replace
+                </label>
+                <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                  {selectedItem.requiredToolToReplace ? (
+                    <div>
+                      <img
+                        src={selectedItem.requiredToolToReplace?.src}
+                        className="w-20 h-auto"
+                      />
+                    </div>
+                  ) : (
+                    "➕"
+                  )}
+                </div>
+              </>
+            }
+          >
+            <AllImage
+              imgs={sceneItems}
+              onClick={(o) => {
+                updateItem(id, {
+                  requiredToolToReplace: o ?? null,
+                });
+              }}
+            />
+          </Popover>
+
+          <Popover
+            label={
+              <>
+                <label className="block text-left text-xs font-medium mt-4 mb-4 text-gray-200">
+                  Reward on Replace
+                </label>
+                <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                  {selectedItem.reward ? (
+                    <div>
+                      <img
+                        src={selectedItem.reward?.src}
+                        className="w-20 h-auto"
+                      />
+                    </div>
+                  ) : (
+                    "➕"
+                  )}
+                </div>
+              </>
+            }
+          >
+            <AllImage
+              imgs={getOnlyItems(props.imgs)}
+              onClick={async (o) => {
+                updateItem(id, {
+                  reward: o,
+                });
+              }}
+            />
+          </Popover>
+          <br />
+        </>
       )}
 
       {selectedItem.collectable && (

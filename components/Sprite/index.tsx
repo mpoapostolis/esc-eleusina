@@ -93,6 +93,7 @@ export default function Sprite(props: Item) {
 
         if (store.hand && store.hand === props.requiredToolToReplace?._id) {
           setT(true);
+          if (props.reward) store.setReward(props.reward);
           store.removeInvItem(store.hand);
           store.setHand(undefined);
         }
