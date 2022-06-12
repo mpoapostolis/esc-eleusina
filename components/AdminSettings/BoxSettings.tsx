@@ -100,6 +100,72 @@ export default function BoxSettings(props: { imgs: Img[] }) {
             });
           }}
         ></textarea>
+        <br />
+        <br />
+        <Popover
+          label={
+            <>
+              <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                on click replace to Image
+              </label>
+              <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                {selectedItem.replaceImg ? (
+                  <div>
+                    <img
+                      src={selectedItem.replaceImg}
+                      className="w-20 h-auto"
+                    />
+                  </div>
+                ) : (
+                  "➕"
+                )}
+              </div>
+            </>
+          }
+        >
+          <AllImage
+            imgs={props.imgs}
+            onClick={(o) => {
+              updateItem(id, {
+                replaceImg: o?.src ?? null,
+              });
+            }}
+          />
+        </Popover>
+        <br />
+        {selectedItem.replaceImg && (
+          <Popover
+            label={
+              <>
+                <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+                  Required tool to replace
+                </label>
+                <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
+                  {selectedItem.requiredToolToReplace ? (
+                    <div>
+                      <img
+                        src={selectedItem.requiredToolToReplace?.src}
+                        className="w-20 h-auto"
+                      />
+                    </div>
+                  ) : (
+                    "➕"
+                  )}
+                </div>
+              </>
+            }
+          >
+            <AllImage
+              imgs={sceneItems}
+              onClick={(o) => {
+                updateItem(id, {
+                  requiredToolToReplace: o ?? null,
+                });
+              }}
+            />
+          </Popover>
+        )}
+        <br />{" "}
         <Popover
           label={
             <>
@@ -130,7 +196,6 @@ export default function BoxSettings(props: { imgs: Img[] }) {
             }}
           />
         </Popover>
-
         <div>
           <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
             Reward Msg

@@ -43,7 +43,6 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       setHint,
       setGuidelines,
       clickableWords,
-      description,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
