@@ -58,14 +58,14 @@ export default function MiniGameModal() {
       >
         <div className="px-20 bg-opacity-80 bg-black border py-10 rounded-2xl">
           <div style={shadow}>
-            Έχετε ολοκληρώσει τη πίστα, <br /> Άνοιγμα mini game
+            Έχετε ολοκληρώσει τη πίστα, <br /> Θα παίξεις το γρίφο;
           </div>
           <div className="grid grid-cols-2 gap-x-4 mt-12">
             <button
               onClick={() => store.setStatus("RUNNING")}
               className="w-full bg-white border-dashed pb-4 hover:bg-opacity-10 bg-opacity-5 rounded py-3 flex items-center justify-center border-gray-700 border"
             >
-              Άκυρο
+              Όχι!
             </button>
             <button
               onClick={() => {
@@ -73,7 +73,7 @@ export default function MiniGameModal() {
               }}
               className="w-full bg-white border-dashed pb-4 hover:bg-opacity-10 bg-opacity-5 rounded py-3 flex items-center justify-center border-gray-700 border"
             >
-              Άνοιγμα
+              Ναί!!!
             </button>
           </div>
         </div>
