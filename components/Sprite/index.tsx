@@ -43,8 +43,14 @@ export default function Sprite(props: Item) {
     scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
   });
+  const isSame = props.orderInsideTheBox
+    ?.map((x, idx) => {
+      return x === insideBox[idx];
+    })
+    .every(Boolean);
+
   useEffect(() => {
-    if (props.orderInsideTheBox) {
+    if (props.orderInsideTheBox && !props.replaceImg) {
       const isSame = props.orderInsideTheBox
         .map((x, idx) => {
           return x === insideBox[idx];
@@ -66,6 +72,18 @@ export default function Sprite(props: Item) {
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
+        if (
+          props.type === "box" &&
+          store.hand &&
+          store.hand === props.requiredToolToReplace?._id &&
+          isSame
+        ) {
+          setT(true);
+          if (props.reward) store.setReward(props.reward);
+          store.removeInvItem(store.hand);
+          store.setHand(undefined);
+        }
+
         if (props.type === "box" && props.orderInsideTheBox) {
           if (store.hand === props.orderInsideTheBox[insideBox.length]) {
             const str = store.hand;
@@ -91,7 +109,11 @@ export default function Sprite(props: Item) {
           return;
         }
 
-        if (store.hand && store.hand === props.requiredToolToReplace?._id) {
+        if (
+          props.type !== "box" &&
+          store.hand &&
+          store.hand === props.requiredToolToReplace?._id
+        ) {
           setT(true);
           if (props.reward) store.setReward(props.reward);
           store.removeInvItem(store.hand);
