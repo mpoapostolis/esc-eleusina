@@ -23,6 +23,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
     onClickTrigger: "",
     onClickOpenModal: "",
     setHint: "",
+    rewardDescription: "",
     setGuidelines: "",
     ancientText: "",
     inventorySrc: "",
@@ -38,18 +39,22 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       ancientText,
       onClickTrigger,
       onClickOpenModal,
+      reward,
       setHint,
       setGuidelines,
       clickableWords,
+
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
     } = selectedItem;
     setS({
       name,
+      reward,
       ancientText,
       onClickTrigger,
       onClickOpenModal,
+      rewardDescription: reward?.description,
       author,
       setHint,
       clickableWords,
@@ -291,6 +296,30 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
               }}
             />
           </Popover>
+          <br />
+          <div>
+            <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+              Reward Msg
+            </label>
+            <textarea
+              className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+              rows={5}
+              value={selectedItem.reward?.description}
+              onChange={(evt) => {
+                setS({
+                  rewardDescription: evt.currentTarget.value,
+                });
+              }}
+              onBlur={() => {
+                updateItem(id, {
+                  reward: {
+                    ...selectedItem.reward,
+                    description: s.rewardDescription,
+                  },
+                });
+              }}
+            />
+          </div>
           <br />
         </>
       )}
