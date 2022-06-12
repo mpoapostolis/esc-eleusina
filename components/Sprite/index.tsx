@@ -130,7 +130,7 @@ export default function Sprite(props: Item) {
           }
         }
 
-        if (props.collectable && props.onClickOpenModal !== "ancientText") {
+        if (props.collectable && props.clickableWords?.length === 0) {
           store.setInventory(props);
         }
 
