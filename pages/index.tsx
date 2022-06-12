@@ -337,7 +337,6 @@ const Home: NextPage = () => {
                 if (p.type === "portal")
                   return (
                     <Fragment key={p._id}>
-                      <Loader src={p.goToScene} />
                       <Portal
                         onClick={() => {
                           const goTo = p.goToScene;
@@ -360,6 +359,13 @@ const Home: NextPage = () => {
           <Screenshot />
           <Suspense fallback={<CustomLoader />}>
             <Hand />
+          </Suspense>
+          <Suspense fallback="">
+            {sceneItems
+              .filter((e) => e.type === "portal")
+              ?.map((p, _idx) => (
+                <Loader key={p._id} src={p.goToScene} />
+              ))}
           </Suspense>
         </Canvas>
       </div>

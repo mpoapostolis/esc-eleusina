@@ -130,10 +130,16 @@ export default function Sprite(props: Item) {
           }
         }
 
-        if (props.collectable && props.onClickOpenModal !== "ancientText") {
-          store.setInventory(props);
+        if (props.collectable) {
+          if (
+            !(
+              props.onClickOpenModal === "ancientText" &&
+              props.clickableWords &&
+              props.clickableWords.length > 0
+            )
+          )
+            store.setInventory(props);
         }
-
         if (props.setHint) store.setHint(props.setHint);
 
         if (props.setGuidelines) store.setguideLines(props.setGuidelines);
