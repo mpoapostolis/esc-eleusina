@@ -23,7 +23,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
     onClickTrigger: "",
     onClickOpenModal: "",
     setHint: "",
-    rewardDescription: "",
+    description: "",
     setGuidelines: "",
     ancientText: "",
     inventorySrc: "",
@@ -43,7 +43,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       setHint,
       setGuidelines,
       clickableWords,
-
+      description,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
@@ -54,7 +54,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       ancientText,
       onClickTrigger,
       onClickOpenModal,
-      rewardDescription: reward?.description,
+      description: reward?.description,
       author,
       setHint,
       clickableWords,
@@ -304,17 +304,17 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             <textarea
               className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
               rows={5}
-              value={selectedItem.reward?.description}
+              value={s.description}
               onChange={(evt) => {
                 setS({
-                  rewardDescription: evt.currentTarget.value,
+                  description: evt.currentTarget.value,
                 });
               }}
               onBlur={() => {
                 updateItem(id, {
                   reward: {
                     ...selectedItem.reward,
-                    description: s.rewardDescription,
+                    description: s.description,
                   },
                 });
               }}
