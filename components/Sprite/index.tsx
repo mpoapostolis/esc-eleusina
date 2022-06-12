@@ -108,7 +108,7 @@ export default function Sprite(props: Item) {
           }
         }
 
-        if (props.collectable) {
+        if (props.collectable && props.onClickOpenModal !== "ancientText") {
           store.setInventory(props);
         }
 
@@ -120,6 +120,7 @@ export default function Sprite(props: Item) {
         if (props.onClickOpenModal === "ancientText") {
           if (props.ancientText && props.author)
             store.setAncientText({
+              item: props,
               text: props.ancientText,
               keys: props.clickableWords?.split(",") ?? [],
               author: props.author,

@@ -52,6 +52,7 @@ export type Account = {
 };
 
 export type AncientText = {
+  item?: Item;
   text: string;
   author: string;
   keys: string[];
