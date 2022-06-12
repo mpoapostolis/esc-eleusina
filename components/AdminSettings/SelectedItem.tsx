@@ -1,7 +1,9 @@
+import { update } from "@react-spring/three";
 import axios from "axios";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { Euler } from "three";
 import { Checkbox } from ".";
 import { Img } from "../../pages/admin";
 import { updateItem } from "../../queries/items";
@@ -44,6 +46,9 @@ export default function SelectedItem(props: {
   update: (p: Partial<Item>) => void;
 }) {
   const [range, setRange] = useState(0.5);
+  const [x, setX] = useState(180);
+  const [y, setY] = useState(180);
+  const [z, setZ] = useState(180);
   const router = useRouter();
   const id = `${router.query.id}`;
   const idx = props.items.findIndex((e) => e._id === id);
@@ -57,6 +62,13 @@ export default function SelectedItem(props: {
       ? requiredItems?.filter((e) => e !== _id)
       : [...requiredItems, _id];
     updateItem(id, { requiredItems: tmp });
+  };
+
+  const rotate = (axis: "x" | "y" | "z", rot: number) => {
+    if (!selectedItem.rotation) return;
+    const r = new Euler().copy(selectedItem.rotation);
+    r[axis] = rot;
+    updateItem(id, { rotation: r });
   };
 
   return (
@@ -120,6 +132,51 @@ export default function SelectedItem(props: {
             }}
             value={range}
             label="scale"
+          />
+
+          <Range
+            min={0}
+            max={360}
+            step={1}
+            onChange={(evt) => {
+              const value = +evt.target.value;
+              setX(value);
+            }}
+            onPointerUp={() => {
+              rotate("x", x);
+            }}
+            value={x}
+            label="Rotate X"
+          />
+
+          <Range
+            min={0}
+            max={360}
+            step={1}
+            onChange={(evt) => {
+              const value = +evt.target.value;
+              setY(value);
+            }}
+            onPointerUp={() => {
+              rotate("y", y);
+            }}
+            value={y}
+            label="Rotate Y"
+          />
+
+          <Range
+            min={0}
+            max={360}
+            step={1}
+            onPointerUp={() => {
+              rotate("z", z);
+            }}
+            onChange={(evt) => {
+              const value = +evt.target.value;
+              setZ(value);
+            }}
+            value={z}
+            label="Rotate Z"
           />
           {!selectedItem.type && (
             <>
