@@ -298,6 +298,11 @@ const Home: NextPage = () => {
     (e) => e.scene === store.scene && e.type === "box"
   );
 
+  const orkos = store.inventory.find((e) => {
+    // @ts-ignore
+    return e?.author === "Όρκος Μύστη";
+  });
+  console.log(orkos);
   return (
     <div {...bind()}>
       <FadeOut />
@@ -318,6 +323,7 @@ const Home: NextPage = () => {
             {sceneItems
               .filter(() => !store?.invHas(currMinigames?.reward?._id))
               .filter(() => !store?.invHas(boxItem?.reward?._id))
+              .filter((e) => !(store.scene === "intro" && orkos))
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
               .map((p) => {
                 if (p.type === "hint")
