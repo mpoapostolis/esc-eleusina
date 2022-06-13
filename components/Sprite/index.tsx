@@ -104,7 +104,9 @@ export default function Sprite(props: Item) {
           props.type !== "box" &&
           !props.replaceImg
         ) {
-          store.setHint("Nothing happened...");
+          store.setHint(
+            "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς"
+          );
           store.setIsHintVisible(true);
           return;
         }
