@@ -4,6 +4,8 @@ import { useStore } from "../../store";
 import { motion } from "framer-motion";
 
 import { generateUUID } from "three/src/math/MathUtils";
+import { addItem } from "../../lib/inventory";
+import useMutation from "../../Hooks/useMutation";
 
 export default function AncientText() {
   const store = useStore();
@@ -12,12 +14,15 @@ export default function AncientText() {
   useEffect(() => {
     if (store.guideLines) store.setguideLines(undefined);
   }, []);
+  const [_addItem] = useMutation(addItem, [
+    `/api/inventory?scene=${store.scene}`,
+  ]);
 
   useEffect(() => {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
       // store.setEpicItem();
-      if (store.ancientText.item) store.setInventory(store.ancientText.item);
+      if (store.ancientText.item) _addItem(store.ancientText.item?._id);
       store.setAncientText(undefined);
       store.setHint(undefined);
 

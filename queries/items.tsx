@@ -1,10 +1,14 @@
 import axios, { AxiosError } from "axios";
 import useSWR, { mutate } from "swr";
 import { fetcher } from ".";
-import { Item, Scene } from "../store";
+import { Item, Scene, useStore } from "../store";
 
 export function getItems(s?: Scene) {
-  const { data, error } = useSWR<Item[], AxiosError>("/api/items", fetcher);
+  const store = useStore();
+  const { data, error } = useSWR<Item[], AxiosError>(
+    `/api/items?scene=${store.scene}`,
+    fetcher
+  );
   return {
     data: data ?? [],
     isLoading: !error && !data,

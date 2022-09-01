@@ -40,13 +40,61 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       { $unwind: "$item" },
-      { $replaceRoot: { newRoot: "$item" } },
+      {
+        $replaceRoot: {
+          newRoot: { $mergeObjects: ["$item", { used: "$used" }] },
+        },
+      },
+      {
+        $match: { scene: req.query.scene },
+      },
     ])
-    // .aggregate([
-    //   [
-    //   ],
-    // ])
     .toArray();
 
+  res.status(200).json(inv);
+}
+
+export async function useItem(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+  const inv = await db.collection("inventory").updateOne(
+    {
+      userId: new ObjectId(id),
+      itemId: new ObjectId(`${req.query.itemId}`),
+    },
+    {
+      $set: {
+        used: true,
+      },
+    }
+  );
+  res.status(200).json(inv);
+}
+
+export async function getAchievements(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+  const inv = await db
+    .collection("achievements")
+    .find({
+      userId: new ObjectId(id),
+    })
+    .toArray();
+  res.status(200).json(inv);
+}
+
+export async function addAchievements(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+  const inv = await db.collection("achievements").insertOne({
+    userId: new ObjectId(id),
+    ...req.body,
+  });
   res.status(200).json(inv);
 }

@@ -2,29 +2,35 @@ import { useSpring, animated, config } from "@react-spring/three";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh, TextureLoader } from "three";
+import useMutation from "../../Hooks/useMutation";
+import { useInventory, useItem } from "../../lib/inventory";
 import { getItems } from "../../queries/items";
 import { useStore } from "../../store";
 
 export function Hand() {
   const store = useStore();
-  const found = store.inventory.find((s) => store.hand === s._id);
+  const { data: items } = getItems();
+  const { data: inventory } = useInventory();
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const [_useItem] = useMutation(useItem, [
+    `/api/inventory?scene=${store.scene}`,
+  ]);
+  const found = items.find((s) => store.hand === s._id);
   const [src, setSrc] = useState<string>();
   const [vissible, setVissible] = useState(false);
-  const { data: items } = getItems();
-
   const collectables = items
     .filter(
       (e) => e.collectableIfHandHas === store.hand && e.scene === store.scene
     )
-    ?.map((e) => store.invHas(e._id));
+    ?.map((e) => invHas(e._id));
+
   const dispose = collectables.length > 0 && collectables?.every(Boolean);
 
   useEffect(() => {
     if (!store.hand || !dispose) return;
-    store.removeInvItem(store.hand);
+    _useItem(store.hand);
     store.setHand(undefined);
-  }, [store.inventory, dispose, store.hand]);
-
+  }, [inventory, dispose, store.hand]);
   useEffect(() => {
     if (store.hand) {
       setVissible(true);

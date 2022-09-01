@@ -11,7 +11,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
   const transform = { transform: "skewX(-20deg)" };
   const { data: inventory } = useInventory();
-  const currInv = inventory.filter((item) => `${item.scene}` === store.scene);
+  const currInv = inventory.filter((e) => !e.used);
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
     name: "",
     src: "",

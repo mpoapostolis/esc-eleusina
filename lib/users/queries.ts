@@ -42,6 +42,5 @@ export async function register(
 }
 
 export async function updateUser(obj: Record<string, any>) {
-  console.log(obj);
   await axios.put("/api/auth", obj);
 }

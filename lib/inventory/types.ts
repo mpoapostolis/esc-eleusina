@@ -3,6 +3,15 @@ import { HintType } from "../../components/AdminSettings/SceneSettings";
 import { Reward } from "../../pages";
 import { Img } from "../../pages/admin";
 
+export type ACHIEVEMENT = {
+  _id: string;
+  userId: string;
+  src: string;
+  name: string;
+  isEpic: boolean;
+  scene: string;
+};
+
 export type Item = {
   _id?: string;
   isMiniGame?: boolean;

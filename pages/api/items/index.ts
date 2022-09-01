@@ -8,19 +8,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (req.method) {
     case "GET":
-      const imgs = await db.collection("library").find({}).toArray();
-      const items = await collection.find({}).toArray();
-      let idToImg: Record<string, any> = {};
-      imgs.forEach((o) => {
-        idToImg[`${o._id}`] = o;
-      });
-      const data = items.map((x) => ({
-        ...x,
-        name: idToImg[x.imgId]?.name,
-        src: idToImg[x.imgId]?.src,
-      }));
+      const scene = req.query.scene ? { scene: req.query.scene } : {};
 
-      return res.status(200).json(data);
+      const items = await collection
+        .aggregate([
+          { $match: scene },
+          {
+            $lookup: {
+              from: "library",
+              localField: "imgId",
+              foreignField: "_id",
+              as: "img",
+            },
+          },
+          { $unwind: "$img" },
+          {
+            $addFields: {
+              imgId: "$img._id",
+              name: "$img.name",
+              src: "$img.src",
+            },
+          },
+        ])
+        .toArray();
+
+      return res.status(200).json(items);
 
     case "POST":
       const { imgId, collectableIfHandHas, reward, inventorySrc, ...rest } =

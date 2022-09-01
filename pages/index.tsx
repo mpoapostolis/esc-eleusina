@@ -32,7 +32,7 @@ import { motion } from "framer-motion";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
 import { withSessionSsr } from "../lib/withSession";
-import { useInventory } from "../lib/inventory";
+import { useAchievements, useInventory } from "../lib/inventory";
 import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
 
@@ -127,7 +127,6 @@ function Portal(props: Item) {
   });
 
   const ref = useRef<Mesh>();
-
   useEffect(() => {
     if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
@@ -178,7 +177,7 @@ function ConditionalHint(props: Item) {
       store.setIsHintVisible(true);
       store.setHint(props.text);
     }
-  }, [store.inventory]);
+  }, [inventory]);
   return null;
 }
 
@@ -279,7 +278,7 @@ const Home: NextPage = () => {
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const { data: inventory } = useInventory();
   const { data: miniGames } = getMiniGames();
-  const { data: items } = getItems();
+  const { data: sceneItems } = getItems();
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
 
   useEffect(() => {
@@ -292,7 +291,7 @@ const Home: NextPage = () => {
       currMinigames.requiredItems?.map((i) => invHas(i)).every(Boolean)
     )
       store.setStatus("MINIGAMEMODAL");
-  }, [miniGames, store.scene, store.inventory]);
+  }, [miniGames, store.scene, inventory]);
 
   const [fov, setFov] = useState(75);
 
@@ -300,8 +299,7 @@ const Home: NextPage = () => {
     store.setHand(undefined);
   }, [store.scene]);
 
-  const sceneItems = items.filter((e) => e.scene === store.scene);
-  const [boxItem] = items.filter(
+  const [boxItem] = sceneItems.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
   const { data: user } = useUser();
@@ -311,10 +309,14 @@ const Home: NextPage = () => {
     if (store.scene !== user?.scene) store.setScene(user?.scene);
   }, [user?.scene]);
 
-  const orkos = store.inventory.find((e) => {
+  const orkos = inventory.find((e) => {
     // @ts-ignore
     return e?.author === "Όρκος Μύστη";
   });
+  const { data: achievements } = useAchievements();
+  const achIds = achievements.map((e) => e._id);
+  const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
+  const rewardScene = currMinigames?.scene || boxItem?.scene;
   return (
     <div {...bind()}>
       <FadeOut />
@@ -332,9 +334,10 @@ const Home: NextPage = () => {
 
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
-              .filter(() => !store?.invHas(currMinigames?.reward?._id))
-              .filter(() => !store?.invHas(boxItem?.reward?._id))
-              .filter((e) => !(store.scene === "intro" && orkos))
+              .filter(
+                () =>
+                  !(rewardScene === store.scene && achIds.includes(rewardId))
+              )
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
               .map((p) => {
                 if (p.type === "hint")
@@ -360,7 +363,6 @@ const Home: NextPage = () => {
                           if (goTo) {
                             store.takeScreenShot(goTo);
                           }
-                          if (p.collectable) store.setInventory(p);
                         }}
                         {...item}
                       />

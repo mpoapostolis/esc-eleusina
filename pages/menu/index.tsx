@@ -248,7 +248,6 @@ function Select() {
   });
 
   const inv = [...tmpInv];
-  console.log(store.status);
   switch (store.status) {
     case "MENU":
       return <Main />;

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
@@ -60,6 +61,7 @@ export type AncientText = {
 
 export type Item = {
   _id?: string;
+  imgId: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
   hintType?: HintType;
@@ -151,7 +153,6 @@ export type Store = {
   setguideLinesVissible: (e: boolean) => void;
   guideLines?: string;
   modal: Modal;
-  inventory: (Item | Reward)[];
 
   jigSawUrl?: string;
   lexigram?: string[];
@@ -159,7 +160,6 @@ export type Store = {
   reward?: Reward | null;
   setReward: (i: Reward | null) => void;
 
-  inventoryNotf: string[];
   selectItem?: Item;
   usedItems: Record<string, boolean>;
   timer: number;
@@ -184,13 +184,8 @@ export type Store = {
   setguideLines: (s?: string) => void;
   setToken: (s: string) => void;
   setLevel: (s: Level) => void;
-  invHas: (e?: string) => boolean;
-  setInventory: (i: Item) => void;
   setOpenModal: (s?: Modal) => void;
-  setInventoryNotf: (n: string) => void;
-  removeInventoryNotf: (n: string) => void;
   setScene: (n: Scene) => void;
-  removeInvItem: (s: string) => void;
   setStatus: (s: Status) => void;
 };
 const dap = loadSound("/sounds/modal.wav");
@@ -199,11 +194,10 @@ const win = loadSound("/sounds/win.wav");
 
 export const useStore = create<Store>((set, get) => ({
   account: {},
-  status: "MENU",
+  status: "RUNNING",
   scene: "intro",
   level: "Φως-Σκοτάδι",
   timer: 600,
-  inventory: [],
   hint: undefined,
   isHintVisible: false,
   usedItems: {},
@@ -276,13 +270,15 @@ export const useStore = create<Store>((set, get) => ({
       hint: hint,
     })),
 
-  setReward: (reward) => {
+  setReward: async (reward) => {
     win?.play();
+    await axios.post("/api/inventory?epic=true", {
+      ...reward,
+      scene: "intro",
+      isEpic: true,
+    });
     set((s) => {
-      let inv = [...s.inventory];
-      if (reward) inv = [...inv, reward];
       return {
-        inventory: inv,
         reward,
         status: reward ? "REWARD" : "RUNNING",
       };
@@ -315,39 +311,6 @@ export const useStore = create<Store>((set, get) => ({
       account: { ...store.account, email: s },
     })),
 
-  invHas: (e?: string) =>
-    get()
-      .inventory.map((i) => i._id)
-      .includes(e),
-
-  setInventory: (i: Item) => {
-    dap?.play();
-    set((state) => ({
-      inventory: [...state.inventory, i],
-      isHintVisible: false,
-    }));
-  },
-  setInventoryNotf: (n: string) =>
-    set((state) => {
-      return { inventoryNotf: [...state.inventoryNotf, n] };
-    }),
-  removeInventoryNotf: (n: string) =>
-    set((state) => {
-      return { inventoryNotf: state.inventoryNotf.filter((i) => i !== n) };
-    }),
-  removeInvItem: (s: string) =>
-    set((state) => {
-      const hand = s === state.hand ? undefined : state.hand;
-      return {
-        hand,
-        inventory: state.inventory.filter((item) => item._id !== s),
-
-        usedItems: {
-          ...state.usedItems,
-          [s]: true,
-        },
-      };
-    }),
   setOpenModal: (s: Modal) => set(() => ({ modal: s })),
   setScene: (n: Scene) => set(() => ({ isHintVisible: false, scene: n })),
 }));
