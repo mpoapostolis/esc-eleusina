@@ -1,5 +1,4 @@
-import type { NextPage } from "next";
-import Menu from "../components/Menu";
+import type { GetServerSideProps, NextPage } from "next";
 import Ui from "../components/Ui";
 import {
   Canvas,
@@ -32,6 +31,10 @@ import { getMiniGames } from "../queries";
 import { motion } from "framer-motion";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
+import { withSessionSsr } from "../lib/withSession";
+import { useInventory } from "../lib/inventory";
+import { useUser } from "../lib/users";
+import { updateUser } from "../lib/users/queries";
 
 export type MiniGame = {
   scene?: string;
@@ -102,6 +105,7 @@ function Portal(props: Item) {
   const fps = 25;
   const texture = useLoader(THREE.TextureLoader, "/images/portal.png");
   const [hovered, setHovered] = useState(false);
+
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
@@ -129,12 +133,14 @@ function Portal(props: Item) {
     ref.current.position.copy(props.position);
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const { data: inventory } = useInventory();
 
   const store = useStore();
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return store.invHas(v) || store.usedItems[v];
+          return invHas(v) || store.usedItems[v];
         })
         .every((e) => e)
     : true;
@@ -163,9 +169,12 @@ function TimerHint(props: Item) {
 }
 
 function ConditionalHint(props: Item) {
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const { data: inventory } = useInventory();
+
   const store = useStore();
   useEffect(() => {
-    if (props.requiredItems?.map((e) => store.invHas(e)).every(Boolean)) {
+    if (props.requiredItems?.map((e) => invHas(e)).every(Boolean)) {
       store.setIsHintVisible(true);
       store.setHint(props.text);
     }
@@ -182,8 +191,11 @@ function FadeOut() {
   const store = useStore();
 
   useEffect(() => {
-    const ss = store.screenShot;
-    if (ss) setTimeout(() => store.setScene(ss as any), 125);
+    const scene = store.screenShot;
+    if (scene) {
+      updateUser({ scene });
+      setTimeout(() => store.setScene(scene as any), 125);
+    }
   }, [store.fadeOutImg]);
 
   return (
@@ -253,9 +265,10 @@ const Home: NextPage = () => {
   });
 
   const timer = useTimer({
-    initialTime: 600,
+    initialTime: store.timer,
     timerType: "DECREMENTAL",
     step: 1,
+    onTimeUpdate: store.setTimer,
     endTime: 0,
   });
 
@@ -263,7 +276,8 @@ const Home: NextPage = () => {
     if (store.status === "RUNNING") timer.start();
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
-
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const { data: inventory } = useInventory();
   const { data: miniGames } = getMiniGames();
   const { data: items } = getItems();
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
@@ -273,22 +287,15 @@ const Home: NextPage = () => {
     if (!currMinigames) return;
     const arr = (currMinigames.requiredItems ?? [])?.length > 0;
     if (
-      !store.invHas(currMinigames.reward?._id) &&
+      !invHas(currMinigames.reward?._id) &&
       arr &&
-      currMinigames.requiredItems?.map((i) => store.invHas(i)).every(Boolean)
+      currMinigames.requiredItems?.map((i) => invHas(i)).every(Boolean)
     )
       store.setStatus("MINIGAMEMODAL");
   }, [miniGames, store.scene, store.inventory]);
 
   const [fov, setFov] = useState(75);
 
-  useEffect(() => {
-    const token = loadKey();
-    if (token) {
-      store.setToken(token);
-      store.setStatus("RUNNING");
-    }
-  }, []);
   useEffect(() => {
     store.setHand(undefined);
   }, [store.scene]);
@@ -297,12 +304,17 @@ const Home: NextPage = () => {
   const [boxItem] = items.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
+  const { data: user } = useUser();
+
+  useEffect(() => {
+    if (!user) return;
+    if (store.scene !== user?.scene) store.setScene(user?.scene);
+  }, [user?.scene]);
 
   const orkos = store.inventory.find((e) => {
     // @ts-ignore
     return e?.author === "Όρκος Μύστη";
   });
-  console.log(orkos);
   return (
     <div {...bind()}>
       <FadeOut />
@@ -313,7 +325,6 @@ const Home: NextPage = () => {
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
       <MiniGameModal />
-      <Menu />
       <Reward />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
@@ -332,10 +343,10 @@ const Home: NextPage = () => {
                   ) : (
                     <TimerHint key={p._id} {...p} />
                   );
-                if (p.type === "guidelines")
+                if (p.type === "guidelines" && store.status !== "LOGIN")
                   return <GuideLineItem key={p._id} {...p} />;
               })}
-            <Environment />
+            {user && <Environment />}
             {sceneItems
               .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((p, _idx) => {
@@ -378,5 +389,25 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = withSessionSsr(
+  async function getServerSideProps({ req }) {
+    const user = req.session.user;
+    let destination = null;
+    if (!user) destination = "/login";
+    if (user?.admin) destination = "/admin";
+    if (destination)
+      return {
+        redirect: {
+          destination,
+          permanent: true,
+        },
+      };
+    else
+      return {
+        props: {},
+      };
+  }
+);
 
 export default Home;

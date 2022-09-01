@@ -2,23 +2,22 @@ import { loadSound } from "../../utils";
 import { Item, Scene, useStore } from "../../store";
 import clsx from "clsx";
 import Hint from "../Hint";
+import Link from "next/link";
+import { useInventory } from "../../lib/inventory";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const sound = loadSound("/sounds/hint.wav");
   const store = useStore();
 
   const transform = { transform: "skewX(-20deg)" };
-
-  const currInv: Item[] = store.inventory.filter(
-    // @ts-ignore
-    (item) => item?.scene === store.scene
-  ) as Item[];
+  const { data: inventory } = useInventory();
+  const currInv = inventory.filter((item) => `${item.scene}` === store.scene);
   const tmpInv: Item[] = Array(9 - currInv.length).fill({
     name: "",
     src: "",
   });
 
-  const inv: Item[] = [...currInv, ...tmpInv];
+  const inv = [...currInv, ...tmpInv];
 
   return (
     <div
@@ -63,15 +62,16 @@ export default function Ui(props: { items: Item[]; time: number }) {
       </div>
 
       <div className={clsx("flex p-3 justify-end", {})}>
-        <button
-          onClick={() => {
-            sound.play();
-            store.setStatus("MENU");
-          }}
-          className=" border-dashed rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
-        >
-          <img src="/images/menu_icon.svg" className="w-20" alt="" />
-        </button>
+        <Link href="/menu">
+          <button
+            onClick={() => {
+              sound.play();
+            }}
+            className=" border-dashed rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
+          >
+            <img src="/images/menu_icon.svg" className="w-20" alt="" />
+          </button>
+        </Link>
       </div>
 
       <div

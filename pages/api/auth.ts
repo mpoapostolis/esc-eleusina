@@ -1,51 +1,35 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
+import {
+  createUser,
+  getUser,
+  login,
+  logout,
+  updateUser,
+} from "../../lib/users/api";
+import { withSessionRoute } from "../../lib/withSession";
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "1mb",
-    },
-  },
-};
+export default withSessionRoute(loginRoute);
 
-type Data = {
-  name: string;
-};
+async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
+  switch (req.method) {
+    case "GET":
+      return getUser(req, res);
+    case "PUT":
+      return updateUser(req, res);
+    case "POST":
+      switch (req.query.type) {
+        case "login":
+          return login(req, res);
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const login = async () => {
-    const { email, password } = req.body;
-    const _res = await fetch(
-      "http://server.cruiser.gr:8091/escape/auth/login",
-      {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        case "logout":
+          return logout(req, res);
+
+        case "register":
+          return createUser(req, res);
       }
-    );
-    const d = await _res.json();
-    return res.status(_res.status).json(d);
-  };
 
-  if (req.body.type === "register") {
-    const r = await fetch("http://server.cruiser.gr:8091/escape/auth/signup", {
-      method: "POST",
-      body: JSON.stringify(req.body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const d = await r.json();
-    if (r.status < 400) login();
-    // @ts-ignore
-    else return res.status(r.status).json<{ msg: string }>({ msg: d.message });
-  } else {
-    login();
+    default:
+      // res.status(405).send("No method allowed");
+      break;
   }
 }

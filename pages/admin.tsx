@@ -14,7 +14,6 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/AdminSettings/Library";
-import Menu from "../components/Menu";
 import { useRouter } from "next/router";
 import { getLibrary } from "../queries/library";
 import { getItems, updateItem } from "../queries/items";
@@ -247,7 +246,6 @@ const Home: NextPage = () => {
       ) : (
         <Library />
       )}
-      <Menu />
 
       <Canvas flat={true} linear={true} mode="concurrent">
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />

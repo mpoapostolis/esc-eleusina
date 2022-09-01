@@ -162,6 +162,8 @@ export type Store = {
   inventoryNotf: string[];
   selectItem?: Item;
   usedItems: Record<string, boolean>;
+  timer: number;
+  setTimer: (n: number) => void;
 
   scene: Scene;
   hand?: string;
@@ -200,6 +202,7 @@ export const useStore = create<Store>((set, get) => ({
   status: "MENU",
   scene: "intro",
   level: "Φως-Σκοτάδι",
+  timer: 600,
   inventory: [],
   hint: undefined,
   isHintVisible: false,
@@ -208,6 +211,7 @@ export const useStore = create<Store>((set, get) => ({
     set(() => ({
       screenShot: src,
     })),
+  setTimer: (timer) => set(() => ({ timer })),
 
   setFadeOutImg: (obj) =>
     set(() => ({

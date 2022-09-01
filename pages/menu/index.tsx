@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import MenuItem from "../MenuItem";
+import MenuItem from "../../components/MenuItem";
 import Link from "next/link";
 import clsx from "clsx";
 import axios, { AxiosError } from "axios";
@@ -248,7 +248,7 @@ function Select() {
   });
 
   const inv = [...tmpInv];
-
+  console.log(store.status);
   switch (store.status) {
     case "MENU":
       return <Main />;
@@ -277,158 +277,93 @@ function Select() {
         </div>
       );
 
-    case "REGISTER":
-    case "LOGIN":
-      return <Register />;
-
     default:
       return <Main />;
   }
 }
 
 const Main = () => {
-  const store = useStore();
-
-  const setType = (status: Status) => store.setStatus(status);
-  const router = useRouter();
   return (
     <div className="z-50 grid gap-y-3 w-full p-5">
-      {store.account.accessToken && (
-        <a
-          onClick={() => {
-            router.push("/");
-          }}
-        >
-          <MenuItem
-            onClick={() => store.setStatus("RUNNING")}
-            src="https://s2.svgbox.net/materialui.svg?ic=games&color=fff9"
-            title="Play"
-          />
-        </a>
-      )}
+      <MenuItem
+        goTo="/"
+        src="https://s2.svgbox.net/octicons.svg?ic=play&color=fff9"
+        title="Play"
+      />
 
-      {store.account.accessToken && (
-        <>
-          <MenuItem
-            onClick={() => {
-              hint?.play();
-              setType("SELECT_LEVEL");
-            }}
-            src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
-            title="Select level"
-          />
-          <MenuItem
-            onClick={() => {
-              hint?.play();
-              setType("HISTORY");
-            }}
-            src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
-            title="History"
-          />
-          <MenuItem
-            onClick={() => {
-              hint?.play();
-              setType("ACHIEVEMENTS");
-            }}
-            src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
-            title="Achievements"
-          />
-        </>
-      )}
-
-      {!store.account.accessToken && (
-        <>
-          <MenuItem
-            onClick={() => {
-              hint?.play();
-              setType("LOGIN");
-            }}
-            src="https://s2.svgbox.net/materialui.svg?ic=login&color=fff9"
-            title="Login"
-          />
-
-          {router.pathname !== "/admin" && (
-            <MenuItem
-              onClick={() => {
-                hint?.play();
-                setType("REGISTER");
-              }}
-              src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
-              title="Register"
-            />
-          )}
-        </>
-      )}
+      <MenuItem
+        goTo="/menu/select-level"
+        src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
+        title="Select level"
+      />
+      <MenuItem
+        goTo="/menu/history"
+        src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
+        title="History"
+      />
+      <MenuItem
+        goTo="/menu/achievements"
+        src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
+        title="Achievements"
+      />
+      <form
+        className="w-full h-full"
+        action="/api/auth?type=logout"
+        method="POST"
+      >
+        <MenuItem
+          type="submit"
+          src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
+          title="LOGOUT"
+        />
+      </form>
     </div>
   );
 };
 
 const Menu: NextPage = () => {
   const store = useStore();
-  const router = useRouter();
-  const type = router.query.type;
-
   return (
-    <div
-      className={clsx("fixed w-screen h-screen bg-black bg-opacity-20 z-50", {
-        hidden: ![
-          "REGISTER",
-          "ACHIEVEMENTS",
-          "LOGIN",
-          "SELECT_LEVEL",
-          "MENU",
-        ].includes(store.status),
-      })}
-    >
-      <div className="top-0 left-0 absolute bg-black bg-opacity-80  w-screen h-screen flex flex-col justify-center  items-center ">
-        <div className="lg:w-1/2 w-full  rounded-lg flex flex-col items-center p-10 ">
-          {type !== "selectLevel" &&
-            (store.account.accessToken && store.account.email ? (
-              <div className="mb-8">
-                <div className="w-24 h-24 rounded-full bg-gray-400 text-5xl text-gray-800 font-bold flex justify-center items-center">
-                  {store.account.email[0].toUpperCase()}
-                </div>
-                <br />
-                <h1 className="text-center text-white text-lg">
-                  {store.account.email}
-                </h1>
-                <h1 className="text-center text-white text-lg">
-                  Level: {store.level}
-                </h1>
-              </div>
-            ) : (
-              <div className="w-full flex justify-center">
-                <img
-                  className="w-28 h-28 mb-12 "
-                  src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
-                  alt=""
-                />
-              </div>
-            ))}
-          <Select />
-        </div>
-      </div>
-
-      {store.status !== "MENU" && (
+    <div className="flex justify-center items-center w-screen h-screen bg-black bg-opacity-50">
+      <div className="grid container  gap-y-3 w-full p-5">
         <img
-          onClick={() => {
-            hint?.play();
-            store.setStatus("MENU");
-          }}
-          role="button"
-          src="https://s2.svgbox.net/materialui.svg?ic=arrow_back&color=fff9"
-          className="fixed cursor-pointer top-0 left-0 p-3 w-20"
+          className="w-28 mx-auto h-28 mb-12 "
+          src="https://s2.svgbox.net/materialui.svg?ic=account_circle&color=fff9"
           alt=""
         />
-      )}
-      <img
-        onClick={() => {
-          store.setAncientText(undefined);
-        }}
-        src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff9"
-        role="button"
-        className=" w-12 m-5 h-12 z-50 pointer-events-auto absolute right-0 top-0"
-      />
+        <MenuItem
+          goTo="/"
+          src="https://s2.svgbox.net/octicons.svg?ic=play&color=fff9"
+          title="Play"
+        />
+
+        <MenuItem
+          goTo="/menu/select-level"
+          src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
+          title="Select level"
+        />
+        <MenuItem
+          goTo="/menu/history"
+          src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
+          title="History"
+        />
+        <MenuItem
+          goTo="/menu/achievements"
+          src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
+          title="Achievements"
+        />
+        <form
+          className="w-full h-full"
+          action="/api/auth?type=logout"
+          method="POST"
+        >
+          <MenuItem
+            type="submit"
+            src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
+            title="LOGOUT"
+          />
+        </form>
+      </div>
     </div>
   );
 };

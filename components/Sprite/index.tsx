@@ -5,14 +5,19 @@ import { DoubleSide, Sprite as SpriteType } from "three";
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
+import { addItem, useInventory } from "../../lib/inventory";
+import useMutation from "../../Hooks/useMutation";
 
 export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
-
+  const [_addItem] = useMutation(addItem, ["/api/inventory"]);
   const texture1 = useLoader(
     THREE.TextureLoader,
     props?.replaceImg ?? "/images/empty.png"
   );
+  const { data: inventory } = useInventory();
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+
   const [t, setT] = useState(false);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
@@ -22,7 +27,7 @@ export default function Sprite(props: Item) {
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return store.invHas(v) || store.usedItems[v];
+          return invHas(v) || store.usedItems[v];
         })
         .every((e) => e)
     : true;
@@ -38,7 +43,7 @@ export default function Sprite(props: Item) {
   }, [props.position, ref.current]);
   let s = show ? props.scale ?? 0.2 : 0;
   if (hovered) s += 0.01;
-  const collected = props.collectable && store.invHas(props._id);
+  const collected = props.collectable && invHas(props._id);
   const { scale } = useSpring({
     scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
@@ -140,7 +145,7 @@ export default function Sprite(props: Item) {
               props.clickableWords.length > 0
             )
           )
-            store.setInventory(props);
+            _addItem(props._id);
         }
         if (props.setHint) store.setHint(props.setHint);
 

@@ -1,25 +1,17 @@
-import { HTMLProps } from "react";
+import Link from "next/link";
+import { Fragment } from "react";
 
-export default function MenuItem(props: HTMLProps<HTMLDivElement>) {
+export default function MenuItem(props: any) {
+  const Comp = props.goTo ? Link : Fragment;
   return (
-    <div
-      role="button"
-      {...props}
-      className={`
-                  text-shadow border cursor-pointer border-gray-400 bg-black bg-opacity-70 
-                  text-center flex justify-center items-center h-20 text-gray-500
-                  rounded-md text-3xl hover:underline  duration-150 font-bold shadow-lg 
-                  ${props.className}`}
-    >
-      <div className="flex items-center w-64 gap-x-2">
-        <img
-          className="w-10 h-10 mr-10"
-          src={props.src}
-          width="32"
-          height="32"
-        />
-        <span className="">{props.title}</span>
-      </div>
-    </div>
+    <Comp href={props.goTo ?? "#"}>
+      <button
+        {...props}
+        className={`grid grid-cols-[24px_1fr] justify-center items-center btn  w-full`}
+      >
+        <img className="w-6 h-fit" src={props.src} />
+        <div className="text-center">{props.title}</div>
+      </button>
+    </Comp>
   );
 }
