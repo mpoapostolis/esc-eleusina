@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
+import { updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
-import { updateItem } from "../../queries/items";
 import { Item, Scene, scenes } from "../../store";
 import Select from "../Select";
 

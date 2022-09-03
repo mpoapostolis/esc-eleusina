@@ -2,12 +2,13 @@ import { update } from "@react-spring/three";
 import axios from "axios";
 import clsx from "clsx";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { Euler } from "three";
+import { useEffect, useState } from "react";
+import { Euler, Vector3 } from "three";
 import { Checkbox } from ".";
+import useMutation from "../../Hooks/useMutation";
+import { deleteItem, updateItem as _updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
-import { updateItem } from "../../queries/items";
-import { Item } from "../../store";
+import { Item, useStore } from "../../store";
 import Range from "../Range";
 import Select from "../Select";
 import BoxSettings from "./BoxSettings";
@@ -45,15 +46,17 @@ export default function SelectedItem(props: {
   imgs: Img[];
   update: (p: Partial<Item>) => void;
 }) {
-  const [range, setRange] = useState(0.5);
-  const [x, setX] = useState(180);
-  const [y, setY] = useState(180);
-  const [z, setZ] = useState(180);
   const router = useRouter();
   const id = `${router.query.id}`;
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
 
+  useEffect(() => {}, [selectedItem]);
+
+  const store = useStore();
+  const [updateItem] = useMutation(_updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
   const updateRequired = (_id: string) => {
     if (!selectedItem) return;
     const requiredItems = selectedItem?.requiredItems ?? [];
@@ -64,24 +67,28 @@ export default function SelectedItem(props: {
     updateItem(id, { requiredItems: tmp });
   };
 
+  const [_deleteItem] = useMutation(deleteItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   const rotate = (axis: "x" | "y" | "z", rot: number) => {
     if (!selectedItem.rotation) return;
-    const r = new Euler().copy(selectedItem.rotation);
-    r[axis] = rot;
-    updateItem(id, { rotation: r });
+    if (axis === "x") store.setRotX(rot);
+    if (axis === "y") store.setRotY(rot);
+    if (axis === "z") store.setRotZ(rot);
   };
 
   return (
     <>
       <div className="flex">
         <button
-          onClick={() =>
+          onClick={() => {
             router.push({
               query: {
                 id: undefined,
               },
-            })
-          }
+            });
+          }}
         >
           <img
             src="https://s2.svgbox.net/materialui.svg?ic=arrow_back&color=888"
@@ -91,18 +98,18 @@ export default function SelectedItem(props: {
         </button>
         <button
           className="ml-auto"
-          onClick={() =>
+          onClick={() => {
             router.push({
               query: {
                 id: undefined,
               },
-            })
-          }
+            });
+          }}
         >
           <img
             onClick={async () => {
               router.push("/admin");
-              await axios.delete(`/api/items/${id}`);
+              _deleteItem(id);
             }}
             src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
             width="32"
@@ -120,64 +127,67 @@ export default function SelectedItem(props: {
 
         <div className="w-full px-4">
           <Range
-            min={0.05}
+            min={0.1}
             max={1}
-            step={0.01}
+            step={0.1}
             onChange={(evt) => {
-              const value = +evt.target.value;
-              setRange(value);
+              const v = +evt.target.value;
+              store.setScale(v);
             }}
             onPointerUp={() => {
-              updateItem(id, { scale: range });
+              updateItem(id, { scale: store.scale });
             }}
-            value={range}
             label="scale"
           />
 
           <Range
             min={0}
-            max={360}
-            step={1}
+            max={2 * Math.PI}
+            step={0.0174532925}
             onChange={(evt) => {
-              const value = +evt.target.value;
-              setX(value);
-            }}
-            onPointerUp={() => {
+              const x = +evt.target.value;
               rotate("x", x);
             }}
-            value={x}
+            onPointerUp={() => {
+              const rotation = selectedItem.rotation;
+              if (rotation?.x && store.rotX) rotation.x = store.rotX;
+              updateItem(id, { rotation });
+            }}
             label="Rotate X"
           />
 
           <Range
             min={0}
-            max={360}
-            step={1}
+            max={2 * Math.PI}
+            step={0.0174532925}
             onChange={(evt) => {
-              const value = +evt.target.value;
-              setY(value);
-            }}
-            onPointerUp={() => {
+              const y = +evt.target.value;
               rotate("y", y);
             }}
-            value={y}
+            onPointerUp={() => {
+              const rotation = selectedItem.rotation;
+              if (rotation?.y && store.rotY) rotation.y = store.rotY;
+              updateItem(id, { rotation });
+            }}
             label="Rotate Y"
           />
 
           <Range
             min={0}
-            max={360}
-            step={1}
-            onPointerUp={() => {
+            max={2 * Math.PI}
+            step={0.0174532925}
+            onChange={(evt) => {
+              const z = +evt.target.value;
               rotate("z", z);
             }}
-            onChange={(evt) => {
-              const value = +evt.target.value;
-              setZ(value);
+            onPointerUp={() => {
+              const rotation = selectedItem.rotation;
+              if (rotation?.y && store.rotZ) rotation.z = store.rotZ;
+              updateItem(id, { rotation });
             }}
-            value={z}
-            label="Rotate Z"
+            label="Rotate z"
           />
+          <br />
           {!selectedItem.type && (
             <>
               <Checkbox

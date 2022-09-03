@@ -1,18 +1,29 @@
 import myDb from "../../../helpers/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { ObjectId } from "mongodb";
+import { withSessionRoute } from "../../../lib/withSession";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default withSessionRoute(myItems);
+async function myItems(req: NextApiRequest, res: NextApiResponse) {
   const db = await myDb();
   const collection = await db.collection("items");
-
   switch (req.method) {
     case "GET":
       const scene = req.query.scene ? { scene: req.query.scene } : {};
-
+      const emptyImg = await db
+        .collection("library")
+        .findOne({ type: "empty" });
       const items = await collection
         .aggregate([
           { $match: scene },
+          {
+            $addFields: {
+              imgId: {
+                $cond: ["$imgId", "$imgId", new ObjectId(emptyImg?._id)],
+              },
+            },
+          },
+
           {
             $lookup: {
               from: "library",
@@ -52,4 +63,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     default:
       return res.status(200).send("");
   }
-};
+}

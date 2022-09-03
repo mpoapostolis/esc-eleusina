@@ -15,8 +15,7 @@ import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/AdminSettings/Library";
 import { useRouter } from "next/router";
-import { getLibrary } from "../queries/library";
-import { getItems, updateItem } from "../queries/items";
+import { getItems, getLibrary, updateItem } from "../lib/items";
 
 extend({ OrbitControls });
 
@@ -117,10 +116,11 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
   );
 }
 
-function Sprite(props: Sprite) {
+function Sprite(props: Sprite & { selected: boolean }) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [drag, setDrag] = useState(false);
   const ref = useRef<SpriteType>();
+
   useFrame((t) => {
     if (!ref.current) return;
     if (drag && !props.hidden) {
@@ -231,13 +231,12 @@ const Home: NextPage = () => {
     tmp[idx] = { ...tmp[idx], ...i };
   };
 
-  const sceneItems = items.filter((e) => e.scene === store.scene);
   return (
     <div className="canvas">
       {!library ? (
         <AdminSettings
           imgs={imgs}
-          items={sceneItems}
+          items={items}
           update={(p) => updateItem(p)}
           portal={portal}
           setScene={setScene}
@@ -251,14 +250,22 @@ const Home: NextPage = () => {
         <Controls position={[0, 0, 0]} maxDistance={0.02} fov={75} />
 
         <Suspense fallback={<CustomLoader />}>
-          {sceneItems
+          {items
             .filter((e) => !e.isEpic)
             ?.map((o, idx) => {
               if (["hint", "guidelines"].includes(`${o.type}`)) return null;
               if (o.type === "portal")
                 return <Portal {...o} key={idx} setItem={updateUrl} />;
 
-              if (o.src) return <Sprite setItem={updateUrl} key={idx} {...o} />;
+              if (o.src)
+                return (
+                  <Sprite
+                    selected={router.query.id === o._id}
+                    setItem={updateUrl}
+                    key={idx}
+                    {...o}
+                  />
+                );
               else return null;
             })}
         </Suspense>

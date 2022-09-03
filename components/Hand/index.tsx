@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh, TextureLoader } from "three";
 import useMutation from "../../Hooks/useMutation";
 import { useInventory, useItem } from "../../lib/inventory";
-import { getItems } from "../../queries/items";
+import { getItems } from "../../lib/items";
 import { useStore } from "../../store";
 
 export function Hand() {

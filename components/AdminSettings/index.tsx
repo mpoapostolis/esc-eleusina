@@ -8,7 +8,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
-import { addItem } from "../../queries/items";
+import { addItem, getItems, getLibrary } from "../../lib/items";
+import useMutation from "../../Hooks/useMutation";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -19,14 +20,20 @@ export function Checkbox(
   const id = uuidv4();
   return (
     <div className="flex items-center text-sm">
-      <input type="checkbox" name="" className="mr-2" id={id} {...props} />
+      <input
+        type="checkbox"
+        name=""
+        className="checkbox mr-2 checkbox-xs"
+        id={id}
+        {...props}
+      />
       <label htmlFor={id}>{props.label}</label>
     </div>
   );
 }
 
 export function AllImage(props: {
-  imgs?: (Item | Img)[];
+  imgs?: (Item | Img)[] | undefined;
   onClick: (e?: Item | Img | null) => void;
 }) {
   return (
@@ -54,8 +61,6 @@ export function AllImage(props: {
 }
 
 const Component = (props: {
-  items: Item[];
-  imgs: Img[];
   update: (p: Partial<Item>) => void;
   portal: boolean;
   setScene: (s: Scene) => void;
@@ -64,9 +69,20 @@ const Component = (props: {
   const router = useRouter();
   const id = router.query.id;
   const type = router.query.type;
+  const { data: items } = getItems();
+  const { data: imgs } = getLibrary();
 
   const store = useStore();
-  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+  const [_addItem] = useMutation(addItem, [`/api/items?scene=${store.scene}`], {
+    onSuccess: (d) => {
+      router.push({
+        query: {
+          type: "selectedItem",
+          id: d.id,
+        },
+      });
+    },
+  });
 
   useEffect(() => {
     if (id) router.push(`/admin?id=${id}&type=selectedItem`);
@@ -77,18 +93,13 @@ const Component = (props: {
       return (
         <SceneSettings
           update={props.update}
-          items={sceneItems}
-          imgs={props.imgs}
+          // @ts-ignore
+          items={items}
+          imgs={imgs}
         />
       );
     case "selectedItem":
-      return (
-        <SelectedItem
-          imgs={props.imgs}
-          items={props.items}
-          update={props.update}
-        />
-      );
+      return <SelectedItem imgs={imgs} items={items} update={props.update} />;
 
     default:
       return (
@@ -117,7 +128,7 @@ const Component = (props: {
                 },
               })
             }
-            className="w-full mb-2 px-3 py-2 text-center bg-white bg-opacity-20"
+            className="btn"
           >
             Scene Settings
           </button>
@@ -125,7 +136,7 @@ const Component = (props: {
           <hr className="my-5 opacity-20" />
 
           <div className="mb-4 grid grid-cols-4 gap-4">
-            {props.items
+            {items
               ?.filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((i, idx) => {
                 return (
@@ -154,34 +165,18 @@ const Component = (props: {
                 );
               })}
           </div>
-          <Popover
-            label={
-              <button className="w-full px-3 py-2 text-center bg-white bg-opacity-20">
-                + Add Item
-              </button>
-            }
-          >
+          <Popover label={<button className="btn w-full">+ Add Item</button>}>
             <AllImage
-              imgs={props.imgs}
+              imgs={imgs}
               onClick={(id) => {
-                addItem({
-                  scene: store.scene,
-                  imgId: `${id?._id}`,
-                }).then((d) => {
-                  router.push({
-                    query: {
-                      type: "selectedItem",
-                      id: d.id,
-                    },
-                  });
-                });
+                _addItem({ scene: store.scene, imgId: `${id?._id}` });
               }}
             />
           </Popover>
 
           <button
             onClick={() => router.push("/admin?type=library")}
-            className="mt-auto w-full px-3 py-2 text-center bg-white bg-opacity-20"
+            className="mt-auto btn"
           >
             library
           </button>

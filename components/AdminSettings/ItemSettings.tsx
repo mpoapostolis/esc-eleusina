@@ -1,9 +1,9 @@
-import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import useMutation from "../../Hooks/useMutation";
+import { updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
-import { updateItem } from "../../queries/items";
 import { Item, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
@@ -16,6 +16,10 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
   const idx = props.items.findIndex((e) => e._id === id);
   const selectedItem = { ...props.items[idx] };
   const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   const [s, $S] = useState<Record<string, string>>({
     name: "",
     clickableWords: "",
@@ -72,7 +76,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
     })?.src;
 
   const onBlur = (key: string) =>
-    updateItem(id, {
+    _updateItem(id, {
       [key]: s[key],
     });
 
@@ -96,7 +100,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
 
       <Select
         onChange={(v) => {
-          updateItem(id, {
+          _updateItem(id, {
             onClickOpenModal: v.value as
               | "hint"
               | "guidelines"
@@ -223,7 +227,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
         <AllImage
           imgs={props.imgs}
           onClick={(o) => {
-            updateItem(id, {
+            _updateItem(id, {
               replaceImg: o?.src ?? null,
             });
           }}
@@ -258,7 +262,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             <AllImage
               imgs={sceneItems}
               onClick={(o) => {
-                updateItem(id, {
+                _updateItem(id, {
                   requiredToolToReplace: o ?? null,
                 });
               }}
@@ -289,7 +293,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             <AllImage
               imgs={getOnlyItems(props.imgs)}
               onClick={async (o) => {
-                updateItem(id, {
+                _updateItem(id, {
                   reward: o,
                 });
               }}
@@ -310,7 +314,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
                 });
               }}
               onBlur={() => {
-                updateItem(id, {
+                _updateItem(id, {
                   reward: {
                     ...selectedItem.reward,
                     description: s.description,
@@ -349,7 +353,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             <AllImage
               imgs={props.imgs}
               onClick={(o) => {
-                updateItem(id, {
+                _updateItem(id, {
                   inventorySrc: o?.src ?? null,
                 });
               }}
@@ -379,7 +383,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             <AllImage
               imgs={sceneItems}
               onClick={(o) => {
-                updateItem(id, {
+                _updateItem(id, {
                   collectableIfHandHas: o?._id ?? null,
                 });
               }}

@@ -2,11 +2,13 @@ import axios from "axios";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { mutate } from "swr";
 import { AllImage } from ".";
+import useMutation from "../../Hooks/useMutation";
+import { addItem, deleteItem, getItems, Item } from "../../lib/items";
 import { MiniGame, Reward } from "../../pages";
 import { Img } from "../../pages/admin";
-import { invalidateItems } from "../../queries/items";
-import { Item, useStore } from "../../store";
+import { useStore } from "../../store";
 import Load from "../Load";
 import Popover from "../Popover";
 import Select from "../Select";
@@ -67,11 +69,11 @@ function Row(props: Item & { sceneItems: Item[] }) {
   const [requiredItems, setRequiredItems] = useState<string[]>([]);
   const [deleteLoad, setDeleteLoad] = useState(false);
   const [load, setLoad] = useState(false);
-
+  const { data: items } = getItems();
   useEffect(() => {
     setHint(props.text);
     setTime(props.delayTimeHint);
-  }, [props.items]);
+  }, [items]);
 
   const updateRequired = (id: string) => {
     const found = requiredItems?.includes(id);
@@ -80,6 +82,10 @@ function Row(props: Item & { sceneItems: Item[] }) {
       : [...requiredItems, id];
     setRequiredItems(tmp);
   };
+  const store = useStore();
+  const [_deleteItem] = useMutation(deleteItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
 
   return (
     <div className="p-4 my-1  border border-gray-500 bg-gray-500 bg-opacity-5">
@@ -156,15 +162,9 @@ function Row(props: Item & { sceneItems: Item[] }) {
       )}
       <div className="grid mt-4 grid-cols-2 gap-x-1">
         <button
-          className="flex justify-center border border-gray-500 p-2"
+          className="btn"
           onClick={async () => {
-            setDeleteLoad(true);
-            await axios
-              .delete(`/api/items/${props._id}`)
-              .then(() => {
-                setDeleteLoad(false);
-              })
-              .then(invalidateItems);
+            _deleteItem(props._id);
           }}
         >
           {deleteLoad ? (
@@ -195,10 +195,9 @@ function Row(props: Item & { sceneItems: Item[] }) {
                   },
                 }
               )
-              .then(() => setLoad(false))
-              .then(invalidateItems);
+              .then(() => setLoad(false));
           }}
-          className="flex justify-center border border-gray-500 p-2"
+          className="btn"
         >
           {load ? (
             <Load />
@@ -217,7 +216,6 @@ function Row(props: Item & { sceneItems: Item[] }) {
 
 export default function SceneSettings(props: {
   update: (p: Partial<Item>) => void;
-  items: Item[];
   imgs: Img[];
 }) {
   const store = useStore();
@@ -226,7 +224,8 @@ export default function SceneSettings(props: {
   const router = useRouter();
   const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
-  const doIHaveGuideLines = props.items.find((e) => e.type === "guidelines");
+  const { data: items } = getItems();
+  const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
   const [miniGameLoad, setMiniGameLoad] = useState(false);
 
   const updateRequired = (id: string) => {
@@ -238,12 +237,12 @@ export default function SceneSettings(props: {
       : [...requiredItems, id];
     update({ requiredItems: tmp });
   };
+  const [_addItem] = useMutation(addItem, [`/api/items?scene=${store.scene}`]);
 
   useEffect(() => {
-    const doIHaveGuideLines = props.items.find((e) => e.type === "guidelines");
+    const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
-  }, [props.items]);
-
+  }, [items]);
   const getMiniGames = async () =>
     axios.get("/api/miniGames").then((d) => {
       const [currMinigames] = d.data.filter(
@@ -295,7 +294,6 @@ export default function SceneSettings(props: {
       </div>
       <button
         onClick={async () => {
-          setLoadG(true);
           if (doIHaveGuideLines)
             await axios
               .put(
@@ -308,20 +306,16 @@ export default function SceneSettings(props: {
                 }
               )
               .then(() => {
-                setLoadG(false);
+                mutate(`/api/items?scenes=${store.scene}`);
               });
           else
-            axios
-              .post("/api/items", {
-                scene: store.scene,
-                type: "guidelines",
-                text: guideLines,
-              })
-              .then(() => {
-                setLoadG(false);
-              });
+            _addItem({
+              scene: store.scene,
+              type: "guidelines",
+              text: guideLines,
+            });
         }}
-        className="flex border py-2 border-gray-500 justify-center"
+        className="btn"
       >
         {loadG ? (
           <Load />
@@ -334,11 +328,11 @@ export default function SceneSettings(props: {
         )}
       </button>
       <hr className="my-5 opacity-20" />
-      {props.items
+      {items
         .filter((e) => e.type === "hint")
         .map((e) => (
           <Row
-            sceneItems={props.items?.filter(
+            sceneItems={items?.filter(
               (e) => !["portal", "guidelines"].includes(`${e.type}`)
             )}
             key={e._id}
@@ -347,18 +341,13 @@ export default function SceneSettings(props: {
         ))}
       <button
         onClick={() => {
-          setLoad(true);
-          axios
-            .post("/api/items", {
-              scene: store.scene,
-              type: "hint",
-            })
-            .then(() => {
-              setLoad(false);
-            })
-            .then(invalidateItems);
+          _addItem({
+            scene: store.scene,
+            type: "hint",
+            delayTimeHint: 10,
+          });
         }}
-        className="mt-3 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
+        className="btn mt-4 "
       >
         {load ? <Load /> : `+ Add Hint`}
       </button>
@@ -434,7 +423,7 @@ export default function SceneSettings(props: {
         Required items in inventory for mini game
       </label>
       <div className="grid gap-2 grid-cols-6">
-        {props.items
+        {items
           ?.filter(
             (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
           )
@@ -476,7 +465,7 @@ export default function SceneSettings(props: {
               setMiniGameLoad(false);
             });
         }}
-        className="mt-4 flex items-center justify-center w-full px-3 py-2 text-center bg-white bg-opacity-20"
+        className="btn mt-4"
       >
         {miniGameLoad && <Load />}
         Save

@@ -169,6 +169,16 @@ export type Store = {
   hand?: string;
   status: Status;
 
+  scale?: number | null;
+  setScale: (e: number | null) => void;
+
+  rotX?: number | null;
+  rotY?: number | null;
+  rotZ?: number | null;
+  setRotX: (e: number | null) => void;
+  setRotY: (e: number | null) => void;
+  setRotZ: (e: number | null) => void;
+
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
   setJigSaw: (e?: string, reward?: Reward | null) => void;
@@ -212,6 +222,10 @@ export const useStore = create<Store>((set, get) => ({
       fadeOutImg: obj,
     })),
 
+  setScale: (scale) => set(() => ({ scale })),
+  setRotX: (rotX: number | null) => set(() => ({ rotX })),
+  setRotY: (rotY: number | null) => set(() => ({ rotY })),
+  setRotZ: (rotZ: number | null) => set(() => ({ rotZ })),
   setStatus: (status) => set(() => ({ status })),
   setUsedItem: (id: string) =>
     set((s) => ({

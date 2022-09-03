@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { getMiniGames } from "../../queries";
+import { getMiniGames } from "../../lib/items";
 import { useStore } from "../../store";
 
 const shadow = {

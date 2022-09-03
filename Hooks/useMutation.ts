@@ -11,7 +11,6 @@ export default function useMutation<Params = any, Result = any>(
   }
 ) {
   const [loading, setLoading] = useState(false);
-
   const mutate = (...params: Params[]) => {
     setLoading(true);
     return fn(...params)

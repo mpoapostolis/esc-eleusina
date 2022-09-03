@@ -4,7 +4,7 @@ import axios, { AxiosError } from "axios";
 import useSWR from "swr";
 import { useStore } from "../../store";
 import { fetcher } from "../utils";
-import { Item } from "./types";
+import { ACHIEVEMENT, Item } from "./types";
 
 export function useInventory() {
   const store = useStore();

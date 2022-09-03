@@ -26,8 +26,6 @@ import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import MiniGameModal from "../components/MiniGameModal";
-import { getItems } from "../queries/items";
-import { getMiniGames } from "../queries";
 import { motion } from "framer-motion";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
@@ -35,6 +33,7 @@ import { withSessionSsr } from "../lib/withSession";
 import { useAchievements, useInventory } from "../lib/inventory";
 import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
+import { getItems, getMiniGames } from "../lib/items";
 
 export type MiniGame = {
   scene?: string;
@@ -317,6 +316,7 @@ const Home: NextPage = () => {
   const achIds = achievements.map((e) => e._id);
   const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
   const rewardScene = currMinigames?.scene || boxItem?.scene;
+
   return (
     <div {...bind()}>
       <FadeOut />
@@ -336,7 +336,10 @@ const Home: NextPage = () => {
             {sceneItems
               .filter(
                 () =>
-                  !(rewardScene === store.scene && achIds.includes(rewardId))
+                  !(
+                    rewardScene === store.scene &&
+                    achIds.includes(`${rewardId}`)
+                  )
               )
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
               .map((p) => {
@@ -346,7 +349,7 @@ const Home: NextPage = () => {
                   ) : (
                     <TimerHint key={p._id} {...p} />
                   );
-                if (p.type === "guidelines" && store.status !== "LOGIN")
+                if (p.type === "guidelines")
                   return <GuideLineItem key={p._id} {...p} />;
               })}
             {user && <Environment />}

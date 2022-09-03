@@ -2,8 +2,9 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
+import useMutation from "../../Hooks/useMutation";
+import { getItems, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
-import { getItems, updateItem } from "../../queries/items";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
@@ -17,6 +18,11 @@ export default function BoxSettings(props: { imgs: Img[] }) {
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };
   const store = useStore();
+
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   useEffect(() => {
     if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
     if (selectedItem.reward?.description)
@@ -30,7 +36,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
     const tmp = found
       ? orderInsideTheBox?.filter((e) => e !== _id)
       : [...orderInsideTheBox, _id];
-    updateItem(id, { orderInsideTheBox: tmp });
+    _updateItem(id, { orderInsideTheBox: tmp });
   };
   const idToName = (id?: string) =>
     items.find((e) => {
@@ -41,7 +47,6 @@ export default function BoxSettings(props: { imgs: Img[] }) {
     items.find((e) => {
       return e._id === id;
     })?.src;
-  const sceneItems = items.filter((item) => store?.scene === item.scene);
 
   return (
     <>
@@ -67,14 +72,10 @@ export default function BoxSettings(props: { imgs: Img[] }) {
       </ul>
 
       <Popover
-        label={
-          <button className="w-full mt-4 px-3 py-2 text-center bg-white bg-opacity-20">
-            + Add Item in box
-          </button>
-        }
+        label={<button className="btn mt-4 w-full">+ Add Item in box</button>}
       >
         <AllImage
-          imgs={getOnlyItems(sceneItems)}
+          imgs={getOnlyItems(items)}
           onClick={(o) => {
             if (o) updateOrderInBox(`${o?._id}`);
           }}
@@ -95,7 +96,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
             setV(evt.currentTarget.value);
           }}
           onBlur={() => {
-            updateItem(id, {
+            _updateItem(id, {
               orderBoxError: v,
             });
           }}
@@ -126,7 +127,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
           <AllImage
             imgs={props.imgs}
             onClick={(o) => {
-              updateItem(id, {
+              _updateItem(id, {
                 replaceImg: o?.src ?? null,
               });
             }}
@@ -156,9 +157,10 @@ export default function BoxSettings(props: { imgs: Img[] }) {
             }
           >
             <AllImage
-              imgs={sceneItems}
+              // @ts-ignore
+              imgs={items}
               onClick={(o) => {
-                updateItem(id, {
+                _updateItem(id, {
                   requiredToolToReplace: o ?? null,
                 });
               }}
@@ -190,7 +192,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
           <AllImage
             imgs={getOnlyItems(props.imgs)}
             onClick={async (o) => {
-              updateItem(id, {
+              _updateItem(id, {
                 reward: o,
               });
             }}
@@ -208,7 +210,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
               setRewardDescription(evt.currentTarget.value);
             }}
             onBlur={() => {
-              updateItem(id, {
+              _updateItem(id, {
                 reward: {
                   ...selectedItem.reward,
                   description: rewardDescription,
