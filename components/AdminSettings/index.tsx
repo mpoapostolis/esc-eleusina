@@ -99,7 +99,7 @@ const Component = (props: {
         />
       );
     case "selectedItem":
-      return <SelectedItem imgs={imgs} items={items} update={props.update} />;
+      return <SelectedItem />;
 
     default:
       return (

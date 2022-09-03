@@ -8,8 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case "PUT":
       if (req.body.reward) req.body.reward._id = new ObjectId();
-
-      await collection.updateOne(
+      const x = await collection.updateOne(
         { _id: new ObjectId(`${req.query.id}`) },
         {
           $set: req.body,

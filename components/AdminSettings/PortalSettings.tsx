@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
-import { updateItem } from "../../lib/items";
-import { Img } from "../../pages/admin";
-import { Item, Scene, scenes } from "../../store";
+import { getItems, updateItem } from "../../lib/items";
+import { Scene, scenes } from "../../store";
 import Select from "../Select";
 
-export default function PortalSettings(props: { items: Item[]; imgs: Img[] }) {
+export default function PortalSettings() {
   const router = useRouter();
+  const { data: items } = getItems();
   const id = router.query.id;
-  const idx = props.items.findIndex((e) => e._id === id);
-  const selectedItem = { ...props.items[idx] };
+  const idx = items.findIndex((e) => e._id === id);
+  const selectedItem = { ...items[idx] };
   return (
     <Select
       onChange={(v) => {

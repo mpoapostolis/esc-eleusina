@@ -73,8 +73,8 @@ function Portal(props: Sprite) {
         if (!ref.current) return;
         props.setItem(`${props._id}`);
         const v3 = new Vector3().copy(ref.current.position);
-        const e3 = new Euler().copy(ref.current.rotation);
-        if (drag) updateItem(`${props._id}`, { rotation: e3, position: v3 });
+        // const e3 = new Euler().copy(ref.current.rotation);
+        if (drag) updateItem(`${props._id}`, { position: v3 });
 
         setDrag(!drag);
       }}
@@ -120,13 +120,24 @@ function Sprite(props: Sprite & { selected: boolean }) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const [drag, setDrag] = useState(false);
   const ref = useRef<SpriteType>();
-
+  const store = useStore();
   useFrame((t) => {
     if (!ref.current) return;
+    if (props.selected) {
+      if (store.rot) ref.current.rotation.copy(store.rot);
+      if (store.scale)
+        ref.current.scale.set(store.scale, store.scale, store.scale);
+    }
+
     if (drag && !props.hidden) {
       ref.current.position.copy(t.raycaster.ray.direction);
-      ref.current.scale.set(props.scale, props.scale, props.scale);
+      ref.current.scale.set(
+        store.scale ?? props.scale,
+        store.scale ?? props.scale,
+        store.scale ?? props.scale
+      );
       ref.current.rotation.copy(t.camera.rotation);
+      if (store.rot?.z) ref.current.rotation.z = store.rot.z;
     }
   });
 
@@ -147,6 +158,7 @@ function Sprite(props: Sprite & { selected: boolean }) {
         props.setItem(`${props._id}`);
         const v3 = new Vector3().copy(ref.current.position);
         const e3 = new Euler().copy(ref.current.rotation);
+        store.setRot(e3);
         if (drag) updateItem(`${props._id}`, { rotation: e3, position: v3 });
         setDrag(!drag);
       }}

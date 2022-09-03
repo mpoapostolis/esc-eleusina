@@ -2,20 +2,24 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { updateItem } from "../../lib/items";
+import { getItems, getLibrary, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
 
-export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
+export default function ItemSettings() {
   const store = useStore();
   const router = useRouter();
   const id = `${router.query.id}`;
-  const idx = props.items.findIndex((e) => e._id === id);
-  const selectedItem = { ...props.items[idx] };
-  const sceneItems = props.items.filter((item) => store?.scene === item.scene);
+
+  const { data: items } = getItems();
+  const { data: imgs } = getLibrary();
+
+  const idx = items.findIndex((e) => e._id === id);
+  const selectedItem = { ...items[idx] };
+  const sceneItems = items.filter((item) => store?.scene === item.scene);
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
   ]);
@@ -36,7 +40,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
   });
 
   useEffect(() => {
-    const selectedItem = { ...props.items[idx] };
+    const selectedItem = { ...items[idx] };
     const {
       name,
       author,
@@ -66,12 +70,12 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
       collectableIfHandHas,
       onCollectFail,
     });
-  }, [props.items, idx]);
+  }, [items, idx]);
 
   const setS = (y: Partial<Item>) => $S((s) => ({ ...s, ...y }));
 
   const idToSrc = (id?: string) =>
-    props.items.find((e) => {
+    items.find((e) => {
       return e._id === id;
     })?.src;
 
@@ -225,7 +229,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
         }
       >
         <AllImage
-          imgs={props.imgs}
+          imgs={imgs}
           onClick={(o) => {
             _updateItem(id, {
               replaceImg: o?.src ?? null,
@@ -291,7 +295,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             }
           >
             <AllImage
-              imgs={getOnlyItems(props.imgs)}
+              imgs={getOnlyItems(imgs)}
               onClick={async (o) => {
                 _updateItem(id, {
                   reward: o,
@@ -351,7 +355,7 @@ export default function ItemSettings(props: { items: Item[]; imgs: Img[] }) {
             }
           >
             <AllImage
-              imgs={props.imgs}
+              imgs={imgs}
               onClick={(o) => {
                 _updateItem(id, {
                   inventorySrc: o?.src ?? null,

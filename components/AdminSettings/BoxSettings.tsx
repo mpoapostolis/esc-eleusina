@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { getItems, updateItem } from "../../lib/items";
+import { getItems, getLibrary, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 
-export default function BoxSettings(props: { imgs: Img[] }) {
+export default function BoxSettings() {
   const { data: items } = getItems();
   const [v, setV] = useState<string>();
   const [rewardDescription, setRewardDescription] = useState<string>();
@@ -18,6 +18,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };
   const store = useStore();
+  const { data: imgs } = getLibrary();
 
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
@@ -125,7 +126,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
           }
         >
           <AllImage
-            imgs={props.imgs}
+            imgs={imgs}
             onClick={(o) => {
               _updateItem(id, {
                 replaceImg: o?.src ?? null,
@@ -190,7 +191,7 @@ export default function BoxSettings(props: { imgs: Img[] }) {
           }
         >
           <AllImage
-            imgs={getOnlyItems(props.imgs)}
+            imgs={getOnlyItems(imgs)}
             onClick={async (o) => {
               _updateItem(id, {
                 reward: o,

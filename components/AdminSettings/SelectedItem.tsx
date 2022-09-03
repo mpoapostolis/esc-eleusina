@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Euler, Vector3 } from "three";
 import { Checkbox } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { deleteItem, updateItem as _updateItem } from "../../lib/items";
+import { deleteItem, getItems, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Range from "../Range";
@@ -15,48 +15,35 @@ import BoxSettings from "./BoxSettings";
 import ItemSettings from "./ItemSettings";
 import PortalSettings from "./PortalSettings";
 
-const Component = (props: {
-  items: Item[];
-  imgs: Img[];
-  update: (p: Partial<Item>) => void;
-}) => {
-  const router = useRouter();
-  const id = router.query.id;
-  const idx = props.items.findIndex((e) => e._id === id);
-  const selectedItem = { ...props.items[idx] };
-  const _items = props.items?.filter(
-    (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-  );
-
-  const p = { ...props, items: _items };
-
-  switch (selectedItem.type) {
+const Component = (props: { type?: string }) => {
+  switch (props.type) {
     case "portal":
-      return <PortalSettings {...props} />;
+      return <PortalSettings />;
     case "box":
-      return <BoxSettings imgs={props.imgs} />;
+      return <BoxSettings />;
 
     default:
-      return <ItemSettings {...p} />;
+      return <ItemSettings />;
   }
 };
 
-export default function SelectedItem(props: {
-  items: Item[];
-  imgs: Img[];
-  update: (p: Partial<Item>) => void;
-}) {
+export default function SelectedItem() {
+  const { data: items } = getItems();
   const router = useRouter();
   const id = `${router.query.id}`;
-  const idx = props.items.findIndex((e) => e._id === id);
-  const selectedItem = { ...props.items[idx] };
+  const idx = items.findIndex((e) => e._id === id);
+  const selectedItem = { ...items[idx] };
 
-  useEffect(() => {}, [selectedItem]);
+  useEffect(() => {
+    const idx = items.findIndex((e) => e._id === id);
+    const selectedItem = { ...items[idx] };
+  }, [items]);
 
   const store = useStore();
-  const [updateItem] = useMutation(_updateItem, [
+  const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
   ]);
+
   const updateRequired = (_id: string) => {
     if (!selectedItem) return;
     const requiredItems = selectedItem?.requiredItems ?? [];
@@ -64,7 +51,7 @@ export default function SelectedItem(props: {
     const tmp = found
       ? requiredItems?.filter((e) => e !== _id)
       : [...requiredItems, _id];
-    updateItem(id, { requiredItems: tmp });
+    _updateItem(id, { requiredItems: tmp });
   };
 
   const [_deleteItem] = useMutation(deleteItem, [
@@ -72,17 +59,27 @@ export default function SelectedItem(props: {
   ]);
 
   const rotate = (axis: "x" | "y" | "z", rot: number) => {
-    if (!selectedItem.rotation) return;
-    if (axis === "x") store.setRotX(rot);
-    if (axis === "y") store.setRotY(rot);
-    if (axis === "z") store.setRotZ(rot);
+    if (!store.rot) return;
+    const e3 = new Euler().copy(store.rot);
+    e3[axis] = rot;
+    store.setRot(e3);
   };
+  const resetRots = () => {
+    store.setScale(null);
+    store.setRot(null);
+  };
+
+  useEffect(() => {
+    const rot = selectedItem.rotation;
+    if (rot) store.setRot(rot);
+  }, []);
 
   return (
     <>
       <div className="flex">
         <button
           onClick={() => {
+            resetRots();
             router.push({
               query: {
                 id: undefined,
@@ -99,6 +96,7 @@ export default function SelectedItem(props: {
         <button
           className="ml-auto"
           onClick={() => {
+            resetRots();
             router.push({
               query: {
                 id: undefined,
@@ -108,6 +106,7 @@ export default function SelectedItem(props: {
         >
           <img
             onClick={async () => {
+              resetRots();
               router.push("/admin");
               _deleteItem(id);
             }}
@@ -119,7 +118,7 @@ export default function SelectedItem(props: {
       </div>
 
       <hr className="my-5 opacity-20" />
-      <div className="flex  items-start my-2 text-xs">
+      <div className="flex  items-start select-none my-2 text-xs">
         <div className="flex cursor-pointer w-40 h-20 justify-center flex-col items-center bg-white bg-opacity-5 text-center p-2">
           <img className=" w-12 h-12" src={selectedItem.src} />
           {selectedItem.name}
@@ -130,12 +129,14 @@ export default function SelectedItem(props: {
             min={0.1}
             max={1}
             step={0.1}
+            onPointerUp={(e) => {
+              _updateItem(id, {
+                rotation: store.rot,
+              });
+            }}
             onChange={(evt) => {
               const v = +evt.target.value;
               store.setScale(v);
-            }}
-            onPointerUp={() => {
-              updateItem(id, { scale: store.scale });
             }}
             label="scale"
           />
@@ -144,14 +145,14 @@ export default function SelectedItem(props: {
             min={0}
             max={2 * Math.PI}
             step={0.0174532925}
+            onPointerUp={(e) => {
+              _updateItem(id, {
+                rotation: store.rot,
+              });
+            }}
             onChange={(evt) => {
               const x = +evt.target.value;
               rotate("x", x);
-            }}
-            onPointerUp={() => {
-              const rotation = selectedItem.rotation;
-              if (rotation?.x && store.rotX) rotation.x = store.rotX;
-              updateItem(id, { rotation });
             }}
             label="Rotate X"
           />
@@ -160,14 +161,14 @@ export default function SelectedItem(props: {
             min={0}
             max={2 * Math.PI}
             step={0.0174532925}
+            onPointerUp={(e) => {
+              _updateItem(id, {
+                rotation: store.rot,
+              });
+            }}
             onChange={(evt) => {
               const y = +evt.target.value;
               rotate("y", y);
-            }}
-            onPointerUp={() => {
-              const rotation = selectedItem.rotation;
-              if (rotation?.y && store.rotY) rotation.y = store.rotY;
-              updateItem(id, { rotation });
             }}
             label="Rotate Y"
           />
@@ -176,14 +177,14 @@ export default function SelectedItem(props: {
             min={0}
             max={2 * Math.PI}
             step={0.0174532925}
+            onPointerUp={(e) => {
+              _updateItem(id, {
+                rotate: store.rot,
+              });
+            }}
             onChange={(evt) => {
               const z = +evt.target.value;
               rotate("z", z);
-            }}
-            onPointerUp={() => {
-              const rotation = selectedItem.rotation;
-              if (rotation?.y && store.rotZ) rotation.z = store.rotZ;
-              updateItem(id, { rotation });
             }}
             label="Rotate z"
           />
@@ -194,7 +195,7 @@ export default function SelectedItem(props: {
                 label="Collect to inventory"
                 checked={selectedItem.collectable}
                 onChange={(evt) => {
-                  updateItem(id, {
+                  _updateItem(id, {
                     selectable: evt.target.checked
                       ? selectedItem.selectable
                       : false,
@@ -206,7 +207,7 @@ export default function SelectedItem(props: {
               <Checkbox
                 label="Select as tool"
                 onChange={(evt) => {
-                  updateItem(id, {
+                  _updateItem(id, {
                     collectable: evt.target.checked
                       ? true
                       : selectedItem.collectable,
@@ -233,7 +234,7 @@ export default function SelectedItem(props: {
             rows={5}
             value={selectedItem.description}
             onChange={(evt) => {
-              updateItem(id, {
+              _updateItem(id, {
                 description: evt.currentTarget.value,
               });
             }}
@@ -244,7 +245,7 @@ export default function SelectedItem(props: {
           {
             <Select
               onChange={(v) => {
-                updateItem(id, {
+                _updateItem(id, {
                   type: v.value as string,
                 });
               }}
@@ -257,7 +258,7 @@ export default function SelectedItem(props: {
             />
           }
           <hr className="my-5 opacity-20" />
-          <Component {...props} />
+          <Component type={selectedItem.type} />
 
           <hr className="my-5 opacity-20" />
 
@@ -265,7 +266,7 @@ export default function SelectedItem(props: {
             Required items in inventory to show {selectedItem.name}
           </label>
           <div className="grid gap-2 grid-cols-6">
-            {props.items
+            {items
               ?.filter(
                 (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
               )
