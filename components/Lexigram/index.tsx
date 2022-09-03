@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
+import useMutation from "../../Hooks/useMutation";
+import { addReward } from "../../lib/inventory";
 import { useStore } from "../../store";
 import Keyboard from "../Keyboard";
 import MiniGameWrapper from "../MiniGameWrapper";
@@ -52,6 +54,11 @@ function Lexigram() {
     [found]
   );
 
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/itesm?scene=${store.scene}`,
+  ]);
+
   useEffect(() => {
     const total = Object.values<number>(foundTotalLetter).reduce(
       (acc, curr) => acc + curr,
@@ -59,6 +66,7 @@ function Lexigram() {
     );
 
     if (store.lexigram?.length === total && store.reward) {
+      _addReward(store.reward);
       store.setReward(store.reward);
     }
   }, [foundTotalLetter]);

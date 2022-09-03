@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 import { mutate } from "swr";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { addItem, deleteItem, getItems, Item } from "../../lib/items";
+import {
+  addItem,
+  deleteItem,
+  useItems,
+  Item,
+  useMiniGames,
+} from "../../lib/items";
 import { MiniGame, Reward } from "../../pages";
 import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
@@ -21,7 +27,7 @@ const Component = (
   switch (props.type) {
     case "jigsaw":
       return (
-        <div className="mt-4">
+        <div key={props.type} className="mt-4">
           <label className="block text-left text-xs font-medium mb-2 text-gray-200">
             jigsaw image url
           </label>
@@ -39,12 +45,11 @@ const Component = (
 
     case "lexigram":
       return (
-        <div className="mt-4">
+        <div key={props.type} className="mt-4">
           <label className="block text-left text-xs font-medium mb-2 text-gray-200">
             onClick set Lexigram seperated by comma (,)
           </label>
           <input
-            value={props.lexigram}
             onChange={(evt) => {
               props.update({
                 lexigram: evt.currentTarget.value,
@@ -69,7 +74,7 @@ function Row(props: Item & { sceneItems: Item[] }) {
   const [requiredItems, setRequiredItems] = useState<string[]>([]);
   const [deleteLoad, setDeleteLoad] = useState(false);
   const [load, setLoad] = useState(false);
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   useEffect(() => {
     setHint(props.text);
     setTime(props.delayTimeHint);
@@ -224,7 +229,7 @@ export default function SceneSettings(props: {
   const router = useRouter();
   const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
   const [miniGameLoad, setMiniGameLoad] = useState(false);
 
@@ -243,18 +248,15 @@ export default function SceneSettings(props: {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
   }, [items]);
-  const getMiniGames = async () =>
-    axios.get("/api/miniGames").then((d) => {
-      const [currMinigames] = d.data.filter(
-        (e: MiniGame) => e.scene === store.scene
-      );
-      const { _id, ...rest } = currMinigames ?? {};
-      setMiniGame(rest);
-    });
 
+  const { data: miniGames } = useMiniGames();
   useEffect(() => {
-    getMiniGames();
-  }, []);
+    const [currMinigames] = miniGames.filter(
+      (e: MiniGame) => e.scene === store.scene
+    );
+    const { _id, ...rest } = currMinigames ?? {};
+    setMiniGame(rest);
+  }, [miniGames]);
 
   function update(o: MiniGame) {
     setMiniGame((s) => ({ ...s, ...o }));
@@ -355,7 +357,7 @@ export default function SceneSettings(props: {
 
       <Select
         onChange={(v) => {
-          update({
+          setMiniGame({
             type: v.value as any,
           });
         }}
@@ -462,6 +464,7 @@ export default function SceneSettings(props: {
               ...miniGame,
             })
             .then(() => {
+              mutate("/api/games");
               setMiniGameLoad(false);
             });
         }}

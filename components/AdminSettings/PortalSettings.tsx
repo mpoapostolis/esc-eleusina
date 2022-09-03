@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
-import { getItems, updateItem } from "../../lib/items";
+import { useItems, updateItem } from "../../lib/items";
 import { Scene, scenes } from "../../store";
 import Select from "../Select";
 
 export default function PortalSettings() {
   const router = useRouter();
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   const id = router.query.id;
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };

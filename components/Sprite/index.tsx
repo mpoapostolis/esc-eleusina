@@ -5,7 +5,7 @@ import { DoubleSide, Sprite as SpriteType } from "three";
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
-import { addItem, useInventory, useItem } from "../../lib/inventory";
+import { addItem, addReward, useInventory, useItem } from "../../lib/inventory";
 import useMutation from "../../Hooks/useMutation";
 
 export default function Sprite(props: Item) {
@@ -59,6 +59,10 @@ export default function Sprite(props: Item) {
       return x === insideBox[idx];
     })
     .every(Boolean);
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/itesm?scene=${store.scene}`,
+  ]);
 
   useEffect(() => {
     if (props.orderInsideTheBox && !props.replaceImg) {
@@ -68,6 +72,10 @@ export default function Sprite(props: Item) {
         })
         .every(Boolean);
       if (isSame && props.reward) {
+        addReward({
+          ...props.reward,
+          description: props.reward?.description,
+        });
         store.setReward({
           ...props.reward,
           description: props.reward?.description,

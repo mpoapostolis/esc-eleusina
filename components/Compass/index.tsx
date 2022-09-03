@@ -5,6 +5,8 @@ import styles from "./index.module.css";
 import clsx from "clsx";
 import { useStore } from "../../store";
 import { loadSound } from "../../utils";
+import useMutation from "../../Hooks/useMutation";
+import { addReward } from "../../lib/inventory";
 const win = loadSound("/sounds/win.wav");
 
 mapboxgl.accessToken =
@@ -139,11 +141,20 @@ export default function Compass() {
     west: false,
     south: false,
   });
+  const store = useStore();
+
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/itesm?scene=${store.scene}`,
+  ]);
 
   useEffect(() => {
     if (answers.north && answers.east && answers.west && answers.south) {
       store.setCompass(false);
-      if (store.reward) store.setReward(store.reward);
+      if (store.reward) {
+        _addReward(store.reward);
+        store.setReward(store.reward);
+      }
     }
   }, [answers]);
 
@@ -174,7 +185,6 @@ export default function Compass() {
     flyTo(p.coords);
     setIdx(idx);
   };
-  const store = useStore();
   return (
     <div
       className={clsx(

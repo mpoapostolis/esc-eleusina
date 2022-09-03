@@ -2,6 +2,7 @@
 
 import axios, { AxiosError } from "axios";
 import useSWR from "swr";
+import { Reward } from "../../pages";
 import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { ACHIEVEMENT, Item } from "./types";
@@ -40,4 +41,12 @@ export async function addItem(itemId?: string) {
 
 export async function useItem(itemId?: string) {
   if (itemId) await axios.put(`/api/inventory?itemId=${itemId}`);
+}
+
+export async function addReward(reward: Reward) {
+  await axios.post("/api/inventory?epic=true", {
+    ...reward,
+    scene: "intro",
+    isEpic: true,
+  });
 }

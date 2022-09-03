@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { getItems, getLibrary, updateItem } from "../../lib/items";
+import { useItems, useLibrary, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
@@ -14,8 +14,8 @@ export default function ItemSettings() {
   const router = useRouter();
   const id = `${router.query.id}`;
 
-  const { data: items } = getItems();
-  const { data: imgs } = getLibrary();
+  const { data: items } = useItems();
+  const { data: imgs } = useLibrary();
 
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };

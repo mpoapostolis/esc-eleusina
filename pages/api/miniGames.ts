@@ -7,17 +7,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const collection = await db.collection("scenes");
 
   if (req.method === "GET") {
-    const data = await db.collection("scenes").find({}).toArray();
+    const data = await collection.find({}).toArray();
     return res.status(200).json(data);
-  } else {
+  } else if (req.method === "POST") {
     try {
-      const yh = await collection.deleteOne({
+      const y = await collection.deleteOne({
         scene: req.body.scene,
       });
-      const id = await collection.insertOne({
-        _id: new ObjectID(),
-        ...req.body,
-      });
+
+      const id = await collection.insertOne(req.body);
 
       return res.status(201).json({ id: id.insertedId });
     } catch (error) {}

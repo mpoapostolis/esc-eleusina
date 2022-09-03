@@ -8,6 +8,7 @@ import {
 } from "../../lib/users/api";
 import { withSessionRoute } from "../../lib/withSession";
 
+// @ts-ignore
 export default withSessionRoute(loginRoute);
 
 async function loginRoute(req: NextApiRequest, res: NextApiResponse) {

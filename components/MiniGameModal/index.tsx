@@ -1,6 +1,9 @@
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { getMiniGames } from "../../lib/items";
+import { useEffect } from "react";
+import { useTimer } from "use-timer";
+import { useAchievements, useInventory } from "../../lib/inventory";
+import { useItems, useMiniGames } from "../../lib/items";
 import { useStore } from "../../store";
 
 const shadow = {
@@ -9,11 +12,27 @@ const shadow = {
 
 export default function MiniGameModal() {
   const store = useStore();
+  const { data: inventory } = useInventory();
+  const { data: miniGames } = useMiniGames();
+  const { data: achievements, isLoading } = useAchievements();
+
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
+
+  const doIHaveAchievement =
+    isLoading ||
+    achievements.map((e) => e._id).includes(`${currMinigames?.reward?._id}`);
+
+  useEffect(() => {
+    if (!currMinigames || doIHaveAchievement) return;
+    if (currMinigames?.requiredItems?.map((i) => invHas(i)).every(Boolean)) {
+      store.setStatus("MINIGAMEMODAL");
+    }
+  }, [miniGames, doIHaveAchievement, store.scene, inventory]);
 
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
 
-  const { data: miniGames } = getMiniGames();
   const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
   const accept = () => {
     switch (miniGame?.type) {

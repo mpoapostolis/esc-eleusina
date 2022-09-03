@@ -4,12 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Mesh, TextureLoader } from "three";
 import useMutation from "../../Hooks/useMutation";
 import { useInventory, useItem } from "../../lib/inventory";
-import { getItems } from "../../lib/items";
+import { useItems } from "../../lib/items";
 import { useStore } from "../../store";
 
 export function Hand() {
   const store = useStore();
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   const { data: inventory } = useInventory();
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const [_useItem] = useMutation(useItem, [

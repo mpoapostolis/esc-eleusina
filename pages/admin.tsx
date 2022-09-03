@@ -15,7 +15,7 @@ import { Euler, MathUtils, Mesh, Sprite as SpriteType, Vector3 } from "three";
 import AdminSettings from "../components/AdminSettings";
 import Library from "../components/AdminSettings/Library";
 import { useRouter } from "next/router";
-import { getItems, getLibrary, updateItem } from "../lib/items";
+import { useItems, useLibrary, updateItem } from "../lib/items";
 
 extend({ OrbitControls });
 
@@ -220,8 +220,8 @@ const Home: NextPage = () => {
     }
   }, []);
 
-  const { data: imgs } = getLibrary();
-  const { data: items } = getItems();
+  const { data: imgs } = useLibrary();
+  const { data: items } = useItems();
 
   const updateUrl = (_id: string) => {
     const q = router.query;

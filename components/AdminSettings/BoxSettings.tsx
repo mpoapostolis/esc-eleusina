@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { getItems, getLibrary, updateItem } from "../../lib/items";
+import { useItems, useLibrary, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 
 export default function BoxSettings() {
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   const [v, setV] = useState<string>();
   const [rewardDescription, setRewardDescription] = useState<string>();
   const router = useRouter();
@@ -18,7 +18,7 @@ export default function BoxSettings() {
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };
   const store = useStore();
-  const { data: imgs } = getLibrary();
+  const { data: imgs } = useLibrary();
 
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,

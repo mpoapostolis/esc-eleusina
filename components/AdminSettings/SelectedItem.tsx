@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Euler, Vector3 } from "three";
 import { Checkbox } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { deleteItem, getItems, updateItem } from "../../lib/items";
+import { deleteItem, useItems, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Range from "../Range";
@@ -28,7 +28,7 @@ const Component = (props: { type?: string }) => {
 };
 
 export default function SelectedItem() {
-  const { data: items } = getItems();
+  const { data: items } = useItems();
   const router = useRouter();
   const id = `${router.query.id}`;
   const idx = items.findIndex((e) => e._id === id);

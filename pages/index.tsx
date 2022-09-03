@@ -7,7 +7,7 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
-import { Item, loadKey, useStore } from "../store";
+import { Item, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
@@ -33,7 +33,7 @@ import { withSessionSsr } from "../lib/withSession";
 import { useAchievements, useInventory } from "../lib/inventory";
 import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
-import { getItems, getMiniGames } from "../lib/items";
+import { useItems, useMiniGames } from "../lib/items";
 
 export type MiniGame = {
   scene?: string;
@@ -276,21 +276,10 @@ const Home: NextPage = () => {
   }, [store.status]);
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const { data: inventory } = useInventory();
-  const { data: miniGames } = getMiniGames();
-  const { data: sceneItems } = getItems();
+  const { data: miniGames } = useMiniGames();
+  const { data: sceneItems } = useItems();
+  const { data: achievements, isLoading } = useAchievements();
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
-
-  useEffect(() => {
-    const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
-    if (!currMinigames) return;
-    const arr = (currMinigames.requiredItems ?? [])?.length > 0;
-    if (
-      !invHas(currMinigames.reward?._id) &&
-      arr &&
-      currMinigames.requiredItems?.map((i) => invHas(i)).every(Boolean)
-    )
-      store.setStatus("MINIGAMEMODAL");
-  }, [miniGames, store.scene, inventory]);
 
   const [fov, setFov] = useState(75);
 
@@ -308,15 +297,16 @@ const Home: NextPage = () => {
     if (store.scene !== user?.scene) store.setScene(user?.scene);
   }, [user?.scene]);
 
-  const orkos = inventory.find((e) => {
-    // @ts-ignore
-    return e?.author === "Όρκος Μύστη";
-  });
-  const { data: achievements } = useAchievements();
   const achIds = achievements.map((e) => e._id);
   const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
   const rewardScene = currMinigames?.scene || boxItem?.scene;
-
+  console.log(
+    sceneItems
+      .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
+      .filter(
+        () => !(rewardScene === store.scene && achIds.includes(`${rewardId}`))
+      )
+  );
   return (
     <div {...bind()}>
       <FadeOut />
@@ -334,6 +324,7 @@ const Home: NextPage = () => {
 
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
+              .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
               .filter(
                 () =>
                   !(
@@ -341,7 +332,7 @@ const Home: NextPage = () => {
                     achIds.includes(`${rewardId}`)
                   )
               )
-              .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
+
               .map((p) => {
                 if (p.type === "hint")
                   return p.hintType === "conditional" ? (

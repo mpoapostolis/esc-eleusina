@@ -18,7 +18,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
   });
 
   const inv = [...currInv, ...tmpInv];
-
   return (
     <div
       className={clsx(

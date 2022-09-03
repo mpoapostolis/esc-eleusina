@@ -22,7 +22,8 @@ export default function AncientText() {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
       // store.setEpicItem();
-      if (store.ancientText.item) _addItem(store.ancientText.item?._id);
+      if (store.ancientText.item && store.ancientText.item.collectable)
+        _addItem(store.ancientText.item?._id);
       store.setAncientText(undefined);
       store.setHint(undefined);
 

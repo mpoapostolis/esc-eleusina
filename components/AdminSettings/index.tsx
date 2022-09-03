@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
-import { addItem, getItems, getLibrary } from "../../lib/items";
+import { addItem, useItems, useLibrary } from "../../lib/items";
 import useMutation from "../../Hooks/useMutation";
 
 export function Checkbox(
@@ -69,8 +69,8 @@ const Component = (props: {
   const router = useRouter();
   const id = router.query.id;
   const type = router.query.type;
-  const { data: items } = getItems();
-  const { data: imgs } = getLibrary();
+  const { data: items } = useItems();
+  const { data: imgs } = useLibrary();
 
   const store = useStore();
   const [_addItem] = useMutation(addItem, [`/api/items?scene=${store.scene}`], {

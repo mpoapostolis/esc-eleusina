@@ -1,4 +1,5 @@
 import axios from "axios";
+import { mutate } from "swr";
 import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
@@ -280,11 +281,6 @@ export const useStore = create<Store>((set, get) => ({
 
   setReward: async (reward) => {
     win?.play();
-    await axios.post("/api/inventory?epic=true", {
-      ...reward,
-      scene: "intro",
-      isEpic: true,
-    });
     set((s) => {
       return {
         reward,

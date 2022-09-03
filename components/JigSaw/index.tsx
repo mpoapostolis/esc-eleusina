@@ -6,6 +6,8 @@ import { useStore } from "../../store";
 import { loadSound } from "../../utils";
 import MiniGameModal from "../MiniGameModal";
 import MiniGameWrapper from "../MiniGameWrapper";
+import useMutation from "../../Hooks/useMutation";
+import { addReward } from "../../lib/inventory";
 
 const paths = [
   "M11,14 v200 h48.589c37.5,0,26.367,13.463,26.367,13.463  c-3.14,4.743-4.979,10.422-4.979,16.537c0,16.569,13.432,30,30.001,30c16.569,0,29.999-13.431,29.999-30  c0-6.113-1.837-11.793-4.978-16.535c0,0-11.133-13.464,26.367-13.464H211v-47.917c0-37.5-13.464-26.367-13.464-26.367  c-4.742,3.14-10.422,4.978-16.535,4.978c-16.569,0-30-13.43-30-30c0-16.569,13.431-30,30-30c6.114,0,11.793,1.839,16.537,4.979  c0,0,13.463,11.133,13.463-26.367c0-0.235,0-0.46,0-0.694V14H11z",
@@ -150,14 +152,23 @@ export default function JigSaw() {
   const [position, setPosition] = useState<{ x: number; y: number }[]>(
     Array(16).fill(undefined)
   );
+  const store = useStore();
+
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/itesm?scene=${store.scene}`,
+  ]);
+
   useEffect(() => {
     const isDone = position.every((item) => item && item?.x === position[0]?.x);
     if (isDone) {
       store.setJigSaw(undefined);
-      if (store.reward) store.setReward(store.reward);
+      if (store.reward) {
+        _addReward(store.reward);
+        store.setReward(store.reward);
+      }
     }
   }, [position]);
-  const store = useStore();
 
   return (
     <MiniGameWrapper status="JIGSAW">

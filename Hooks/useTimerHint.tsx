@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { useTimer } from "use-timer";
-import { getMiniGames } from "../queries";
-import { getItems } from "../queries/items";
 import { useStore } from "../store";
 
 export default function useTimerHint(str: string, time: number = 0) {

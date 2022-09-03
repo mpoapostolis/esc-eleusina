@@ -5,7 +5,7 @@ import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { Item } from "./types";
 
-export function getItems() {
+export function useItems() {
   const store = useStore();
   const { data, error } = useSWR<Item[], AxiosError>(
     `/api/items?scene=${store.scene}`,
@@ -38,7 +38,7 @@ export const invalidateItems = () => {
   mutate(`/api/items`);
 };
 
-export function getLibrary() {
+export function useLibrary() {
   const { data, error } = useSWR<Img[], AxiosError>("/api/library", fetcher);
   mutate("/api/items");
 
@@ -49,7 +49,7 @@ export function getLibrary() {
   };
 }
 
-export function getMiniGames() {
+export function useMiniGames() {
   const { data, error } = useSWR<Item[], AxiosError>("/api/miniGames", fetcher);
   return {
     data: data ?? [],
