@@ -300,13 +300,7 @@ const Home: NextPage = () => {
   const achIds = achievements.map((e) => e._id);
   const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
   const rewardScene = currMinigames?.scene || boxItem?.scene;
-  console.log(
-    sceneItems
-      .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
-      .filter(
-        () => !(rewardScene === store.scene && achIds.includes(`${rewardId}`))
-      )
-  );
+
   return (
     <div {...bind()}>
       <FadeOut />

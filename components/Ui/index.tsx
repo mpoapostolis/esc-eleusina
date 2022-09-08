@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useInventory } from "../../lib/inventory";
 
 export default function Ui(props: { items: Item[]; time: number }) {
-  const sound = loadSound("/sounds/hint.wav");
+  const sound = loadSound("/sounds/01_click.wav");
   const store = useStore();
 
   const transform = { transform: "skewX(-20deg)" };

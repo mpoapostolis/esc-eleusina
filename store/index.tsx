@@ -196,7 +196,10 @@ export type Store = {
   setStatus: (s: Status) => void;
 };
 const dap = loadSound("/sounds/modal.wav");
-const hint = loadSound("/sounds/hint.wav");
+const guideLinesSound = loadSound("/sounds/02_instruction_box.wav");
+const literatureSound = loadSound("/sounds/03_main_text_box.wav");
+const hintSound = loadSound("/sounds/05_hint.wav");
+
 const win = loadSound("/sounds/win.wav");
 
 export const useStore = create<Store>((set, get) => ({
@@ -265,7 +268,7 @@ export const useStore = create<Store>((set, get) => ({
     });
   },
   setguideLinesVissible: (b: boolean) => {
-    dap?.play();
+    if (b) guideLinesSound?.play();
     set(() => ({
       status: b ? "GUIDELINES" : "RUNNING",
       guideLinesVissible: b,
@@ -291,7 +294,7 @@ export const useStore = create<Store>((set, get) => ({
 
   setIsHintVisible: (isHintVisible) =>
     set(() => {
-      hint.play();
+      if (isHintVisible) hintSound.play();
       return { isHintVisible };
     }),
   setLevel: (l: Level) => set(() => ({ level: l })),
@@ -301,7 +304,7 @@ export const useStore = create<Store>((set, get) => ({
     }),
   setAncientText: (ancientText?: AncientText) =>
     set(() => {
-      dap?.play();
+      if (ancientText) literatureSound?.play();
       return { status: ancientText ? "ANCIENT_TEXT" : "RUNNING", ancientText };
     }),
   inventoryNotf: [],
