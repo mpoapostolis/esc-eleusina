@@ -72,6 +72,28 @@ export async function logout(req: NextApiRequest, res: NextApiResponse) {
   return res.writeHead(302, { Location: "/login" }).end();
 }
 
+export async function reset(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+
+  await db.collection("users").updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: {
+        scene: "intro",
+      },
+    }
+  );
+  await db.collection("achievements").deleteMany({
+    userId: new ObjectId(id),
+  });
+  await db.collection("inventory").deleteMany({
+    userId: new ObjectId(id),
+  });
+
+  return res.writeHead(302, { Location: "/" }).end();
+}
+
 export async function updateUser(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
   const db = await myDb();

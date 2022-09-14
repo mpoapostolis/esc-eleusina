@@ -4,6 +4,7 @@ import {
   getUser,
   login,
   logout,
+  reset,
   updateUser,
 } from "../../lib/users/api";
 import { withSessionRoute } from "../../lib/withSession";
@@ -24,6 +25,9 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
         case "logout":
           return logout(req, res);
+
+        case "reset":
+          return reset(req, res);
 
         case "register":
           return createUser(req, res);

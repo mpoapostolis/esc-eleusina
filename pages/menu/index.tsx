@@ -362,6 +362,17 @@ const Menu: NextPage = () => {
             title="LOGOUT"
           />
         </form>
+        <form
+          className="w-full h-full"
+          action="/api/auth?type=reset"
+          method="POST"
+        >
+          <MenuItem
+            type="submit"
+            src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
+            title="RESET"
+          />
+        </form>
       </div>
     </div>
   );

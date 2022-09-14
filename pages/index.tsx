@@ -320,7 +320,6 @@ const Home: NextPage = () => {
       <Lexigram />
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
-      {/* <MiniGameModal /> */}
       <Reward />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
