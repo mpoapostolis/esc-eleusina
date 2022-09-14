@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MenuItem from "../../components/MenuItem";
 import Link from "next/link";
 import clsx from "clsx";
@@ -14,8 +14,6 @@ import {
   useStore,
 } from "../../store";
 import { useRouter } from "next/dist/client/router";
-import { loadSound } from "../../utils";
-const hint = loadSound("/sounds/hint.wav");
 
 export const ACHIEVEMENTS = ["kernos", "stone", "peiraias"];
 
@@ -50,7 +48,6 @@ function Register() {
   const [err, setErr] = useState<Err>({});
 
   const goBack = () => {
-    hint?.play();
     setErr({});
     store.setStatus("RUNNING");
   };
@@ -322,8 +319,11 @@ const Main = () => {
 
 const Menu: NextPage = () => {
   const store = useStore();
+  const ref = useRef<HTMLAudioElement>(null);
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-black bg-opacity-50">
+      <audio ref={ref} src={`/sounds/${store.sound ?? `01_click`}.wav`} />
+
       <div className="grid container  gap-y-3 w-full p-5">
         <img
           className="w-28 mx-auto h-28 mb-12 "

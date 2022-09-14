@@ -5,7 +5,6 @@ import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
 import { Reward } from "../pages";
 import { Img } from "../pages/admin";
-import { loadSound } from "../utils";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
 
@@ -147,7 +146,7 @@ export type Store = {
   ancientText?: AncientText;
   setHint: (s?: string) => void;
   tmpHint?: string;
-  setIsHintVisible: (b: boolean) => void;
+  setIsHintVisible: (b: boolean, s?: string) => void;
   setAncientText: (s?: AncientText) => void;
   level: Level;
   guideLinesVissible?: boolean;
@@ -169,7 +168,9 @@ export type Store = {
   scene: Scene;
   hand?: string;
   status: Status;
-
+  sound?: string | null;
+  setSound: (s?: string) => void;
+  soundId?: number;
   scale?: number | null;
   setScale: (e: number | null) => void;
 
@@ -195,13 +196,6 @@ export type Store = {
   setScene: (n: Scene) => void;
   setStatus: (s: Status) => void;
 };
-const dap = loadSound("/sounds/modal.wav");
-const guideLinesSound = loadSound("/sounds/02_instruction_box.wav");
-const literatureSound = loadSound("/sounds/03_main_text_box.wav");
-const hintSound = loadSound("/sounds/05_hint.wav");
-
-const win = loadSound("/sounds/win.wav");
-
 export const useStore = create<Store>((set, get) => ({
   account: {},
   status: "RUNNING",
@@ -222,6 +216,7 @@ export const useStore = create<Store>((set, get) => ({
       fadeOutImg: obj,
     })),
 
+  setSound: (sound) => set(() => ({ soundId: Math.random(), sound })),
   setScale: (scale) => set(() => ({ scale })),
   setRot: (rot) => set(() => ({ rot })),
   setStatus: (status) => set(() => ({ status })),
@@ -233,7 +228,6 @@ export const useStore = create<Store>((set, get) => ({
       },
     })),
   setJigSaw: (e, reward) => {
-    if (e) dap?.play();
     set(() => ({
       status: e ? "JIGSAW" : "RUNNING",
       jigSawUrl: e,
@@ -242,7 +236,6 @@ export const useStore = create<Store>((set, get) => ({
   },
 
   setCompass: (compass, reward?: Reward | null) => {
-    dap?.play();
     set(() => ({
       status: compass ? "COMPASS" : "RUNNING",
       compass,
@@ -252,7 +245,6 @@ export const useStore = create<Store>((set, get) => ({
 
   setLexigram: (lexigram?: string[], reward?: Reward | null) =>
     set(() => {
-      dap?.play();
       return {
         status: lexigram ? "LEXIGRAM" : "RUNNING",
         lexigram,
@@ -261,18 +253,21 @@ export const useStore = create<Store>((set, get) => ({
     }),
 
   setHand: (h?: string) => {
-    if (h) dap?.play();
     set((s) => {
+      s.setSound(`08_select_from_inventory`);
       const hand = s.hand === h ? undefined : h;
       return { hand };
     });
   },
   setguideLinesVissible: (b: boolean) => {
-    if (b) guideLinesSound?.play();
-    set(() => ({
-      status: b ? "GUIDELINES" : "RUNNING",
-      guideLinesVissible: b,
-    }));
+    console.log("setguideLinesVissible", b);
+    set((s) => {
+      if (b) s.setSound(`02_instruction_box`);
+      return {
+        status: b ? "GUIDELINES" : "RUNNING",
+        guideLinesVissible: b,
+      };
+    });
   },
 
   setSelectItem: (i: Item) => set(() => ({ selectItem: i })),
@@ -283,8 +278,8 @@ export const useStore = create<Store>((set, get) => ({
     })),
 
   setReward: async (reward) => {
-    win?.play();
     set((s) => {
+      s.setSound(`18_success`);
       return {
         reward,
         status: reward ? "REWARD" : "RUNNING",
@@ -292,20 +287,27 @@ export const useStore = create<Store>((set, get) => ({
     });
   },
 
-  setIsHintVisible: (isHintVisible) =>
-    set(() => {
-      if (isHintVisible) hintSound.play();
+  setIsHintVisible: (isHintVisible, sound) =>
+    set((s) => {
+      if (sound) s.setSound(sound);
+      else if (isHintVisible) s.setSound(`05_hint`);
       return { isHintVisible };
     }),
   setLevel: (l: Level) => set(() => ({ level: l })),
   setguideLines: (guideLines?: string) =>
     set(() => {
-      return { status: guideLines ? "GUIDELINES" : "RUNNING", guideLines };
+      return {
+        status: guideLines ? "GUIDELINES" : "RUNNING",
+        guideLines,
+      };
     }),
   setAncientText: (ancientText?: AncientText) =>
-    set(() => {
-      if (ancientText) literatureSound?.play();
-      return { status: ancientText ? "ANCIENT_TEXT" : "RUNNING", ancientText };
+    set((s) => {
+      if (ancientText?.text) s.setSound(`03_main_text_box`);
+      return {
+        status: ancientText ? "ANCIENT_TEXT" : "RUNNING",
+        ancientText,
+      };
     }),
   inventoryNotf: [],
   modal: undefined,

@@ -1,7 +1,7 @@
 // getVehicles with useSwr
 
 import axios, { AxiosError } from "axios";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { fetcher } from "../utils";
 import { User } from "./types";
 

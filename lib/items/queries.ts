@@ -5,10 +5,10 @@ import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { Item } from "./types";
 
-export function useItems() {
+export function useItems(scene?: string) {
   const store = useStore();
   const { data, error } = useSWR<Item[], AxiosError>(
-    `/api/items?scene=${store.scene}`,
+    `/api/items?scene=${scene ?? store.scene}`,
     fetcher
   );
   return {

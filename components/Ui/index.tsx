@@ -1,12 +1,12 @@
-import { loadSound } from "../../utils";
 import { Item, Scene, useStore } from "../../store";
 import clsx from "clsx";
 import Hint from "../Hint";
 import Link from "next/link";
-import { useInventory } from "../../lib/inventory";
+import { useAchievements, useInventory } from "../../lib/inventory";
+import { useMiniGames } from "../../lib/items";
+import { useEffect } from "react";
 
 export default function Ui(props: { items: Item[]; time: number }) {
-  const sound = loadSound("/sounds/01_click.wav");
   const store = useStore();
 
   const transform = { transform: "skewX(-20deg)" };
@@ -17,7 +17,46 @@ export default function Ui(props: { items: Item[]; time: number }) {
     src: "",
   });
 
+  const { data: miniGames } = useMiniGames();
+  const { data: achievements, isLoading } = useAchievements();
+  const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
+
+  const doIHaveAchievement =
+    isLoading ||
+    achievements.map((e) => e._id).includes(`${currMinigames?.reward?._id}`);
+
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+
+  const miniGameBnt =
+    !doIHaveAchievement &&
+    currMinigames?.requiredItems?.map((i) => invHas(i)).every(Boolean);
+
   const inv = [...currInv, ...tmpInv];
+
+  useEffect(() => {
+    if (miniGameBnt) store.setSound(`04_are_you_ready`);
+  }, [miniGameBnt]);
+
+  const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
+  const openMiniGame = () => {
+    switch (miniGame?.type) {
+      case "jigsaw":
+        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward);
+        break;
+
+      case "compass":
+        store.setCompass(true, miniGame.reward);
+        break;
+
+      case "lexigram":
+        store.setLexigram(miniGame?.lexigram?.split(","), miniGame.reward);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div
       className={clsx(
@@ -60,11 +99,26 @@ export default function Ui(props: { items: Item[]; time: number }) {
         <Hint />
       </div>
 
-      <div className={clsx("flex p-3 justify-end", {})}>
+      <div className={clsx("flex gap-x-4 p-3 justify-end", {})}>
+        {miniGameBnt && (
+          <button
+            onClick={() => {
+              openMiniGame();
+            }}
+            className=" border-dashed p-2 w-20 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
+          >
+            <img
+              src="https://s2.svgbox.net/materialui.svg?ic=games"
+              className="w-16"
+              alt=""
+            />
+          </button>
+        )}
+
         <Link href="/menu">
           <button
             onClick={() => {
-              sound.play();
+              store.setSound(`01_click`);
             }}
             className=" border-dashed rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
           >

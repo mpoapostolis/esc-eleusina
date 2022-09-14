@@ -300,6 +300,16 @@ const Home: NextPage = () => {
   const achIds = achievements.map((e) => e._id);
   const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
   const rewardScene = currMinigames?.scene || boxItem?.scene;
+  const ref = useRef<HTMLAudioElement>(null);
+
+  if (ref.current?.ended && store.sound) {
+  }
+
+  useEffect(() => {
+    if (!ref.current || !store.sound) return;
+    ref.current.currentTime = 0;
+    ref.current?.play();
+  }, [store.soundId]);
 
   return (
     <div {...bind()}>
@@ -310,7 +320,7 @@ const Home: NextPage = () => {
       <Lexigram />
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
-      <MiniGameModal />
+      {/* <MiniGameModal /> */}
       <Reward />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
@@ -376,6 +386,7 @@ const Home: NextPage = () => {
           </Suspense>
         </Canvas>
       </div>
+      {store.sound && <audio ref={ref} src={`/sounds/${store.sound}.wav`} />}
     </div>
   );
 };

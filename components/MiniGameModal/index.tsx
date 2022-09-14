@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useStore } from "../../store";
-import { loadSound } from "../../utils";
 
 const shadow = {
   WebkitTextStroke: "1px black",
@@ -15,7 +14,6 @@ export default function MiniGameModal() {
   const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
   const { data: achievements, isLoading } = useAchievements();
-  const rewardModal = loadSound("/sounds/04_are_you_ready.wav");
 
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
@@ -27,7 +25,6 @@ export default function MiniGameModal() {
   useEffect(() => {
     if (!currMinigames || doIHaveAchievement) return;
     if (currMinigames?.requiredItems?.map((i) => invHas(i)).every(Boolean)) {
-      rewardModal.play();
       store.setStatus("MINIGAMEMODAL");
     }
   }, [miniGames, doIHaveAchievement, store.scene, inventory]);

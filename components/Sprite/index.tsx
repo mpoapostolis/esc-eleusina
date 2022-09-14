@@ -1,6 +1,7 @@
 import { Item, useStore } from "../../store";
 import { useSpring, animated, config } from "@react-spring/three";
 import { DoubleSide, Sprite as SpriteType } from "three";
+import useSound from "use-sound";
 
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
@@ -109,10 +110,10 @@ export default function Sprite(props: Item) {
             setInsideBox((s) => [...s, str]);
             _useItem(store.hand);
             store.setHand(undefined);
-            store.setIsHintVisible(false);
+            store.setIsHintVisible(false, `09_add_to_target_OK`);
           } else {
             store.setHint(props.orderBoxError);
-            store.setIsHintVisible(true);
+            store.setIsHintVisible(true, `10_add_to_target_WRONG`);
           }
           return;
         }
@@ -126,7 +127,8 @@ export default function Sprite(props: Item) {
           store.setHint(
             "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς"
           );
-          store.setIsHintVisible(true);
+
+          store.setIsHintVisible(true, `07_add_to_inventory_WRONG`);
           return;
         }
 
@@ -146,7 +148,7 @@ export default function Sprite(props: Item) {
             store.setIsHintVisible(false);
           } else {
             store.setHint(props.onCollectFail);
-            store.setIsHintVisible(true);
+            store.setIsHintVisible(true, `07_add_to_inventory_WRONG`);
             return;
           }
         }
@@ -158,8 +160,10 @@ export default function Sprite(props: Item) {
               props.clickableWords &&
               props.clickableWords.length > 0
             )
-          )
+          ) {
+            store.setSound(`06_add_to_inventory_OK`);
             _addItem(props._id);
+          }
         }
         if (props.setHint) store.setHint(props.setHint);
 
@@ -177,7 +181,9 @@ export default function Sprite(props: Item) {
         }
         if (props.onClickOpenModal === "guidelines")
           store.setguideLinesVissible(true);
-        if (props.onCollectError) props.onCollectError();
+        if (props.onCollectError) {
+          props.onCollectError();
+        }
         if (props.onClick) props?.onClick(evt);
       }}
       scale={scale}

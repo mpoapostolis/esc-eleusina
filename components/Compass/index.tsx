@@ -4,10 +4,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import clsx from "clsx";
 import { useStore } from "../../store";
-import { loadSound } from "../../utils";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
-const win = loadSound("/sounds/win.wav");
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoibXBvYXBvc3RvbGlzYXBwIiwiYSI6ImNsMGt0NWEycTBwbWEzY205cmxjNjZuMjUifQ.PjvkTnV_Puw9hKmBQXVJBA";
