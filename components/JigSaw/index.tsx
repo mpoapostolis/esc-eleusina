@@ -59,7 +59,7 @@ function Piece(p: {
 
   useEffect(() => {
     const startFrom = (-p.idx % 4) - 2;
-    const pointsX = range(startFrom * 200, (7 - (p.idx % 4)) * 50, 15);
+    const pointsX = range(startFrom * 90, (7 - (p.idx % 4)) * 50, 15);
     const x = getRandom(pointsX);
     const y = Math.floor(p.idx / 4) * 50;
     api({

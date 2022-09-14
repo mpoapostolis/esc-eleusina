@@ -1,9 +1,8 @@
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { useTimer } from "use-timer";
 import { useAchievements, useInventory } from "../../lib/inventory";
-import { useItems, useMiniGames } from "../../lib/items";
+import { useMiniGames } from "../../lib/items";
 import { useStore } from "../../store";
 import { loadSound } from "../../utils";
 

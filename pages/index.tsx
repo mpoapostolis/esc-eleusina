@@ -337,7 +337,7 @@ const Home: NextPage = () => {
                 if (p.type === "guidelines")
                   return <GuideLineItem key={p._id} {...p} />;
               })}
-            {user && <Environment />}
+            {user ? <Environment /> : null}
             {sceneItems
               .filter((e) => !["hint", "guidelines"].includes(`${e.type}`))
               ?.map((p, _idx) => {
