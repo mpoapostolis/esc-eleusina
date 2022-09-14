@@ -198,7 +198,6 @@ function SceneSelect() {
           <h1 className="text-white text-2xl text-center">{l.label}</h1>
           <img
             onClick={() => {
-              hint?.play();
               store.setScene(l.key);
               store.setStatus("RUNNING");
             }}
@@ -225,7 +224,6 @@ function SceneSelect() {
             }
           )}
           onClick={() => {
-            hint?.play();
             setLevel(lvl);
           }}
         >

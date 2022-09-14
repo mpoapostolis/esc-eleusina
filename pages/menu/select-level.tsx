@@ -33,6 +33,7 @@ export default function Menu() {
             .filter((p) => p.type === "portal")
             .map((item) => (
               <img
+                key={item._id}
                 onClick={() => _updateUser({ scene: item.goToScene })}
                 role="button"
                 className="w-full"
