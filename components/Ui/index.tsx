@@ -99,22 +99,22 @@ export default function Ui(props: { items: Item[]; time: number }) {
         <Hint />
       </div>
 
+      {miniGameBnt && (
+        <button
+          onClick={() => {
+            openMiniGame();
+          }}
+          className=" border-dashed absolute right-4 top-[50%]  p-2 w-fit rounded-lg border border-black bg-black animate-pulse bg-opacity-100  cursor-pointer pointer-events-auto"
+        >
+          {/* <img
+            src="https://s2.svgbox.net/materialui.svg?ic=games"
+            className="w-16"
+            alt=""
+          /> */}
+          <span className="text-4xl font-bold ">Παίξε το παιχνίδι</span>
+        </button>
+      )}
       <div className={clsx("flex gap-x-4 p-3 justify-end", {})}>
-        {miniGameBnt && (
-          <button
-            onClick={() => {
-              openMiniGame();
-            }}
-            className=" border-dashed p-2 w-20 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
-          >
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=games"
-              className="w-16"
-              alt=""
-            />
-          </button>
-        )}
-
         <Link href="/menu">
           <button
             onClick={() => {
