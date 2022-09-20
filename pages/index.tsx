@@ -311,6 +311,8 @@ const Home: NextPage = () => {
     ref.current?.play();
   }, [store.soundId]);
 
+  console.log(achIds, rewardId);
+
   return (
     <div {...bind()}>
       <FadeOut />

@@ -19,7 +19,8 @@ export default function useMutation<Params = any, Result = any>(
         options?.onSuccess?.(v);
       })
       .then(() => {
-        if (keysToInvalidate) keysToInvalidate.forEach((s) => mutateSwr(s));
+        if (keysToInvalidate)
+          keysToInvalidate.forEach(async (s) => await mutateSwr(s));
       })
       .catch((error: AxiosError) => {
         setLoading(false);

@@ -154,7 +154,7 @@ export default function JigSaw() {
 
   const [_addReward] = useMutation(addReward, [
     `/api/inventory?epic=true`,
-    `/api/itesm?scene=${store.scene}`,
+    `/api/items?scene=${store.scene}`,
   ]);
 
   useEffect(() => {

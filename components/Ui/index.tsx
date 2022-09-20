@@ -11,27 +11,26 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
   const transform = { transform: "skewX(-20deg)" };
   const { data: inventory } = useInventory();
+  const { data: miniGames } = useMiniGames();
+  const { data: achievements, isLoading } = useAchievements();
+  // const ach = achievements?.filter((e) => e.scene === "intro");
   const currInv = inventory.filter((e) => !e.used);
-  const tmpInv: Item[] = Array(9 - currInv.length).fill({
+  const tmpInv: Item[] = Array(9 - achievements.length - currInv.length).fill({
     name: "",
     src: "",
   });
-
-  const { data: miniGames } = useMiniGames();
-  const { data: achievements, isLoading } = useAchievements();
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
-
   const doIHaveAchievement =
     isLoading ||
     achievements.map((e) => e._id).includes(`${currMinigames?.reward?._id}`);
 
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const _achievements = achievements.filter((e) => e.scene === store.scene);
 
   const miniGameBnt =
     !doIHaveAchievement &&
     currMinigames?.requiredItems?.map((i) => invHas(i)).every(Boolean);
-
-  const inv = [...currInv, ...tmpInv];
+  const inv = [...currInv, ..._achievements, ...tmpInv];
 
   useEffect(() => {
     if (miniGameBnt) store.setSound(`04_are_you_ready`);

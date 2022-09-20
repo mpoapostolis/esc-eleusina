@@ -10,7 +10,7 @@ export type ACHIEVEMENT = {
   name: string;
   isEpic: boolean;
   scene: string;
-};
+} & Item;
 
 export type Item = {
   _id?: string;

@@ -62,7 +62,7 @@ export default function Sprite(props: Item) {
     .every(Boolean);
   const [_addReward] = useMutation(addReward, [
     `/api/inventory?epic=true`,
-    `/api/itesm?scene=${store.scene}`,
+    `/api/items?scene=${store.scene}`,
   ]);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function Sprite(props: Item) {
         })
         .every(Boolean);
       if (isSame && props.reward) {
-        addReward({
+        _addReward({
           ...props.reward,
           description: props.reward?.description,
         });
