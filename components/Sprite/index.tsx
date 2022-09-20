@@ -6,10 +6,16 @@ import useSound from "use-sound";
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
-import { addItem, addReward, useInventory, useItem } from "../../lib/inventory";
+import {
+  addItem,
+  addReward,
+  useAchievements,
+  useInventory,
+  useItem,
+} from "../../lib/inventory";
 import useMutation from "../../Hooks/useMutation";
 
-export default function Sprite(props: Item) {
+export default function Sprite(props: Item & { doIHaveReward: boolean }) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const store = useStore();
   const [_addItem, { loading }] = useMutation(addItem, [
@@ -24,13 +30,16 @@ export default function Sprite(props: Item) {
     props?.replaceImg ?? "/images/empty.png"
   );
   const { data: inventory } = useInventory();
-  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
-
+  const { data: achievements } = useAchievements();
+  const invIds = inventory.map((e) => e._id);
+  const achIds = achievements.map((e) => e._id);
+  const invHas = (id?: string) => [...invIds, ...achIds].includes(id);
   const [_texture, setTexture] = useState(false);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
   const isUsed = store.usedItems[`${props._id}`];
+  if (props.requiredItems) console.log(props.name, props);
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
@@ -87,11 +96,13 @@ export default function Sprite(props: Item) {
 
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
+
   return (
     <animated.mesh
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
+        if (props.doIHaveReward) return;
         if (
           props.type === "box" &&
           store.hand &&

@@ -244,6 +244,8 @@ export default function SceneSettings(props: {
   };
   const [_addItem] = useMutation(addItem, [`/api/items?scene=${store.scene}`]);
 
+  const currBox = items.find((e) => e.type === "box");
+
   useEffect(() => {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
@@ -361,27 +363,46 @@ export default function SceneSettings(props: {
             type: v.value as any,
           });
         }}
-        value={miniGame.type}
+        value={currBox ? "box" : miniGame.type}
         label="Mini Game"
-        options={[undefined, "jigsaw", "lexigram", "cerberus", "compass"].map(
-          (o) => ({
-            label: o === undefined ? "-" : o,
-            value: o,
-          })
-        )}
+        options={[
+          undefined,
+          "jigsaw",
+          "lexigram",
+          "cerberus",
+          "compass",
+          "box",
+        ].map((o) => ({
+          label: o === undefined ? "-" : o,
+          value: o,
+        }))}
       />
       <Component {...miniGame} update={update} />
       <br />
       <Popover
+        disabled={miniGame.type === "box"}
         label={
           <>
             <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-              Reward
+              Reward{" "}
+              {miniGame.type === "box"
+                ? `(change reward from the box item)`
+                : ""}
             </label>
-            <div className="border p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center">
-              {miniGame.reward ? (
+            <div
+              className={clsx(
+                "border  p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center",
+                {
+                  "cursor-not-allowed": miniGame.type === "box",
+                }
+              )}
+            >
+              {miniGame.reward || currBox?.reward ? (
                 <div>
-                  <img src={miniGame.reward?.src} className="w-20 h-auto" />
+                  <img
+                    src={miniGame.reward?.src || currBox?.reward?.src}
+                    className="w-20 h-auto"
+                  />
                 </div>
               ) : (
                 "➕"
@@ -399,14 +420,18 @@ export default function SceneSettings(props: {
           }}
         />
       </Popover>
-      <div>
+      <div
+        className={clsx({
+          "cursor-not-allowed pointer-events-none": miniGame.type === "box",
+        })}
+      >
         <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
           Reward Msg
         </label>
         <textarea
           className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={miniGame.reward?.description}
+          value={currBox?.reward?.description ?? miniGame.reward?.description}
           onChange={(evt) => {
             const r = miniGame.reward;
             if (r)
@@ -464,7 +489,7 @@ export default function SceneSettings(props: {
               ...miniGame,
             })
             .then(() => {
-              mutate("/api/games");
+              mutate("/api/miniGames");
               setMiniGameLoad(false);
             });
         }}

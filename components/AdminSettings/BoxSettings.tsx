@@ -1,9 +1,16 @@
+import axios from "axios";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { mutate } from "swr";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { useItems, useLibrary, updateItem } from "../../lib/items";
+import {
+  useItems,
+  useLibrary,
+  updateItem,
+  useMiniGames,
+} from "../../lib/items";
 import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
@@ -23,6 +30,8 @@ export default function BoxSettings() {
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
   ]);
+  const { data: miniGames } = useMiniGames();
+  const [miniGame] = miniGames.filter((e) => e.scene === store.scene);
 
   useEffect(() => {
     if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
@@ -210,7 +219,7 @@ export default function BoxSettings() {
             onChange={(evt) => {
               setRewardDescription(evt.currentTarget.value);
             }}
-            onBlur={() => {
+            onBlur={async () => {
               _updateItem(id, {
                 reward: {
                   ...selectedItem.reward,

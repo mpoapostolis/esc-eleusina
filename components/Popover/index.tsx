@@ -13,6 +13,7 @@ type Props = {
   showClose?: boolean;
   maxHeight?: string;
   onClose?: (e?: any) => void;
+  disabled?: boolean;
 };
 
 export default function Popover(props: Props) {
@@ -36,7 +37,7 @@ export default function Popover(props: Props) {
       <div className={`cursor-pointer`} onClick={togglePopOver}>
         {props.label}
       </div>
-      {open && (
+      {open && !props.disabled && (
         <div
           onClick={() => !props.stayOpen && togglePopOver()}
           className={clsx(

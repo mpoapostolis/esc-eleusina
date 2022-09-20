@@ -13,9 +13,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
   const { data: achievements, isLoading } = useAchievements();
-  // const ach = achievements?.filter((e) => e.scene === "intro");
+  const ach = achievements?.filter((e) => e.scene === store.scene);
+
   const currInv = inventory.filter((e) => !e.used);
-  const tmpInv: Item[] = Array(9 - achievements.length - currInv.length).fill({
+  const tmpInv: Item[] = Array(9 - ach.length - currInv.length).fill({
     name: "",
     src: "",
   });
