@@ -37,13 +37,18 @@ export type Scene =
   | "karnagio";
 
 export const scenes = [
-  "intro",
   "arxaiologikos",
   "elaiourgeio",
   "eleusina",
-  "teletourgeio",
-  "pangal",
+  "intro",
   "karnagio",
+  "kikeonas",
+  "navagio_ext",
+  "navagio_int",
+  "ntamari",
+  "pangal",
+  "teletourgeio",
+  "xorafi",
 ];
 
 export type Account = {
