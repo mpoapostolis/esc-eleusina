@@ -200,7 +200,7 @@ export default function BoxSettings() {
           }
         >
           <AllImage
-            imgs={getOnlyItems(imgs)}
+            imgs={imgs}
             onClick={async (o) => {
               _updateItem(id, {
                 reward: o,

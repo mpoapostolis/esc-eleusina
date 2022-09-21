@@ -39,11 +39,6 @@ export default function SelectedItem() {
   const idx = items.findIndex((e) => e._id === id);
   const selectedItem = { ...items[idx] };
 
-  useEffect(() => {
-    const idx = items.findIndex((e) => e._id === id);
-    const selectedItem = { ...items[idx] };
-  }, [items]);
-
   const store = useStore();
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
@@ -63,6 +58,7 @@ export default function SelectedItem() {
   const rewards = miniGames
     .map((e) => ({ ...e.reward, scene: e.scene }))
     .filter((e) => e._id);
+
   const [_deleteItem] = useMutation(deleteItem, [
     `/api/items?scene=${store.scene}`,
   ]);

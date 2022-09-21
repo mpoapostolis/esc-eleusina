@@ -305,7 +305,7 @@ const Home: NextPage = () => {
   const doIHaveReward = achIds.includes(`${rewardId}`);
 
   return (
-    <div {...bind()}>
+    <div {...bind()} className="select-none">
       <FadeOut />
       {store.compass && <Compass />}
       <JigSaw />

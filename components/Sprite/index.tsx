@@ -39,7 +39,6 @@ export default function Sprite(props: Item & { doIHaveReward: boolean }) {
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
   const isUsed = store.usedItems[`${props._id}`];
-  if (props.requiredItems) console.log(props.name, props);
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
@@ -64,38 +63,25 @@ export default function Sprite(props: Item & { doIHaveReward: boolean }) {
     scale: isUsed || collected ? 0 : s,
     config: config.wobbly,
   });
-  const isSame = props.orderInsideTheBox
-    ?.map((x, idx) => {
-      return x === insideBox[idx];
-    })
-    .every(Boolean);
+
   const [_addReward] = useMutation(addReward, [
     `/api/inventory?epic=true`,
     `/api/items?scene=${store.scene}`,
   ]);
 
-  useEffect(() => {
-    if (props.orderInsideTheBox && !props.replaceImg) {
-      const isSame = props.orderInsideTheBox
-        .map((x, idx) => {
-          return x === insideBox[idx];
-        })
-        .every(Boolean);
-      if (isSame && props.reward) {
-        _addReward({
-          ...props.reward,
-          description: props.reward?.description,
-        });
-        store.setReward({
-          ...props.reward,
-          description: props.reward?.description,
-        });
-      }
-    }
-  }, [insideBox, props.orderInsideTheBox]);
-
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
+
+  const giveBoxReward = () => {
+    if (!props.reward) return;
+    store.setReward(props.reward);
+    _addReward({
+      ...props.reward,
+      description: props.reward?.description,
+    });
+    _useItem(store.hand);
+    store.setHand(undefined);
+  };
 
   return (
     <animated.mesh
@@ -103,30 +89,37 @@ export default function Sprite(props: Item & { doIHaveReward: boolean }) {
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
         if (props.doIHaveReward) return;
-        if (
-          props.type === "box" &&
-          store.hand &&
-          store.hand === props.requiredToolToReplace?._id &&
-          isSame
-        ) {
-          setTexture(true);
-          if (props.reward) store.setReward(props.reward);
-          _useItem(store.hand);
-          store.setHand(undefined);
-        }
+        if (props.type === "box") {
+          const isFull =
+            props.orderInsideTheBox?.length === insideBox.length &&
+            insideBox.length > 0;
 
-        if (props.type === "box" && props.orderInsideTheBox) {
-          if (store.hand === props.orderInsideTheBox[insideBox.length]) {
-            const str = store.hand;
+          const requiredItem = props.orderInsideTheBox?.at(insideBox.length);
+          const isLastItem =
+            props.orderInsideTheBox?.length === insideBox.length + 1;
+          const isHandRequired = requiredItem === store.hand;
+
+          if (isFull && props.requiredToolToReplace?._id === store.hand) {
+            return giveBoxReward();
+          }
+
+          if (
+            isHandRequired &&
+            isLastItem &&
+            props.reward &&
+            !props.requiredToolToReplace
+          ) {
+            return giveBoxReward();
+          } else if (isHandRequired) {
+            const str = store.hand ?? "";
             setInsideBox((s) => [...s, str]);
             _useItem(store.hand);
-            store.setHand(undefined);
             store.setIsHintVisible(false, `09_add_to_target_OK`);
+            store.setHand(undefined);
           } else {
             store.setHint(props.orderBoxError);
             store.setIsHintVisible(true, `10_add_to_target_WRONG`);
           }
-          return;
         }
 
         if (

@@ -278,7 +278,9 @@ export const useStore = create<Store>((set, get) => ({
 
   setReward: async (reward) => {
     set((s) => {
-      s.setSound(`18_success`);
+      setTimeout(() => {
+        if (reward?._id) s.setSound(`18_success`);
+      });
       return {
         reward,
         status: reward ? "REWARD" : "RUNNING",
