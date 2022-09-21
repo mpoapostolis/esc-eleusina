@@ -385,7 +385,7 @@ const Home: NextPage = () => {
           </Suspense>
         </Canvas>
       </div>
-      {store.sound && <audio ref={ref} src={`/sounds/${store.sound}.wav`} />}
+      {store.sound && <audio ref={ref} src={`/sounds/${store.sound}.mp3`} />}
     </div>
   );
 };
