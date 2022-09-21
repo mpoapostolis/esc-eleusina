@@ -246,6 +246,8 @@ export default function SceneSettings(props: {
 
   const currBox = items.find((e) => e.type === "box");
 
+  console.log(currBox);
+
   useEffect(() => {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);

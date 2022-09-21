@@ -220,6 +220,20 @@ export default function BoxSettings() {
               setRewardDescription(evt.currentTarget.value);
             }}
             onBlur={async () => {
+              await axios
+                .post("/api/miniGames", {
+                  ...miniGame,
+                  scene: store.scene,
+                  type: "box",
+                  reward: {
+                    ...selectedItem.reward,
+                    description: rewardDescription,
+                  },
+                })
+                .then(() => {
+                  mutate("/api/miniGames");
+                });
+
               _updateItem(id, {
                 reward: {
                   ...selectedItem.reward,
