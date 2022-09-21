@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -5,7 +6,7 @@ import MenuItem from "../../components/MenuItem";
 import useMutation from "../../Hooks/useMutation";
 import { useItems } from "../../lib/items";
 import { updateUser } from "../../lib/users";
-import { useStore } from "../../store";
+import { scenes, useStore } from "../../store";
 
 export default function Menu() {
   const store = useStore();
@@ -17,7 +18,7 @@ export default function Menu() {
       router.push("/");
     },
   });
-
+  console.log(scenes);
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-black bg-opacity-50">
       <audio ref={ref} src={`/sounds/${store.sound ?? `01_click`}.wav`} />
@@ -29,19 +30,19 @@ export default function Menu() {
           alt=""
         />
         <div className="grid gap-4 grid-cols-4">
-          {items
-            .filter((p) => p.type === "portal")
-            .map((item) => (
-              <img
-                key={item._id}
-                onClick={() => _updateUser({ scene: item.goToScene })}
-                role="button"
-                className="w-full"
-                id={item._id}
-                src={`/scenes/${item.goToScene}.jpg`}
-                alt=""
-              />
-            ))}
+          {scenes.map((item) => (
+            <img
+              key={item}
+              onClick={() => _updateUser({ scene: item })}
+              role="button"
+              className={clsx("w-full", {
+                // "opacity-20 cursor-not-allowed": true,
+              })}
+              id={item}
+              src={`/scenes/${item}.jpg`}
+              alt=""
+            />
+          ))}
         </div>
       </div>
     </div>
