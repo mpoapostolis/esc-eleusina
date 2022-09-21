@@ -260,6 +260,7 @@ export const useStore = create<Store>((set, get) => ({
     });
   },
   setguideLinesVissible: (b: boolean) => {
+    console.log("setguideLinesVissible", b);
     set((s) => {
       if (b) s.setSound(`02_instruction_box`);
       return {

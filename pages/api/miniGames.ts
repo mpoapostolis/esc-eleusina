@@ -1,5 +1,6 @@
 import myDb from "../../helpers/mongo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { ObjectID } from "bson";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const db = await myDb();
@@ -7,19 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "GET") {
     const data = await collection.find({}).toArray();
-    const boxGames = await db
-      .collection("items")
-      .find({ type: "box" })
-      .toArray();
-    return res.status(200).json([
-      ...data,
-      ...boxGames.map((b) => ({
-        type: "box",
-        reward: b.reward,
-        scene: b.scene,
-        _id: b._id,
-      })),
-    ]);
+    return res.status(200).json(data);
   } else if (req.method === "POST") {
     try {
       const y = await collection.deleteOne({

@@ -274,6 +274,8 @@ const Home: NextPage = () => {
     if (store.status === "RUNNING") timer.start();
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
   const { data: sceneItems } = useItems();
   const { data: achievements, isLoading } = useAchievements();
@@ -285,6 +287,9 @@ const Home: NextPage = () => {
     store.setHand(undefined);
   }, [store.scene]);
 
+  const [boxItem] = sceneItems.filter(
+    (e) => e.scene === store.scene && e.type === "box"
+  );
   const { data: user } = useUser();
 
   useEffect(() => {
@@ -293,16 +298,18 @@ const Home: NextPage = () => {
   }, [user?.scene]);
 
   const achIds = achievements.map((e) => e._id);
-  const rewardId = currMinigames?.reward?._id;
-  const rewardScene = currMinigames?.scene;
+  const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
+  const rewardScene = currMinigames?.scene || boxItem?.scene;
   const ref = useRef<HTMLAudioElement>(null);
+
+  if (ref.current?.ended && store.sound) {
+  }
 
   useEffect(() => {
     if (!ref.current || !store.sound) return;
     ref.current.currentTime = 0;
     ref.current?.play();
   }, [store.soundId]);
-  const doIHaveReward = achIds.includes(`${rewardId}`);
 
   return (
     <div {...bind()}>
@@ -359,14 +366,7 @@ const Home: NextPage = () => {
                     </Fragment>
                   );
 
-                if (p.src)
-                  return (
-                    <Sprite
-                      doIHaveReward={doIHaveReward}
-                      key={p._id}
-                      {...item}
-                    />
-                  );
+                if (p.src) return <Sprite key={p._id} {...item} />;
                 else return null;
               })}
             <Scenes />

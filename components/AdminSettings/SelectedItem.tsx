@@ -34,6 +34,7 @@ const Component = (props: { type?: string }) => {
 
 export default function SelectedItem() {
   const { data: items } = useItems();
+  const { data: miniGames } = useMiniGames();
   const router = useRouter();
   const id = `${router.query.id}`;
   const idx = items.findIndex((e) => e._id === id);
@@ -59,10 +60,6 @@ export default function SelectedItem() {
     _updateItem(id, { requiredItems: tmp });
   };
 
-  const { data: miniGames } = useMiniGames();
-  const rewards = miniGames
-    .map((e) => ({ ...e.reward, scene: e.scene }))
-    .filter((e) => e._id);
   const [_deleteItem] = useMutation(deleteItem, [
     `/api/items?scene=${store.scene}`,
   ]);
@@ -73,7 +70,6 @@ export default function SelectedItem() {
     e3[axis] = rot;
     store.setRot(e3);
   };
-
   const resetRots = () => {
     store.setScale(null);
     store.setRot(null);
@@ -276,36 +272,35 @@ export default function SelectedItem() {
             Required items in inventory to show {selectedItem.name}
           </label>
           <div className="grid gap-2 grid-cols-6">
-            {[
-              ...rewards,
-              ...items?.filter(
+            {items
+              ?.filter(
                 (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-              ),
-            ].map((i) => {
-              const item = i as Item;
-              return (
-                <div
-                  key={i._id}
-                  onClick={() => {
-                    updateRequired(`${i._id}`);
-                  }}
-                  className={clsx(
-                    "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
-                    {
-                      "bg-green-500": selectedItem.requiredItems?.includes(
-                        `${i._id}`
-                      ),
-                    }
-                  )}
-                >
-                  <img
-                    className="hover:scale-150 w-full p-2"
-                    src={item.src}
-                    alt=""
-                  />
-                </div>
-              );
-            })}
+              )
+              .map((i) => {
+                const item = i as Item;
+                return (
+                  <div
+                    key={i._id}
+                    onClick={() => {
+                      updateRequired(`${i._id}`);
+                    }}
+                    className={clsx(
+                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                      {
+                        "bg-green-500": selectedItem.requiredItems?.includes(
+                          `${i._id}`
+                        ),
+                      }
+                    )}
+                  >
+                    <img
+                      className="hover:scale-150 w-full p-2"
+                      src={item.src}
+                      alt=""
+                    />
+                  </div>
+                );
+              })}
           </div>
         </>
       )}
