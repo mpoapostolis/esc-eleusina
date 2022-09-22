@@ -1,6 +1,11 @@
 import { useGesture } from "@use-gesture/react";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useMutation from "../../Hooks/useMutation";
+import { addItem, useInventory } from "../../lib/inventory";
+import { getInventory } from "../../lib/inventory/api";
+import { useItems } from "../../lib/items";
+import { useStore } from "../../store";
 import MiniGameWrapper from "../MiniGameWrapper";
 
 const _words = [
@@ -51,14 +56,9 @@ const r = () => {
   return greekLetters[Math.floor(Math.random() * greekLetters.length)];
 };
 
-// generate random string
-const randomString = () => {
-  let s = "";
-  for (let i = 0; i < 10; i++) {
-    s += r();
-  }
-  return s;
-};
+const solved = words.map((e, i) =>
+  e.split("").map((e, j) => ({ letter: e.replace(/ /g, ""), id: `${i}${j}` }))
+);
 
 // array of 12 with r as values
 const randomLetters = () => Array.from({ length: 12 }, r);
@@ -75,10 +75,10 @@ const letters = [
   ["Ξ", "Ε", "Ν", "Α", r(), r(), r(), r(), r(), r(), r(), r()],
   [r(), "Σ", "Κ", "Ο", "Τ", "Ε", "Ι", "Ν", "Α", r(), r(), r()],
 ]
-  .map((e) =>
-    e.map((e) => ({
+  .map((e, i) =>
+    e.map((e, j) => ({
       letter: e,
-      id: randomString(),
+      id: `${i}${j}`,
     }))
   )
   .sort(() => Math.random() - 0.5);
@@ -87,14 +87,47 @@ type Word = { id: string; letter: string };
 export function WordSearch() {
   const [found, setFound] = useState<Word[][]>([]);
   const [selected, setSelected] = useState<Word[]>([]);
+  const store = useStore();
+
+  const { data: items } = useItems();
+  const { data: inventory } = useInventory();
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  useEffect(() => {
+    const giveItem = items.find((e) => e.hidden);
+    if (invHas(giveItem?._id)) {
+      setFound(solved);
+    }
+  }, [items, inventory]);
+
+  const giveItem = items.find((e) => e.hidden);
+
+  const [_addItem] = useMutation(addItem, [
+    `/api/inventory?scene=${store.scene}`,
+  ]);
+
+  const solve = () => {
+    if (!giveItem) return;
+    _addItem(giveItem._id);
+    store.setReward({
+      _id: "sss",
+      name: giveItem.name,
+      src: giveItem.src,
+      description: "Βρήκες την κρυμμένη λέξη!",
+    });
+  };
 
   const bind = useGesture({
     onMouseUp: (w) => {
       const word = selected.map((e) => e.letter).join("");
-      const found = words.find((e) => {
+      const foundWord = words.find((e) => {
         return e.replace(/ /g, "") === word;
       });
-      if (found) setFound((f) => [...f, selected]);
+      if (foundWord) {
+        if (found.length + 1 === words.length && giveItem) {
+          solve();
+        }
+        setFound((f) => [...f, selected]);
+      }
       setSelected([]);
       setDrag(false);
     },
@@ -114,7 +147,7 @@ export function WordSearch() {
   const [drag, setDrag] = useState(false);
   const foundWorlds = found.map((e) => e.map((e) => e.letter).join(""));
   return (
-    <MiniGameWrapper status="RUNNING">
+    <MiniGameWrapper status="WORDSEARCH">
       <div className="grid grid-cols-[1fr_0.2fr] p-10 h-full">
         <div
           onMouseLeave={() => {
@@ -159,6 +192,15 @@ export function WordSearch() {
                 {word}
               </li>
             ))}
+            <div
+              onClick={() => {
+                setFound(solved);
+                solve();
+              }}
+              className="btn"
+            >
+              solve
+            </div>
           </ul>
         </div>
       </div>

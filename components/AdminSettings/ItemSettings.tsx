@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Status } from "use-timer/lib/types";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
 import { useItems, useLibrary, updateItem } from "../../lib/items";
 import { Img } from "../../pages/admin";
-import { Item, useStore } from "../../store";
+import { Item, statusArr, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
@@ -330,6 +331,20 @@ export default function ItemSettings() {
           <br />
         </>
       )}
+      <div className="divider"></div>
+      <Select
+        onChange={(v) => {
+          _updateItem(id, {
+            setStatus: v.value as Status,
+          });
+        }}
+        value={selectedItem.setStatus}
+        label="onClick setStatus"
+        options={[undefined, ...statusArr].map((o) => ({
+          label: o === undefined ? "-" : o,
+          value: o === undefined ? null : o,
+        }))}
+      ></Select>
 
       {selectedItem.collectable && (
         <>

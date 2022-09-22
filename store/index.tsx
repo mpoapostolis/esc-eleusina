@@ -133,6 +133,7 @@ export type Status =
   | "MINIGAMEMODAL"
   | "JIGSAW"
   | "LEXIGRAM"
+  | "WORDSEARCH"
   | "COMPASS"
   | "REGISTER"
   | "SELECT_LEVEL"
@@ -143,6 +144,25 @@ export type Status =
   | "ANCIENT_TEXT"
   | "REWARD"
   | "RUNNING";
+
+export const statusArr = [
+  "MENU",
+  "LOGIN",
+  "MINIGAMEMODAL",
+  "JIGSAW",
+  "LEXIGRAM",
+  "WORDSEARCH",
+  "COMPASS",
+  "REGISTER",
+  "SELECT_LEVEL",
+  "ACHIEVEMENTS",
+  "MODAL",
+  "GUIDELINES",
+  "HISTORY",
+  "ANCIENT_TEXT",
+  "REWARD",
+  "RUNNING",
+];
 
 export type Store = {
   account: Account;
