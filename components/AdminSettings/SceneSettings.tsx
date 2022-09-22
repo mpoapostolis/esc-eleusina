@@ -25,6 +25,39 @@ const Component = (
   }
 ) => {
   switch (props.type) {
+    case "arxaiologikos":
+      return (
+        <>
+          <div key={props.type} className="mt-4">
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              jigsaw image url
+            </label>
+            <input
+              value={props.jigSawUrl}
+              onChange={(evt) => {
+                props.update({
+                  jigSawUrl: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+          </div>
+          <div key={props.type} className="mt-4">
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              onClick set clock seperated by comma (,)
+            </label>
+            <input
+              onChange={(evt) => {
+                props.update({
+                  clock: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+          </div>
+        </>
+      );
+
     case "jigsaw":
       return (
         <div key={props.type} className="mt-4">
@@ -43,16 +76,16 @@ const Component = (
         </div>
       );
 
-    case "lexigram":
+    case "clock":
       return (
         <div key={props.type} className="mt-4">
           <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-            onClick set Lexigram seperated by comma (,)
+            onClick set clock seperated by comma (,)
           </label>
           <input
             onChange={(evt) => {
               props.update({
-                lexigram: evt.currentTarget.value,
+                clock: evt.currentTarget.value,
               });
             }}
             className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
@@ -369,9 +402,9 @@ export default function SceneSettings(props: {
         label="Mini Game"
         options={[
           undefined,
+          "arxaiologikos",
           "jigsaw",
-          "lexigram",
-          "cerberus",
+          "clock",
           "compass",
           "box",
         ].map((o) => ({

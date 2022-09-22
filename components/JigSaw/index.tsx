@@ -3,7 +3,6 @@ import { animated, useSpring } from "@react-spring/web";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "../../store";
-import MiniGameModal from "../MiniGameModal";
 import MiniGameWrapper from "../MiniGameWrapper";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
@@ -160,8 +159,8 @@ export default function JigSaw() {
   useEffect(() => {
     const isDone = position.every((item) => item && item?.x === position[0]?.x);
     if (isDone) {
-      store.setJigSaw(undefined);
-      if (store.reward) {
+      if (store.nextGame) return store.setStatus(store.nextGame);
+      else if (store.reward) {
         _addReward(store.reward);
         store.setReward(store.reward);
       }

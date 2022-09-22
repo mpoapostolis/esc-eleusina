@@ -131,6 +131,7 @@ export type Status =
   | "MENU"
   | "LOGIN"
   | "MINIGAMEMODAL"
+  | "CLOCK"
   | "JIGSAW"
   | "LEXIGRAM"
   | "WORDSEARCH"
@@ -177,6 +178,7 @@ export type Store = {
   guideLinesVissible?: boolean;
   setguideLinesVissible: (e: boolean) => void;
   guideLines?: string;
+  nextGame?: Status;
   modal: Modal;
 
   jigSawUrl?: string;
@@ -204,7 +206,7 @@ export type Store = {
 
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
-  setJigSaw: (e?: string, reward?: Reward | null) => void;
+  setJigSaw: (e?: string, reward?: Reward | null, nextGame?: Status) => void;
 
   screenShot?: string;
   takeScreenShot: (src: string) => void;
@@ -252,8 +254,9 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  setJigSaw: (e, reward) => {
+  setJigSaw: (e, reward, nextGame) => {
     set(() => ({
+      nextGame,
       status: e ? "JIGSAW" : "RUNNING",
       jigSawUrl: e,
       reward,

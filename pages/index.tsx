@@ -276,7 +276,7 @@ const Home: NextPage = () => {
     if (store.status === "RUNNING") timer.start();
     if (store.status !== "RUNNING") timer.pause();
   }, [store.status]);
-  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+
   const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
   const { data: sceneItems } = useItems();
@@ -318,12 +318,12 @@ const Home: NextPage = () => {
       <FadeOut />
       {store.compass && <Compass />}
       <JigSaw />
+      <Clock />
       <GuideLines />
       <Lexigram />
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
       <Reward />
-      <Clock />
       <WordSearch />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
