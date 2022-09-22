@@ -35,6 +35,7 @@ import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
 import { useItems, useMiniGames } from "../lib/items";
 import { WordSearch } from "../components/WordSearch";
+import { Clock } from "../components/Clock";
 
 export type MiniGame = {
   scene?: string;
@@ -322,6 +323,7 @@ const Home: NextPage = () => {
       <AncientText />
       <Ui items={sceneItems} time={timer.time} />
       <Reward />
+      <Clock />
       <WordSearch />
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
