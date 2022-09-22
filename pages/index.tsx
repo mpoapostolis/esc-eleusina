@@ -368,7 +368,7 @@ const Home: NextPage = () => {
                     </Fragment>
                   );
 
-                if (p.src) return <Sprite key={p._id} {...item} />;
+                if (p.src && !p.hidden) return <Sprite key={p._id} {...item} />;
                 else return null;
               })}
             <Scenes />

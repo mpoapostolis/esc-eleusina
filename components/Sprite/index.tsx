@@ -1,7 +1,6 @@
 import { Item, useStore } from "../../store";
 import { useSpring, animated, config } from "@react-spring/three";
 import { DoubleSide, Sprite as SpriteType } from "three";
-import useSound from "use-sound";
 
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
@@ -80,6 +79,7 @@ export default function Sprite(props: Item) {
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={(evt) => {
+        if (props.setStatus) store.setStatus(props.setStatus);
         if (props.doIHaveReward) return;
         if (props.type === "box") {
           const isFull =
@@ -134,7 +134,13 @@ export default function Sprite(props: Item) {
           store.hand === props.requiredToolToReplace?._id
         ) {
           setTexture(true);
-          if (props.reward) store.setReward(props.reward);
+          if (props.reward) {
+            _addReward({
+              ...props.reward,
+              description: props.reward?.description,
+            });
+            store.setReward(props.reward);
+          }
           _useItem(store.hand);
           store.setHand(undefined);
         }

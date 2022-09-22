@@ -217,6 +217,17 @@ export default function SelectedItem() {
                 }}
                 checked={selectedItem.selectable}
               />
+              <div className="my-1" />
+
+              <Checkbox
+                label="Hidden"
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    hidden: !selectedItem.hidden,
+                  });
+                }}
+                checked={selectedItem.hidden}
+              />
             </>
           )}
 
