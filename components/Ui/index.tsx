@@ -44,6 +44,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
         store.setJigSaw(miniGame.jigSawUrl, miniGame.reward);
         break;
 
+      case "arxaiologikos":
+        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward, "CLOCK");
+        break;
+
       case "compass":
         store.setCompass(true, miniGame.reward);
         break;
