@@ -81,7 +81,7 @@ export async function getAchievements(
       userId: new ObjectId(id),
     })
     .toArray();
-  res.status(200).json(inv);
+  res.status(200).json(inv.map((e) => ({ ...e, _id: e.rewardId })));
 }
 
 export async function addAchievements(

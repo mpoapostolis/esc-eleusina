@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
-import items from "../../pages/api/items";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
