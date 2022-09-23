@@ -10,6 +10,7 @@ import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
 import { addItem, useItems, useLibrary } from "../../lib/items";
 import useMutation from "../../Hooks/useMutation";
+import { Reward } from "../../pages";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -33,7 +34,7 @@ export function Checkbox(
 }
 
 export function AllImage(props: {
-  imgs?: (Item | Img)[] | undefined;
+  imgs?: (Item | Img | Reward)[] | undefined;
   onClick: (e?: Item | Img | null) => void;
 }) {
   return (

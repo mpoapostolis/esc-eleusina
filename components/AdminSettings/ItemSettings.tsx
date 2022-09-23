@@ -3,7 +3,13 @@ import { useEffect, useState } from "react";
 import { Status } from "use-timer/lib/types";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { useItems, useLibrary, updateItem } from "../../lib/items";
+import {
+  useItems,
+  useLibrary,
+  updateItem,
+  useMiniGames,
+} from "../../lib/items";
+import { Reward } from "../../pages";
 import { Img } from "../../pages/admin";
 import { Item, statusArr, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
@@ -19,8 +25,10 @@ export default function ItemSettings() {
   const { data: imgs } = useLibrary();
 
   const idx = items.findIndex((e) => e._id === id);
+  const { data: miniGames } = useMiniGames();
   const selectedItem = { ...items[idx] };
-  const sceneItems = items.filter((item) => store?.scene === item.scene);
+  const rewards = miniGames.map((e) => e.reward).filter(Boolean) as Reward[];
+  const sceneItems = [...items, ...rewards];
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
   ]);

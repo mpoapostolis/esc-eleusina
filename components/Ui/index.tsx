@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
+import items from "../../pages/api/items";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
@@ -152,12 +153,12 @@ export default function Ui(props: { items: Item[]; time: number }) {
         </div>
 
         <div className="border-2 p-2 rounded-2xl  border-gray-800  border-dashed">
-          <div className="grid rounded-xl  pointer-events-auto grid-cols-3">
+          <div className="grid rounded-xl   pointer-events-auto grid-cols-3">
             {inv.map((item, i) => (
               <div
                 key={i}
                 onClick={() => {
-                  if (item?.selectable) store.setHand(item._id);
+                  if (item?.selectable || item?.isEpic) store.setHand(item._id);
                   if (item?.action) {
                     item?.action();
                   }
@@ -186,7 +187,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   {
                     "bg-green-900 ": store.hand && store.hand === item?._id,
                     "cursor-pointer":
+                      item.isEpic ||
                       item.setHint ||
+                      item.setHint ||
+                      item.ancientText ||
                       item.setGuidelines ||
                       item.selectable ||
                       item?.action,
