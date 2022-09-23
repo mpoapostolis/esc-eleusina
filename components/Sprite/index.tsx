@@ -5,8 +5,14 @@ import { DoubleSide, Sprite as SpriteType } from "three";
 import { useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
-import { addItem, addReward, useInventory, useItem } from "../../lib/inventory";
+import {
+  addItem,
+  addReward,
+  useInventory,
+  updateInv,
+} from "../../lib/inventory";
 import useMutation from "../../Hooks/useMutation";
+import { updateItem } from "../../lib/items";
 
 export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
@@ -14,7 +20,7 @@ export default function Sprite(props: Item) {
   const [_addItem, { loading }] = useMutation(addItem, [
     `/api/inventory?scene=${store.scene}`,
   ]);
-  const [_useItem] = useMutation(useItem, [
+  const [_updateInv] = useMutation<string | any>(updateInv, [
     `/api/inventory?scene=${store.scene}`,
   ]);
 
@@ -22,10 +28,11 @@ export default function Sprite(props: Item) {
     THREE.TextureLoader,
     props?.replaceImg ?? "/images/empty.png"
   );
+
   const { data: inventory } = useInventory();
+
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
 
-  const [_texture, setTexture] = useState(false);
   const ref = useRef<SpriteType>();
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
@@ -70,9 +77,13 @@ export default function Sprite(props: Item) {
       ...props.reward,
       description: props.reward?.description,
     });
-    _useItem(store.hand);
+    _updateInv(store.hand, { used: true });
     store.setHand(undefined);
   };
+
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
 
   return (
     <animated.mesh
@@ -105,7 +116,7 @@ export default function Sprite(props: Item) {
           } else if (isHandRequired) {
             const str = store.hand ?? "";
             setInsideBox((s) => [...s, str]);
-            _useItem(store.hand);
+            _updateInv(store.hand, { used: true });
             store.setIsHintVisible(false, `09_add_to_target_OK`);
             store.setHand(undefined);
           } else {
@@ -133,7 +144,15 @@ export default function Sprite(props: Item) {
           store.hand &&
           store.hand === props.requiredToolToReplace?._id
         ) {
-          setTexture(true);
+          const { replaced = [] } = props;
+          const r = [...replaced, props.id];
+          _updateItem(props._id, {
+            replaced: Array.from(new Set(r)),
+          });
+          _updateInv(`${props._id}`, {
+            used: true,
+          });
+
           if (props.reward) {
             _addReward({
               ...props.reward,
@@ -141,7 +160,7 @@ export default function Sprite(props: Item) {
             });
             store.setReward(props.reward);
           }
-          _useItem(store.hand);
+
           store.setHand(undefined);
         }
 
@@ -196,7 +215,7 @@ export default function Sprite(props: Item) {
         transparent
         side={DoubleSide}
         attach="material"
-        map={_texture ? texture1 : texture}
+        map={props.replaced?.includes(props.id) ? texture1 : texture}
       />
     </animated.mesh>
   );

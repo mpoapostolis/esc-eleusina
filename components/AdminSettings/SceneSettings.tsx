@@ -280,8 +280,6 @@ export default function SceneSettings(props: {
 
   const currBox = items.find((e) => e.type === "box");
 
-  console.log(currBox);
-
   useEffect(() => {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
     if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
@@ -403,6 +401,7 @@ export default function SceneSettings(props: {
         label="Mini Game"
         options={[
           undefined,
+          "collect",
           "arxaiologikos",
           "jigsaw",
           "clock",

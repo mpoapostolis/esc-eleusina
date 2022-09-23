@@ -54,7 +54,7 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json(inv);
 }
 
-export async function getItems(req: NextApiRequest, res: NextApiResponse) {
+export async function updateInv(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
   const db = await myDb();
   const inv = await db.collection("inventory").updateOne(
@@ -63,9 +63,7 @@ export async function getItems(req: NextApiRequest, res: NextApiResponse) {
       itemId: new ObjectId(`${req.query.itemId}`),
     },
     {
-      $set: {
-        used: true,
-      },
+      $set: req.body,
     }
   );
   res.status(200).json(inv);

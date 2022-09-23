@@ -18,7 +18,6 @@ export default function Menu() {
       router.push("/");
     },
   });
-  console.log(scenes);
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-black bg-opacity-50">
       <audio ref={ref} src={`/sounds/${store.sound ?? `01_click`}.wav`} />

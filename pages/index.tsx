@@ -251,7 +251,7 @@ function Loader(props: { src?: string }) {
   return null;
 }
 
-const Home: NextPage = () => {
+const Home: NextPage<{ id: string }> = (props) => {
   const store = useStore();
 
   const bind = useGesture({
@@ -303,9 +303,6 @@ const Home: NextPage = () => {
   const rewardId = currMinigames?.reward?._id || boxItem?.reward?._id;
   const rewardScene = currMinigames?.scene || boxItem?.scene;
   const ref = useRef<HTMLAudioElement>(null);
-
-  if (ref.current?.ended && store.sound) {
-  }
 
   useEffect(() => {
     if (!ref.current || !store.sound) return;
@@ -370,7 +367,8 @@ const Home: NextPage = () => {
                     </Fragment>
                   );
 
-                if (p.src && !p.hidden) return <Sprite key={p._id} {...item} />;
+                if (p.src && !p.hidden)
+                  return <Sprite id={props?.id} key={p._id} {...item} />;
                 else return null;
               })}
             <Scenes />
@@ -409,7 +407,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
       };
     else
       return {
-        props: {},
+        props: { ...user },
       };
   }
 );

@@ -39,8 +39,8 @@ export async function addItem(itemId?: string) {
     });
 }
 
-export async function useItem(itemId?: string) {
-  if (itemId) await axios.put(`/api/inventory?itemId=${itemId}`);
+export async function updateInv(itemId: string, payload: Record<string, any>) {
+  if (itemId) await axios.put(`/api/inventory?itemId=${itemId}`, payload);
 }
 
 export async function addReward(reward: Reward) {

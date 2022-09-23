@@ -4,7 +4,7 @@ import {
   addItem,
   getAchievements,
   getInventory,
-  getItems,
+  updateInv,
 } from "../../lib/inventory/api";
 import { withSessionRoute } from "../../lib/withSession";
 
@@ -28,7 +28,7 @@ async function invRoute(req: NextApiRequest, res: NextApiResponse) {
       return getInventory(req, res);
 
     case "PUT":
-      return getItems(req, res);
+      return updateInv(req, res);
     case "POST":
       return addItem(req, res);
     default:
