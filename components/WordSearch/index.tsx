@@ -159,8 +159,9 @@ export function WordSearch() {
           className="grid grid-cols-12 "
         >
           {letters.map((word) =>
-            word.map((letter) => (
+            word.map((letter, idx) => (
               <div
+                key={idx}
                 {...bind(letter)}
                 className={clsx(
                   "border items-center justify-center text-2xl font-bold w-full h-full flex",
@@ -183,8 +184,9 @@ export function WordSearch() {
           <div className="divider-horizontal divider h-full"></div>
 
           <ul className=" mx-auto list-disc">
-            {words.map((word) => (
+            {words.map((word, idx) => (
               <li
+                key={idx}
                 className={clsx("whitespace-nowrap list-item font-bold", {
                   "line-through": foundWorlds.includes(word.replace(/ /g, "")),
                 })}
