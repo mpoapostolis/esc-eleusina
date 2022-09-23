@@ -67,6 +67,10 @@ export default function Sprite(props: Item) {
     `/api/items?scene=${store.scene}`,
   ]);
 
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
 
@@ -80,10 +84,6 @@ export default function Sprite(props: Item) {
     _updateInv(store.hand, { used: true });
     store.setHand(undefined);
   };
-
-  const [_updateItem] = useMutation(updateItem, [
-    `/api/items?scene=${store.scene}`,
-  ]);
 
   return (
     <animated.mesh
