@@ -91,6 +91,15 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     userId: new ObjectId(id),
   });
 
+  await db.collection("items").updateMany(
+    {},
+    {
+      $set: {
+        replaced: [],
+      },
+    }
+  );
+
   return res.writeHead(302, { Location: "/" }).end();
 }
 
