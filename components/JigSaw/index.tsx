@@ -199,6 +199,18 @@ export default function JigSaw() {
           />
         ))}
       </div>
+      <div
+        onClick={() => {
+          if (store.nextGame) return store.setStatus(store.nextGame);
+          else if (store.reward) {
+            _addReward(store.reward);
+            store.setReward(store.reward);
+          }
+        }}
+        className="btn"
+      >
+        solve
+      </div>
     </MiniGameWrapper>
   );
 }

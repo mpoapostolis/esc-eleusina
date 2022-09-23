@@ -3,6 +3,7 @@
 import axios, { AxiosError } from "axios";
 import useSWR from "swr";
 import { Reward } from "../../pages";
+import Id from "../../pages/api/items/[id]";
 import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { ACHIEVEMENT, Item } from "./types";
@@ -44,8 +45,10 @@ export async function updateInv(itemId: string, payload: Record<string, any>) {
 }
 
 export async function addReward(reward: Reward) {
+  const { _id, ...rest } = reward;
   await axios.post("/api/inventory?epic=true", {
-    ...reward,
+    ...rest,
+    rewardId: _id,
     scene: "intro",
     isEpic: true,
   });
