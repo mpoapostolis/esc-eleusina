@@ -310,6 +310,11 @@ const Home: NextPage<{ id: string }> = (props) => {
     ref.current?.play();
   }, [store.soundId]);
 
+  useEffect(() => {
+    if (store.scene === "intro")
+      console.log(sceneItems.filter((e) => e.replaced.includes(props.id)));
+  }, [sceneItems, store.scene, props.id]);
+
   return (
     <div {...bind()} className="select-none">
       <FadeOut />
