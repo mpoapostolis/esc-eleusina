@@ -1,25 +1,46 @@
 import { useGesture } from "@use-gesture/react";
 import clsx from "clsx";
 import { useState } from "react";
+import useMutation from "../../Hooks/useMutation";
+import { addReward } from "../../lib/inventory";
+import { useMiniGames } from "../../lib/items";
+import { useStore } from "../../store";
 import MiniGameWrapper from "../MiniGameWrapper";
 
 export function Clock() {
-  const words = ["Ena", "duo", "treia"]?.map((s) =>
+  const { data: miniGames = [] } = useMiniGames();
+  const miniGame = miniGames?.find((e) => e.type === "arxaiologikos");
+
+  const clock = miniGame?.clock?.split(",") ?? [];
+
+  const words = clock?.map((s) =>
     s
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toUpperCase()
   ) ?? [""];
-  const maxWord = words.reduce((a, b) => (a.length > b.length ? a : b));
+  const maxWord = words?.reduce((a, b) => (a.length > b.length ? a : b), "");
   const emptyArr = Array.from({ length: maxWord.length }, () => " ");
-  const allCh = words.join("").split("");
+  const allCh = words?.join("").split("");
   const [found, setFound] = useState<string[]>([]);
 
   const [selected, setSelected] = useState<string[]>([]);
+  const store = useStore();
   const [drag, setDrag] = useState(false);
 
   const uniqCh = Array.from(new Set(allCh));
   const angle = 360 / uniqCh.length;
+
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/items?scene=${store.scene}`,
+  ]);
+
+  const solve = () => {
+    if (!miniGame?.reward) return;
+    store.setReward(miniGame?.reward);
+    _addReward(miniGame?.reward);
+  };
 
   const bind = useGesture({
     onMouseUp: () => {
@@ -32,7 +53,13 @@ export function Clock() {
       const [l] = args;
       const word = [...selected, l].join("");
       if (words.includes(word)) {
+        if (found.length + 1 === words.length) {
+          solve();
+        }
+
+        store.setSound("13_word_select");
         setFound((f) => [...f, word]);
+        setDrag(false);
       }
 
       setSelected((s) => [...s, l]);
