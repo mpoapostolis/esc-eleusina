@@ -48,12 +48,15 @@ export function Clock() {
     setDrag(false);
   };
   return (
-    <MiniGameWrapper status="RUNNING">
+    <MiniGameWrapper status="CLOCK">
       <div onMouseUp={reset} className="grid grid-cols-[1fr_0.2fr] p-10 h-full">
         <div className="flex flex-col justify-center items-center w-full h-full">
           <div className=" gap-x-2 flex">
             {emptyArr.map((_, i) => (
-              <div className="bg-base-300 text-5xl flex items-center justify-center w-20 h-20 font-bold ">
+              <div
+                key={i}
+                className="bg-base-300 text-5xl flex items-center justify-center w-20 h-20 font-bold "
+              >
                 {selected[i] ?? ""}
               </div>
             ))}
@@ -74,6 +77,7 @@ export function Clock() {
               };
               return (
                 <button
+                  key={idx}
                   {...bind(ch)}
                   style={style}
                   className={clsx(
@@ -94,8 +98,9 @@ export function Clock() {
           <div className="divider-horizontal divider h-full"></div>
 
           <ul className=" mx-auto list-disc">
-            {words.map((word) => (
+            {words.map((word, idx) => (
               <li
+                key={idx}
                 className={clsx("whitespace-nowrap list-item font-bold", {
                   "line-through": found.includes(word.replace(/ /g, "")),
                 })}
