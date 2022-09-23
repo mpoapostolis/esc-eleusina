@@ -15,6 +15,7 @@ export type ACHIEVEMENT = {
 export type Item = {
   _id?: string;
   imgId: string;
+  clock?: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
   hintType?: HintType;

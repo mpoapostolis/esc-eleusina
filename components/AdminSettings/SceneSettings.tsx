@@ -47,6 +47,7 @@ const Component = (
               onClick set clock seperated by comma (,)
             </label>
             <input
+              value={props.clock}
               onChange={(evt) => {
                 props.update({
                   clock: evt.currentTarget.value,
