@@ -1,5 +1,7 @@
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { mutate } from "swr";
 import { Status } from "use-timer/lib/types";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
@@ -81,6 +83,8 @@ export default function ItemSettings() {
       onCollectFail,
     });
   }, [items, idx]);
+
+  const [miniGame] = miniGames.filter((e) => e.scene === store.scene);
 
   const setS = (y: Partial<Item>) => $S((s) => ({ ...s, ...y }));
 
@@ -307,6 +311,20 @@ export default function ItemSettings() {
             <AllImage
               imgs={getOnlyItems(imgs)}
               onClick={async (o) => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: {
+                      ...selectedItem.reward,
+                      description: s.description,
+                    },
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
                 _updateItem(id, {
                   reward: o,
                 });
@@ -327,7 +345,21 @@ export default function ItemSettings() {
                   description: evt.currentTarget.value,
                 });
               }}
-              onBlur={() => {
+              onBlur={async () => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: {
+                      ...selectedItem.reward,
+                      description: s.description,
+                    },
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
                 _updateItem(id, {
                   reward: {
                     ...selectedItem.reward,
