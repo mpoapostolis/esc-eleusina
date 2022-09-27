@@ -64,6 +64,7 @@ export default function ItemSettings() {
       collectableIfHandHas,
       onCollectFail,
     } = selectedItem;
+    if (idx < 0) return;
     setS({
       name,
       reward,

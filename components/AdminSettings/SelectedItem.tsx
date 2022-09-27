@@ -12,6 +12,7 @@ import {
   updateItem,
   useMiniGames,
 } from "../../lib/items";
+import { Reward } from "../../pages";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Range from "../Range";
@@ -70,11 +71,11 @@ export default function SelectedItem() {
     store.setRot(null);
   };
 
+  const rewards = miniGames.map((e) => e.reward).filter(Boolean);
   useEffect(() => {
     const rot = selectedItem.rotation;
     if (rot) store.setRot(rot);
   }, []);
-
   return (
     <>
       <div className="flex">
@@ -132,7 +133,7 @@ export default function SelectedItem() {
             step={0.1}
             onPointerUp={(e) => {
               _updateItem(id, {
-                rotation: store.rot,
+                scale: store.scale,
               });
             }}
             onChange={(evt) => {
@@ -278,23 +279,26 @@ export default function SelectedItem() {
             Required items in inventory to show {selectedItem.name}
           </label>
           <div className="grid gap-2 grid-cols-6">
-            {items
-              ?.filter(
+            {[
+              ...items?.filter(
                 (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-              )
+              ),
+              ...rewards,
+            ]
+              .filter((e) => Boolean(e))
               .map((i) => {
-                const item = i as Item;
+                const item = i as Item | Reward;
                 return (
                   <div
-                    key={i._id}
+                    key={item._id}
                     onClick={() => {
-                      updateRequired(`${i._id}`);
+                      updateRequired(`${item._id}`);
                     }}
                     className={clsx(
                       "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
                       {
                         "bg-green-500": selectedItem.requiredItems?.includes(
-                          `${i._id}`
+                          `${item._id}`
                         ),
                       }
                     )}
