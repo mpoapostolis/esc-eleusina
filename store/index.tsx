@@ -28,13 +28,18 @@ export type Level =
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
 export type Scene =
-  | "intro"
   | "arxaiologikos"
   | "elaiourgeio"
   | "eleusina"
-  | "teletourgeio"
+  | "intro"
+  | "karnagio"
+  | "kikeonas"
+  | "navagio_ext"
+  | "navagio_int"
+  | "ntamari"
   | "pangal"
-  | "karnagio";
+  | "teletourgeio"
+  | "xorafi";
 
 export const scenes = [
   "arxaiologikos",
