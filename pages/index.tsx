@@ -30,12 +30,13 @@ import { motion } from "framer-motion";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
 import { withSessionSsr } from "../lib/withSession";
-import { useAchievements, useInventory } from "../lib/inventory";
+import { addReward, useAchievements, useInventory } from "../lib/inventory";
 import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
 import { useItems, useMiniGames } from "../lib/items";
 import { WordSearch } from "../components/WordSearch";
 import { Clock } from "../components/Clock";
+import useMutation from "../Hooks/useMutation";
 
 export type MiniGame = {
   scene?: string;
@@ -310,11 +311,32 @@ const Home: NextPage<{ id: string }> = (props) => {
     ref.current?.play();
   }, [store.soundId]);
 
+  const [_addReward] = useMutation(
+    addReward,
+    [`/api/inventory?epic=true`, `/api/items?scene=${store.scene}`],
+    {
+      onSuccess: () => {
+        store.setScene("xorafi");
+      },
+    }
+  );
+
   useEffect(() => {
     if (store.scene === "intro") {
       const l = sceneItems.filter((e) => e?.replaced?.includes(props.id));
-      if (l.length === 1) {
-        store.setScene("xorafi");
+      if (l.length === 6) {
+        store.setReward({
+          _id: "6332f34b5c2188026f49cce1",
+          src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
+          name: "kernos_shadow",
+          description: "Super duper",
+        });
+        _addReward({
+          _id: "6332f34b5c2188026f49cce1",
+          src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
+          name: "kernos_shadow",
+          description: "Super duper",
+        });
       }
     }
   }, [sceneItems, store.scene, props.id]);
