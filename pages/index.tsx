@@ -312,7 +312,7 @@ const Home: NextPage<{ id: string }> = (props) => {
 
   useEffect(() => {
     if (store.scene === "intro")
-      console.log(sceneItems.filter((e) => e.replaced.includes(props.id)));
+      console.log(sceneItems.filter((e) => e?.replaced?.includes(props.id)));
   }, [sceneItems, store.scene, props.id]);
 
   return (
