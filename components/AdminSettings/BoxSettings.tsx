@@ -202,6 +202,20 @@ export default function BoxSettings() {
           <AllImage
             imgs={imgs}
             onClick={async (o) => {
+              await axios
+                .post("/api/miniGames", {
+                  ...miniGame,
+                  scene: store.scene,
+                  type: "box",
+                  reward: {
+                    ...selectedItem.reward,
+                    description: rewardDescription,
+                  },
+                })
+                .then(() => {
+                  mutate("/api/miniGames");
+                });
+
               _updateItem(id, {
                 reward: o,
               });

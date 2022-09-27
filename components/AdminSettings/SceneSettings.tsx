@@ -297,6 +297,7 @@ export default function SceneSettings(props: {
   function update(o: MiniGame) {
     setMiniGame((s) => ({ ...s, ...o }));
   }
+  const replacedReward = items.find((e) => e.reward)?.reward;
 
   return (
     <div className="flex flex-col h-screen">
@@ -393,6 +394,17 @@ export default function SceneSettings(props: {
 
       <Select
         onChange={(v) => {
+          axios
+            .post("/api/miniGames", {
+              scene: store.scene,
+              ...miniGame,
+              type: v.value,
+            })
+            .then(() => {
+              mutate("/api/miniGames");
+              setMiniGameLoad(false);
+            });
+
           setMiniGame({
             type: v.value as any,
           });
@@ -407,6 +419,7 @@ export default function SceneSettings(props: {
           "clock",
           "compass",
           "box",
+          "replace",
         ].map((o) => ({
           label: o === undefined ? "-" : o,
           value: o,
@@ -415,7 +428,7 @@ export default function SceneSettings(props: {
       <Component {...miniGame} update={update} />
       <br />
       <Popover
-        disabled={miniGame.type === "box"}
+        disabled={["box", "replace"].includes(miniGame.type ?? "")}
         label={
           <>
             <label className="block text-left text-xs font-medium mb-2 text-gray-200">
@@ -423,19 +436,28 @@ export default function SceneSettings(props: {
               {miniGame.type === "box"
                 ? `(change reward from the box item)`
                 : ""}
+              {miniGame.type === "replace"
+                ? `(change reward from the replace item)`
+                : ""}
             </label>
             <div
               className={clsx(
                 "border  p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center",
                 {
-                  "cursor-not-allowed": miniGame.type === "box",
+                  "cursor-not-allowed": ["box", "replace"].includes(
+                    miniGame.type ?? ""
+                  ),
                 }
               )}
             >
               {miniGame.reward || currBox?.reward ? (
                 <div>
                   <img
-                    src={miniGame.reward?.src || currBox?.reward?.src}
+                    src={
+                      miniGame.reward?.src ||
+                      replacedReward?.src ||
+                      currBox?.reward?.src
+                    }
                     className="w-20 h-auto"
                   />
                 </div>
@@ -457,7 +479,9 @@ export default function SceneSettings(props: {
       </Popover>
       <div
         className={clsx({
-          "cursor-not-allowed pointer-events-none": miniGame.type === "box",
+          "cursor-not-allowed pointer-events-none": ["box", "replace"].includes(
+            miniGame.type ?? ""
+          ),
         })}
       >
         <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
@@ -466,7 +490,8 @@ export default function SceneSettings(props: {
         <textarea
           className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={currBox?.reward?.description ?? miniGame.reward?.description}
+          disabled={["box", "replace"].includes(miniGame.type ?? "")}
+          value={miniGame.reward?.description}
           onChange={(evt) => {
             const r = miniGame.reward;
             if (r)

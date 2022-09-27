@@ -10,6 +10,7 @@ import {
   addReward,
   useInventory,
   updateInv,
+  useAchievements,
 } from "../../lib/inventory";
 import useMutation from "../../Hooks/useMutation";
 import { updateItem } from "../../lib/items";
@@ -37,10 +38,17 @@ export default function Sprite(props: Item) {
   const [hovered, setHovered] = useState(false);
   const [insideBox, setInsideBox] = useState<string[]>([]);
   const isUsed = store.usedItems[`${props._id}`];
+  const { data: achievements, isLoading } = useAchievements();
+  const achIds = achievements.map((e) => e.rewardId);
+
+  if (props.name === "cerberus vase_shadow") {
+    const x = props.requiredItems?.map((e) => achIds.includes(e));
+    console.log(x);
+  }
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
-          return invHas(v) || store.usedItems[v];
+          return invHas(v) || store.usedItems[v] || achIds.includes(v);
         })
         .every((e) => e)
     : true;
