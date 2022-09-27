@@ -316,10 +316,7 @@ export default function ItemSettings() {
                     ...miniGame,
                     scene: store.scene,
                     type: "replace",
-                    reward: {
-                      ...selectedItem.reward,
-                      description: s.description,
-                    },
+                    reward: o,
                   })
                   .then(() => {
                     mutate("/api/miniGames");

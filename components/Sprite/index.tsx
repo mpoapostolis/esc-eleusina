@@ -43,8 +43,8 @@ export default function Sprite(props: Item) {
 
   if (props.name === "cerberus vase_shadow") {
     const x = props.requiredItems?.map((e) => achIds.includes(e));
-    console.log(x);
   }
+
   const show = props?.requiredItems
     ? props?.requiredItems
         ?.map((v) => {
@@ -82,7 +82,7 @@ export default function Sprite(props: Item) {
   if (props.type === "help" && !store.hint) return null;
   if (props.type === "guidelines" && !store.guideLines) return null;
 
-  const giveBoxReward = () => {
+  const giveReward = () => {
     if (!props.reward) return;
     store.setReward(props.reward);
     _addReward({
@@ -111,7 +111,7 @@ export default function Sprite(props: Item) {
           const isHandRequired = requiredItem === store.hand;
 
           if (isFull && props.requiredToolToReplace?._id === store.hand) {
-            return giveBoxReward();
+            return giveReward();
           }
 
           if (
@@ -120,7 +120,7 @@ export default function Sprite(props: Item) {
             props.reward &&
             !props.requiredToolToReplace
           ) {
-            return giveBoxReward();
+            return giveReward();
           } else if (isHandRequired) {
             const str = store.hand ?? "";
             setInsideBox((s) => [...s, str]);
@@ -157,15 +157,12 @@ export default function Sprite(props: Item) {
           _updateItem(props._id, {
             replaced: Array.from(new Set(r)),
           });
+
           _updateInv(`${props._id}`, {
             used: true,
           });
-
           if (props.reward) {
-            _addReward({
-              ...props.reward,
-              description: props.reward?.description,
-            });
+            giveReward();
             store.setReward(props.reward);
           }
 

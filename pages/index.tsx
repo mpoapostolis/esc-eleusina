@@ -311,8 +311,12 @@ const Home: NextPage<{ id: string }> = (props) => {
   }, [store.soundId]);
 
   useEffect(() => {
-    if (store.scene === "intro")
-      console.log(sceneItems.filter((e) => e?.replaced?.includes(props.id)));
+    if (store.scene === "intro") {
+      const l = sceneItems.filter((e) => e?.replaced?.includes(props.id));
+      if (l.length === 1) {
+        store.setScene("xorafi");
+      }
+    }
   }, [sceneItems, store.scene, props.id]);
 
   return (
