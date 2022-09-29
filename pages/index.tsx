@@ -411,7 +411,7 @@ const Home: NextPage<{ id: string }> = (props) => {
           </Suspense>
           <Suspense fallback="">
             {sceneItems
-              .filter((e) => e.type === "portal")
+              .filter((e) => e.type === "portal" && e.goToScene)
               ?.map((p, _idx) => (
                 <Loader key={p._id} src={p.goToScene} />
               ))}
