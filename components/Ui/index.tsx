@@ -16,7 +16,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const ach = achievements?.filter((e) => e.scene === store.scene);
   const currInv = inventory.filter((e) => !e.used);
   const tmpInv: Item[] = Array(
-    Math.abs(9 - ach?.length - currInv?.length)
+    Math.min(Math.abs(9 - ach?.length - currInv?.length), 9)
   ).fill({
     name: "",
     src: "",
