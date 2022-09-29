@@ -40,7 +40,6 @@ export default function Sprite(props: Item) {
   const isUsed = store.usedItems[`${props._id}`];
   const { data: achievements, isLoading } = useAchievements();
   const achIds = achievements.map((e) => e.rewardId);
-
   if (props.name === "cerberus vase_shadow") {
     const x = props.requiredItems?.map((e) => achIds.includes(e));
   }
