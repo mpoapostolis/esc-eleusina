@@ -112,7 +112,8 @@ export function WordSearch() {
       _id: "sss",
       name: giveItem.name,
       src: giveItem.src,
-      description: "Βρήκες την κρυμμένη λέξη!",
+      description:
+        "Τοποθέτησε τον καθρέφτη για να δεις το διπλό καθρέφτισμα του Κέρβερου.",
     });
   };
 
