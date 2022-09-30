@@ -33,13 +33,14 @@ export type Scene =
   | "eleusina"
   | "intro"
   | "karnagio"
-  | "kikeonas"
-  | "navagio_ext"
-  | "navagio_int"
-  | "ntamari"
   | "pangal"
   | "teletourgeio"
-  | "xorafi";
+  | "pp0_xorafi"
+  | "pp1_elaiourgeio"
+  | "pp2_kikeonas"
+  | "pp3_ntamari"
+  | "pp4_navagio"
+  | "pp5_navagio_int";
 
 export const scenes = [
   "arxaiologikos",
@@ -47,13 +48,14 @@ export const scenes = [
   "eleusina",
   "intro",
   "karnagio",
-  "kikeonas",
-  "navagio_ext",
-  "navagio_int",
-  "ntamari",
   "pangal",
   "teletourgeio",
-  "xorafi",
+  "pp0_xorafi",
+  "pp1_elaiourgeio",
+  "pp2_kikeonas",
+  "pp3_ntamari",
+  "pp4_navagio",
+  "pp5_navagio_int",
 ];
 
 export type Account = {

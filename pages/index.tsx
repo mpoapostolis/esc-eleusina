@@ -316,7 +316,7 @@ const Home: NextPage<{ id: string }> = (props) => {
     [`/api/inventory?epic=true`, `/api/items?scene=${store.scene}`],
     {
       onSuccess: () => {
-        store.setScene("xorafi");
+        store.setScene("pp0_xorafi");
       },
     }
   );
