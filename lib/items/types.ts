@@ -25,6 +25,7 @@ export type Item = {
   orderInsideTheBox?: string[];
   scene: Scene;
   rewardDescription?: string;
+  useRequiredItems?: boolean
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;

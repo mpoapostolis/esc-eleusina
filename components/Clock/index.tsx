@@ -9,8 +9,7 @@ import MiniGameWrapper from "../MiniGameWrapper";
 
 export function Clock() {
   const { data: miniGames = [] } = useMiniGames();
-  const miniGame = miniGames?.find((e) => e.type === "arxaiologikos");
-
+  const miniGame = miniGames?.find((e) => e.scene === "arxaiologikos");
   const clock = miniGame?.clock?.split(",") ?? [];
 
   const words = clock?.map((s) =>

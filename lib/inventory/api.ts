@@ -40,6 +40,7 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       { $unwind: "$item" },
+
       {
         $replaceRoot: {
           newRoot: { $mergeObjects: ["$item", { used: "$used" }] },

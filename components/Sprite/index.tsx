@@ -40,9 +40,6 @@ export default function Sprite(props: Item) {
   const isUsed = store.usedItems[`${props._id}`];
   const { data: achievements, isLoading } = useAchievements();
   const achIds = achievements.map((e) => e.rewardId);
-  if (props.name === "cerberus vase_shadow") {
-    const x = props.requiredItems?.map((e) => achIds.includes(e));
-  }
 
   const show = props?.requiredItems
     ? props?.requiredItems
@@ -56,11 +53,13 @@ export default function Sprite(props: Item) {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
+
   useEffect(() => {
     if (!ref.current || !props.position || !props.rotation) return;
     ref.current.position.copy(props.position);
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
+
   let s = show ? props.scale ?? 0.2 : 0;
   if (hovered) s += 0.01;
   const collected = props.collectable && invHas(props._id);
@@ -151,13 +150,7 @@ export default function Sprite(props: Item) {
           store.hand &&
           store.hand === props.requiredToolToReplace?._id
         ) {
-          const { replaced = [] } = props;
-          const r = [...replaced, props.id];
-          _updateItem(props._id, {
-            replaced: Array.from(new Set(r)),
-          });
-
-          _updateInv(`${props._id}`, {
+          _updateInv(`${props.requiredToolToReplace._id}`, {
             used: true,
           });
           if (props.reward) {
@@ -219,7 +212,7 @@ export default function Sprite(props: Item) {
         transparent
         side={DoubleSide}
         attach="material"
-        map={props.replaced?.includes(props.id) ? texture1 : texture}
+        map={props.isReplaced ? texture1 : texture}
       />
     </animated.mesh>
   );

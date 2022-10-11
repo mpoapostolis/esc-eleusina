@@ -13,6 +13,7 @@ export type ACHIEVEMENT = {
 } & Item;
 
 export type Item = {
+  used: boolean;
   _id?: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
