@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
+import { debug } from "console";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
@@ -15,6 +16,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const { data: achievements, isLoading } = useAchievements();
   const ach = achievements?.filter((e) => e.scene === store.scene);
   const currInv = inventory.filter((e) => !e.used);
+
   const tmpInv: Item[] = Array(
     Math.min(Math.abs(9 - ach?.length - currInv?.length), 9)
   ).fill({
@@ -28,17 +30,27 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const _achievements = achievements.filter((e) => e.scene === store.scene);
+  const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
+
+  const doINeedToUseForGame =
+    inventory.map((e) => e.used).filter(Boolean).length ===
+    miniGame?.requiredItems?.length;
 
   const miniGameBnt =
     !doIHaveAchievement &&
-    currMinigames?.requiredItems?.map((i) => invHas(i)).every(Boolean);
+    (miniGame?.useRequiredItems
+      ? doINeedToUseForGame
+      : currMinigames?.requiredItems
+          ?.map((i) => {
+            return invHas(i);
+          })
+          .every(Boolean));
   const inv = [...currInv, ..._achievements, ...tmpInv];
 
   useEffect(() => {
     if (miniGameBnt) store.setSound(`04_are_you_ready`);
   }, [miniGameBnt]);
 
-  const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
   const openMiniGame = () => {
     switch (miniGame?.type) {
       case "jigsaw":
@@ -51,6 +63,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
       case "compass":
         store.setCompass(true, miniGame.reward);
+        break;
+
+      case "clock":
+        store.setStatus("CLOCK");
         break;
 
       case "lexigram":
@@ -111,11 +127,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
           }}
           className=" border-dashed absolute right-4 top-[50%]  p-2 w-fit rounded-lg border border-black bg-black animate-pulse bg-opacity-100  cursor-pointer pointer-events-auto"
         >
-          {/* <img
-            src="https://s2.svgbox.net/materialui.svg?ic=games"
-            className="w-16"
-            alt=""
-          /> */}
           <span className="text-4xl font-bold ">Παίξε το παιχνίδι</span>
         </button>
       )}

@@ -398,9 +398,23 @@ const Home: NextPage<{ id: string }> = (props) => {
                     </Fragment>
                   );
 
-                if (p.src && !p.hidden)
-                  return <Sprite id={props?.id} key={p._id} {...item} />;
-                else return null;
+                if (p.src && !p.hidden) {
+                  let isReplaced = false;
+                  if (p.requiredToolToReplace) {
+                    isReplaced =
+                      inventory.find(
+                        (e) => e._id === p.requiredToolToReplace?._id
+                      )?.used ?? false;
+                  }
+                  return (
+                    <Sprite
+                      isReplaced={isReplaced}
+                      id={props?.id}
+                      key={p._id}
+                      {...item}
+                    />
+                  );
+                } else return null;
               })}
             <Scenes />
           </Suspense>

@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { mutate } from "swr";
-import { AllImage } from ".";
+import { AllImage, Checkbox } from ".";
 import useMutation from "../../Hooks/useMutation";
 import {
   addItem,
@@ -509,6 +509,18 @@ export default function SceneSettings(props: {
       <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
         Required items in inventory for mini game
       </label>
+
+      <Checkbox
+        label="Use all items in inventory"
+        checked={miniGame.useRequiredItems}
+        onChange={(evt) => {
+          update({
+            useRequiredItems: evt.currentTarget.checked,
+          });
+        }}
+      />
+
+      <br />
       <div className="grid gap-2 grid-cols-6">
         {items
           ?.filter(
