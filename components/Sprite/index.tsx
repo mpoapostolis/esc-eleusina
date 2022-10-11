@@ -23,6 +23,7 @@ export default function Sprite(props: Item) {
   ]);
   const [_updateInv] = useMutation<string | any>(updateInv, [
     `/api/inventory?scene=${store.scene}`,
+    `/api/used?scene=${store.scene}`,
   ]);
 
   const texture1 = useLoader(
