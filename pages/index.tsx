@@ -37,6 +37,7 @@ import { useItems, useMiniGames } from "../lib/items";
 import { WordSearch } from "../components/WordSearch";
 import { Clock } from "../components/Clock";
 import useMutation from "../Hooks/useMutation";
+import { useUsed } from "../lib/used";
 
 export type MiniGame = {
   scene?: string;
@@ -136,7 +137,6 @@ function Portal(props: Item) {
   }, [props.position, ref.current]);
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const { data: inventory } = useInventory();
-
   const store = useStore();
   const show = props?.requiredItems
     ? props?.requiredItems
@@ -340,6 +340,8 @@ const Home: NextPage<{ id: string }> = (props) => {
       }
     }
   }, [sceneItems, store.scene, props.id]);
+  const { data: usedItems } = useUsed();
+  const usedIds = usedItems.map((e) => e.itemId);
 
   return (
     <div {...bind()} className="select-none">
@@ -401,10 +403,7 @@ const Home: NextPage<{ id: string }> = (props) => {
                 if (p.src && !p.hidden) {
                   let isReplaced = false;
                   if (p.requiredToolToReplace) {
-                    isReplaced =
-                      inventory.find(
-                        (e) => e._id === p.requiredToolToReplace?._id
-                      )?.used ?? false;
+                    isReplaced = usedIds.includes(p.requiredToolToReplace._id);
                   }
                   return (
                     <Sprite

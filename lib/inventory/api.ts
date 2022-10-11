@@ -58,6 +58,19 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
 export async function updateInv(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
   const db = await myDb();
+
+  if (req.body.used) {
+    const item = await db.collection("items").findOne({
+      _id: new ObjectId(`${req.query.itemId}`),
+    });
+    await db.collection("used").insertOne({
+      userId: new ObjectId(id),
+      itemId: new ObjectId(`${item?._id}`),
+      scene: item?.scene,
+      ...req.body,
+    });
+  }
+
   const inv = await db.collection("inventory").updateOne(
     {
       userId: new ObjectId(id),
@@ -91,6 +104,7 @@ export async function addAchievements(
 ) {
   const id = req.session.user?.id;
   const db = await myDb();
+
   const inv = await db.collection("achievements").insertOne({
     userId: new ObjectId(id),
     ...req.body,

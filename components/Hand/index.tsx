@@ -15,6 +15,7 @@ export function Hand() {
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
   const [_updateInv] = useMutation<string | any>(updateInv, [
     `/api/inventory?scene=${store.scene}`,
+    `/api/used?scene=${store.scene}`,
   ]);
   const found = [...items, ...achievements].find((s) => store.hand === s._id);
 

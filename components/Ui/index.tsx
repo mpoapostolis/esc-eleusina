@@ -6,6 +6,7 @@ import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
 import { debug } from "console";
+import { useUsed } from "../../lib/used";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
@@ -14,8 +15,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
   const { data: achievements, isLoading } = useAchievements();
+  const { data: usedItems } = useUsed();
+  const usedIds = usedItems.map((e) => e.itemId);
   const ach = achievements?.filter((e) => e.scene === store.scene);
-  const currInv = inventory.filter((e) => !e.used);
+  const currInv = inventory.filter((e) => !usedIds.includes(`${e._id}`));
 
   const tmpInv: Item[] = Array(
     Math.min(Math.abs(9 - ach?.length - currInv?.length), 9)
@@ -24,6 +27,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
     src: "",
   });
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
+
   const doIHaveAchievement =
     isLoading ||
     achievements.map((e) => e._id).includes(`${currMinigames?.reward?._id}`);
@@ -33,8 +37,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
 
   const doINeedToUseForGame =
-    inventory.map((e) => e.used).filter(Boolean).length ===
-    miniGame?.requiredItems?.length;
+    usedIds.length === miniGame?.requiredItems?.length;
 
   const miniGameBnt =
     !doIHaveAchievement &&
