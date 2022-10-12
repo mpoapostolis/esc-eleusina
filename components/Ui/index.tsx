@@ -26,6 +26,8 @@ export default function Ui(props: { items: Item[]; time: number }) {
     name: "",
     src: "",
   });
+
+  //
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
 
   const doIHaveAchievement =
