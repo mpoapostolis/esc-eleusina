@@ -87,6 +87,10 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
   await db.collection("achievements").deleteMany({
     userId: new ObjectId(id),
   });
+  await db.collection("used").deleteMany({
+    userId: new ObjectId(id),
+  });
+
   await db.collection("inventory").deleteMany({
     userId: new ObjectId(id),
   });
