@@ -194,6 +194,17 @@ export default function SelectedItem() {
           {!selectedItem.type && (
             <>
               <Checkbox
+                label="hide from inventory"
+                checked={selectedItem.hideFromInventory}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    hideFromInventory: evt.target.checked,
+                  });
+                }}
+              />
+              <div className="my-1" />
+
+              <Checkbox
                 label="Collect to inventory"
                 checked={selectedItem.collectable}
                 onChange={(evt) => {

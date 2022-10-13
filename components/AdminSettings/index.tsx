@@ -4,7 +4,6 @@ import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
 import { DetailedHTMLProps, InputHTMLAttributes, useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
