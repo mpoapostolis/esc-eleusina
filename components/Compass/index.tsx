@@ -188,47 +188,76 @@ export default function Compass() {
         <div className="absolute p-2 border border-dashed border-black items-center   w-96 h-96 right-0 bg-white bottom-0 rounded-full z-50  ">
           <div className="border relative  rounded-full w-full h-full  flex justify-center border-black items-center overflow-hidden">
             <div
+              style={{ transform: `rotate(${deg}deg)` }}
               className={clsx(
-                "grid absolute  gap-x-2 grid-cols-[20px_1fr_20px_1fr_20px] w-full"
+                "grid absolute  transition duration-500 gap-x-2 grid-cols-[30px_1fr_20px_1fr_30px] w-full"
               )}
             >
-              <span className="flex justify-center items-center bg-black w-full">
+              <span
+                className={clsx(
+                  "flex justify-center -scale-100 items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.west,
+                  }
+                )}
+              >
                 W
               </span>
               <input
+                name="west"
+                onChange={setPlace}
                 onFocus={() => {
-                  setIdx(0);
+                  setIdx(2);
                 }}
                 className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
               />
-              <div className="text-4xl flex text-black items-center justify-center ">
+              <div
+                style={{ transform: `rotate(-${deg}deg)` }}
+                className="text-4xl flex text-black duration-0 transition-500 items-center justify-center "
+              >
                 Σ
               </div>
               <input
+                name="east"
+                onChange={setPlace}
                 onFocus={() => {
-                  setIdx(1);
+                  setIdx(0);
                 }}
                 className="uppercase bg-gray-300 text-black outline-none w-full px-2"
               />
-              <span className="flex justify-center items-center bg-black w-full">
+              <span
+                className={clsx(
+                  "flex justify-center items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.east,
+                  }
+                )}
+              >
                 E
               </span>
             </div>
 
             <div
+              style={{ transform: `rotate(${90 + deg}deg)` }}
               className={clsx(
-                "grid absolute  gap-x-2 grid-cols-[20px_1fr_20px_1fr_20px] w-full",
-                {
-                  " rotate-90": true,
-                }
+                "grid rotate-90 absolute  transition duration-500 gap-x-2 grid-cols-[30px_1fr_20px_1fr_30px] w-full"
               )}
             >
-              <span className="flex justify-center items-center bg-black w-full">
+              <span
+                className={clsx(
+                  "flex justify-center -scale-100 items-center bg-black w-full",
+                  {
+                    "bg-green-600 text-white": answers.north,
+                  }
+                )}
+              >
                 N
               </span>
               <input
+                name="north"
+                onChange={setPlace}
                 onFocus={() => {
-                  setIdx(2);
+                  setIdx(1);
                 }}
                 className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
               />
@@ -239,9 +268,18 @@ export default function Compass() {
                 onFocus={() => {
                   setIdx(3);
                 }}
+                name="south"
+                onChange={setPlace}
                 className="uppercase bg-gray-300  text-black outline-none w-full px-2"
               />
-              <span className="flex justify-center items-center bg-black w-full">
+              <span
+                className={clsx(
+                  "flex justify-center items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.south,
+                  }
+                )}
+              >
                 S
               </span>
             </div>
