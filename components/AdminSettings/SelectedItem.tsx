@@ -278,6 +278,16 @@ export default function SelectedItem() {
           <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
             Required items in inventory to show {selectedItem.name}
           </label>
+          <Checkbox
+            label="Not in inventory"
+            checked={selectedItem.notInInventory}
+            onChange={(evt) => {
+              _updateItem(id, {
+                notInInventory: evt.currentTarget.checked,
+              });
+            }}
+          />
+          <br />
           <div className="grid gap-2 grid-cols-6">
             {[
               ...items?.filter(
