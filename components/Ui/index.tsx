@@ -85,8 +85,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
   return (
     <div
       className={clsx(
-        "fixed flex flex-col justify-between  pointer-events-none z-50 h-screen w-screen",
-        { hidden: store.status !== "RUNNING" }
+        "fixed flex flex-col justify-between  pointer-events-none z-50 h-screen w-screen"
       )}
     >
       <div
@@ -134,7 +133,11 @@ export default function Ui(props: { items: Item[]; time: number }) {
           <span className="text-4xl font-bold ">Παίξε το παιχνίδι</span>
         </button>
       )}
-      <div className={clsx("flex gap-x-4 p-3 justify-end", {})}>
+      <div
+        className={clsx("flex gap-x-4 p-3 justify-end", {
+          hidden: store.status !== "RUNNING",
+        })}
+      >
         <Link href="/menu">
           <button
             onClick={() => {
@@ -149,7 +152,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
       <div
         className={clsx(
-          "absolute -bottom-3 rounded-3xl p-5 md:max-w-md  place-items-center"
+          "absolute -bottom-3 rounded-3xl p-5 md:max-w-md  place-items-center",
+          {
+            hidden: store.status !== "RUNNING",
+          }
         )}
       >
         <div className="relative flex  tracking-wider italic  text-3xl font-bold text-white mb-2 justify-end w-full ">
