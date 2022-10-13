@@ -18,7 +18,9 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const { data: usedItems } = useUsed();
   const usedIds = usedItems.map((e) => e.itemId);
   const ach = achievements?.filter((e) => e.scene === store.scene);
-  const currInv = inventory.filter((e) => !usedIds.includes(`${e._id}`));
+  const currInv = inventory
+    .filter((e) => !e.hideFromInventory)
+    .filter((e) => !usedIds.includes(`${e._id}`));
 
   const tmpInv: Item[] = Array(
     Math.min(Math.abs(9 - ach?.length - currInv?.length), 9)
