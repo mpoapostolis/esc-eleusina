@@ -87,18 +87,11 @@ export default function Compass() {
       });
 
       points.forEach((c) => {
-        const popup = new mapboxgl.Popup({
-          offset: 25,
-          focusAfterOpen: true,
-        }).setText(c.desc);
-        new mapboxgl.Marker()
-          .setLngLat(c.coords)
-          .setPopup(popup)
-          .addTo(initialMap);
+        new mapboxgl.Marker().setLngLat(c.coords).addTo(initialMap);
       });
       const marker = new mapboxgl.Marker({
-        color: "color",
-        scale: 1.2,
+        color: "steelblue",
+        scale: 1.8,
       }).setLngLat({
         lng: 0,
         lat: 0,
@@ -106,19 +99,34 @@ export default function Compass() {
       setMarker(marker);
       marker.addTo(initialMap);
       initialMap.addControl(new mapboxgl.NavigationControl(), "top-left");
-
       map.current = initialMap;
     }, 1000);
     // initialize map only once
   });
 
-  const flyTo = async (c: { lat: number; lng: number; zoom: number }) => {
+  const flyTo = async (c: {
+    lat: number;
+    lng: number;
+    zoom: number;
+    desc: string;
+  }) => {
     if (!map.current || !marker) return;
+
     marker.setLngLat({
       lat: c.lat,
       lng: c.lng,
     });
 
+    const popup = new mapboxgl.Popup({
+      offset: [0, -30],
+      focusAfterOpen: false,
+      closeButton: false,
+    });
+
+    const popups = document.getElementsByClassName("mapboxgl-popup");
+    Array.from(popups).forEach((e) => e.remove());
+
+    popup.setLngLat(c).setText(c.desc).addTo(map.current);
     map.current.easeTo({
       duration: 500,
       center: {
@@ -129,6 +137,7 @@ export default function Compass() {
       easing: (x) => x,
     });
   };
+
   const setIdx = (i: number) => {
     if (!map.current) return;
     setDeg(i * 90);
@@ -158,20 +167,19 @@ export default function Compass() {
     }
   }, [answers]);
 
-  const setPlace = (e: ChangeEvent<HTMLInputElement>) => {
+  const setPlace = async (e: ChangeEvent<HTMLInputElement>) => {
     e.currentTarget.value = e.currentTarget.value.toUpperCase();
     const value = e.currentTarget.value;
     const name = e.currentTarget.name;
-
     switch (name) {
-      case "west":
+      case "north":
         if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ")
           setAnswers((s) => ({ ...s, [name]: true }));
         break;
       case "south":
         if (value === "ΑΡΩΝΙΚΟΣ") setAnswers((s) => ({ ...s, [name]: true }));
         break;
-      case "north":
+      case "west":
         if (value === "ΑΛΑΜΙΝΑ") setAnswers((s) => ({ ...s, [name]: true }));
         break;
       case "east":
@@ -207,6 +215,7 @@ export default function Compass() {
                 name="west"
                 onChange={setPlace}
                 onFocus={() => {
+                  flyTo({ ...points[1].coords, desc: points[1].desc });
                   setIdx(2);
                 }}
                 className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
@@ -221,6 +230,7 @@ export default function Compass() {
                 name="east"
                 onChange={setPlace}
                 onFocus={() => {
+                  flyTo({ ...points[0].coords, desc: points[0].desc });
                   setIdx(0);
                 }}
                 className="uppercase bg-gray-300 text-black outline-none w-full px-2"
@@ -257,6 +267,8 @@ export default function Compass() {
                 name="north"
                 onChange={setPlace}
                 onFocus={() => {
+                  flyTo({ ...points[2].coords, desc: points[2].desc });
+
                   setIdx(1);
                 }}
                 className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
@@ -266,6 +278,7 @@ export default function Compass() {
               </div>
               <input
                 onFocus={() => {
+                  flyTo({ ...points[3].coords, desc: points[3].desc });
                   setIdx(3);
                 }}
                 name="south"
