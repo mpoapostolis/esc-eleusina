@@ -117,7 +117,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
       <div
         className={clsx(
-          "fixed w-full max-w-xl  right-0  mr-4   pointer-events-auto"
+          "fixed w-full max-w-xl  right-0  mr-4   pointer-events-auto",
+          {
+            hidden: store.status !== "RUNNING",
+          }
         )}
       >
         <Hint />
@@ -128,7 +131,12 @@ export default function Ui(props: { items: Item[]; time: number }) {
           onClick={() => {
             openMiniGame();
           }}
-          className=" border-dashed absolute right-4 top-[50%]  p-2 w-fit rounded-lg border border-black bg-black animate-pulse bg-opacity-100  cursor-pointer pointer-events-auto"
+          className={clsx(
+            " border-dashed absolute right-4 top-[50%]  p-2 w-fit rounded-lg border border-black bg-black animate-pulse bg-opacity-100  cursor-pointer pointer-events-auto",
+            {
+              hidden: store.status !== "RUNNING",
+            }
+          )}
         >
           <span className="text-4xl font-bold ">Παίξε το παιχνίδι</span>
         </button>
@@ -204,7 +212,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   }
                 }}
                 className={clsx(
-                  "flex bg-white relative bg-opacity-40 flex-col w-20 h-20 border items-center justify-center  text-white border-gray-800 p-3 z-50 ",
+                  "flex bg-white relative bg-opacity-40 flex-col w-20 h-20 border items-center overflow-hidden justify-center  text-white border-gray-800 p-3 hover:p-0 z-50 ",
                   {
                     "bg-green-900 ": store.hand && store.hand === item?._id,
                     "cursor-pointer":
@@ -223,13 +231,16 @@ export default function Ui(props: { items: Item[]; time: number }) {
                 )}
               >
                 {item && (
-                  <>
+                  <div className="relative">
                     <img
                       className="w-full p-1"
                       src={item.inventorySrc ? item?.inventorySrc : item.src}
                       alt=""
                     />
-                  </>
+                    <div className="h-full w-full  flex items-center justify-center hover:opacity-100  opacity-0 absolute left-0 bottom-0 bg-black text-center">
+                      {item?.name ?? "need name"}
+                    </div>
+                  </div>
                 )}
               </div>
             ))}
