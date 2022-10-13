@@ -378,7 +378,8 @@ const Home: NextPage<{ id: string }> = (props) => {
                     <TimerHint key={p._id} {...p} />
                   );
                 if (p.type === "guidelines")
-                  return <GuideLineItem key={p._id} {...p} />;
+                  if (p.scene === "intro" && inventory.length > 0) return;
+                  else return <GuideLineItem key={p._id} {...p} />;
               })}
             {user ? <Environment /> : null}
             {sceneItems
