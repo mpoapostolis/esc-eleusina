@@ -275,7 +275,7 @@ export default function SelectedItem() {
               }}
               value={selectedItem.type}
               label="type"
-              options={[null, "portal", "box"].map((o) => ({
+              options={[null, "portal", "box", "hint"].map((o) => ({
                 label: o === null ? "-" : o,
                 value: o,
               }))}

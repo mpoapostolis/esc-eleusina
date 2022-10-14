@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import { useTimer } from "use-timer";
 import { useStore } from "../store";
 
-export default function useTimerHint(str: string, time: number = 0) {
+export default function useTimerHint(
+  str: string,
+  time: number = 0,
+  start: boolean = false
+) {
   const store = useStore();
 
   const timer = useTimer({
@@ -26,6 +30,6 @@ export default function useTimerHint(str: string, time: number = 0) {
   useEffect(() => {
     store.setHint(undefined);
     timer.reset();
-    timer.start();
-  }, [store.scene]);
+    if (start) timer.start();
+  }, [store.scene, start]);
 }
