@@ -350,7 +350,7 @@ const Home: NextPage<{ id: string }> = (props) => {
   return (
     <div {...bind()} className="select-none">
       <FadeOut />
-      {store.compass && <Compass />}
+      {store.status === "COMPASS" && <Compass />}
       <JigSaw />
       <Clock />
       <GuideLines />

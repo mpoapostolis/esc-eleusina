@@ -7,6 +7,7 @@ import { useStore } from "../../store";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
 import MiniGameWrapper from "../MiniGameWrapper";
+import { useTimer } from "use-timer";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZmFyYW5kb3VyaXNwIiwiYSI6ImNsOTZ3dzhpczBzNHg0MHFxZ211dGN3OGcifQ.wG1mCl8Bl26T-w2zFwYK8g";
@@ -166,6 +167,11 @@ export default function Compass() {
       }
     }
   }, [answers]);
+  const timer = useTimer({
+    initialTime: 10,
+    step: -1,
+    endTime: 0,
+  });
 
   const setPlace = async (e: ChangeEvent<HTMLInputElement>) => {
     e.currentTarget.value = e.currentTarget.value.toUpperCase();
@@ -173,20 +179,28 @@ export default function Compass() {
     const name = e.currentTarget.name;
     switch (name) {
       case "north":
-        if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ")
+        if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ") {
           setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
       case "south":
-        if (value === "ΑΡΩΝΙΚΟΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        if (value === "ΑΡΩΝΙΚΟΣ") {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
       case "west":
-        if (value === "ΑΛΑΜΙΝΑ") setAnswers((s) => ({ ...s, [name]: true }));
+        if (value === "ΑΛΑΜΙΝΑ") {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
       case "east":
-        if (value === "ΚΑΡΑΜΑΓΚΑΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        if (value === "ΚΑΡΑΜΑΓΚΑΣ") {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
     }
   };
+  const [help, setHelp] = useState("");
 
   return (
     <MiniGameWrapper status="COMPASS">
@@ -216,6 +230,10 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[1].coords, desc: points[1].desc });
+                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
+                  timer.reset();
+                  timer.start();
+
                   setIdx(2);
                 }}
                 className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
@@ -231,6 +249,10 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[0].coords, desc: points[0].desc });
+                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
+                  timer.reset();
+                  timer.start();
+
                   setIdx(0);
                 }}
                 className="uppercase bg-gray-300 text-black outline-none w-full px-2"
@@ -268,6 +290,9 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[2].coords, desc: points[2].desc });
+                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
+                  timer.reset();
+                  timer.start();
 
                   setIdx(1);
                 }}
@@ -279,6 +304,10 @@ export default function Compass() {
               <input
                 onFocus={() => {
                   flyTo({ ...points[3].coords, desc: points[3].desc });
+                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
+                  timer.reset();
+                  timer.start();
+
                   setIdx(3);
                 }}
                 name="south"
@@ -299,9 +328,11 @@ export default function Compass() {
           </div>
         </div>
 
-        <div className="absolute  bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
-          <div className="w-2/4">{points[deg / 90].desc}</div>
-        </div>
+        {timer.time === 0 && (
+          <div className="absolute  bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
+            <div className="w-2/4">{points[deg / 90].desc}</div>
+          </div>
+        )}
       </div>
     </MiniGameWrapper>
   );
