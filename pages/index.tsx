@@ -262,6 +262,7 @@ const Home: NextPage<{ id: string }> = (props) => {
   const bind = useGesture({
     onWheel: (w) =>
       setFov((s) => {
+        // @ts-ignore
         const n = Math.min(75, s + w.velocity[1] * w.direction[1]);
         if (n > 75) return 75;
         if (n < 40) return 40;
@@ -325,25 +326,26 @@ const Home: NextPage<{ id: string }> = (props) => {
     }
   );
 
-  useEffect(() => {
-    if (store.scene === "intro") {
-      const l = sceneItems.filter((e) => e?.replaced?.includes(props.id));
-      if (l.length === 6) {
-        store.setReward({
-          _id: "6332f34b5c2188026f49cce1",
-          src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
-          name: "kernos_shadow",
-          description: "Super duper",
-        });
-        _addReward({
-          _id: "6332f34b5c2188026f49cce1",
-          src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
-          name: "kernos_shadow",
-          description: "Super duper",
-        });
-      }
-    }
-  }, [sceneItems, store.scene, props.id]);
+  // useEffect(() => {
+  //   if (store.scene === "intro") {
+  //     const l = sceneItems.filter((e) => e?.replaced?.includes(props.id));
+  //     if (l.length === 6) {
+  //       store.setReward({
+  //         _id: "6332f34b5c2188026f49cce1",
+  //         src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
+  //         name: "kernos_shadow",
+  //         description: "Super duper",
+  //       });
+  //       _addReward({
+  //         _id: "6332f34b5c2188026f49cce1",
+  //         src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
+  //         name: "kernos_shadow",
+  //         description: "Super duper",
+  //       });
+  //     }
+  //   }
+  // }, [sceneItems, store.scene, props.id]);
+
   const { data: usedItems } = useUsed();
   const usedIds = usedItems.map((e) => e.itemId);
 

@@ -299,7 +299,7 @@ export default function SelectedItem() {
             }}
           />
           <br />
-          <div className="grid gap-2 grid-cols-6">
+          <div className="grid gap-2 grid-cols-4">
             {[
               ...items?.filter(
                 (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
@@ -329,6 +329,9 @@ export default function SelectedItem() {
                       src={item.src}
                       alt=""
                     />
+                    <span className="absolute bottom-0 text-center  text-xs">
+                      {item.name}
+                    </span>
                   </div>
                 );
               })}
