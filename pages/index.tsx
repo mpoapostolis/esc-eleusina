@@ -169,17 +169,21 @@ function TimerHint(props: Item) {
   return null;
 }
 
-function ConditionalHint(props: Item) {
+function Hint(props: Item) {
+  const notInInventory = (a: boolean) => (props.notInInventory ? !a : a);
+  const { data: achievements, isLoading } = useAchievements();
+  const achIds = achievements.map((e) => e.rewardId);
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
-  const { data: inventory } = useInventory();
 
   const store = useStore();
-  useEffect(() => {
-    if (props.requiredItems?.map((e) => invHas(e)).every(Boolean)) {
-      store.setIsHintVisible(true);
-      store.setHint(props.text);
-    }
-  }, [inventory]);
+  const { data: inventory } = useInventory();
+  const show = notInInventory(
+    props?.requiredItems
+      ?.map((v) => invHas(v) || store.usedItems[v] || achIds.includes(v))
+      .every(Boolean) ?? true
+  );
+
+  useTimerHint(props?.text ?? "", props.delayTimeHint, show);
   return null;
 }
 
@@ -371,15 +375,10 @@ const Home: NextPage<{ id: string }> = (props) => {
               )
 
               .map((p) => {
-                if (p.type === "hint")
-                  return p.hintType === "conditional" ? (
-                    <ConditionalHint key={p._id} {...p} />
-                  ) : (
-                    <TimerHint key={p._id} {...p} />
-                  );
+                if (p.type === "hint") return <Hint key={p._id} {...p} />;
                 if (p.type === "guidelines")
                   if (p.scene === "intro" && inventory.length > 0) return;
-                  else return <GuideLineItem key={p._id} {...p} />;
+                return <GuideLineItem key={p._id} {...p} />;
               })}
             {user ? <Environment /> : null}
             {sceneItems

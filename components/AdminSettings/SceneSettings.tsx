@@ -104,7 +104,7 @@ export type HintType = "conditional" | "timer";
 function Row(props: Item & { sceneItems: Item[] }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
-  const [type, setType] = useState<HintType>("timer");
+  const [notInInventory, setNotInInventory] = useState<boolean>(false);
   const [requiredItems, setRequiredItems] = useState<string[]>([]);
   const [deleteLoad, setDeleteLoad] = useState(false);
   const [load, setLoad] = useState(false);
@@ -112,6 +112,7 @@ function Row(props: Item & { sceneItems: Item[] }) {
   useEffect(() => {
     setHint(props.text);
     setTime(props.delayTimeHint);
+    setNotInInventory(props.notInInventory);
   }, [items]);
 
   const updateRequired = (id: string) => {
@@ -128,32 +129,16 @@ function Row(props: Item & { sceneItems: Item[] }) {
 
   return (
     <div className="p-4 my-1  border border-gray-500 bg-gray-500 bg-opacity-5">
-      <div className="grid gap-x-4 grid-cols-2 mb-4">
+      <div className="grid mb-4">
         <Select
-          value={type}
-          onChange={(e) => {
-            if (type === "conditional") setTime(undefined);
-            if (type === "timer") setRequiredItems([]);
-            setType(e.value as HintType);
-          }}
-          label="Hint Type"
-          options={["timer", "conditional"].map((x) => ({
+          value={`${time}`}
+          onChange={(e) => setTime(+`${e.value}`)}
+          label="Delay seconds"
+          options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
             label: `${x}`,
             value: x,
           }))}
         />
-
-        {type === "timer" && (
-          <Select
-            value={`${time}`}
-            onChange={(e) => setTime(+`${e.value}`)}
-            label="Delay seconds"
-            options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
-              label: `${x}`,
-              value: x,
-            }))}
-          />
-        )}
       </div>
       <textarea
         rows={3}
@@ -163,42 +148,50 @@ function Row(props: Item & { sceneItems: Item[] }) {
         className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
       />
 
-      {type === "conditional" && (
-        <>
-          <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
-            Required items to display hint
-          </label>
-          <div className="grid gap-2 grid-cols-6">
-            {props.sceneItems
-              ?.filter(
-                (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-              )
-              .map((i) => {
-                const item = i as Item;
-                return (
-                  <div
-                    key={i._id}
-                    onClick={() => {
-                      updateRequired(`${i._id}`);
-                    }}
-                    className={clsx(
-                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
-                      {
-                        "bg-green-500": requiredItems?.includes(`${i._id}`),
-                      }
-                    )}
-                  >
-                    <img
-                      className="hover:scale-150 w-full p-2"
-                      src={item.src}
-                      alt=""
-                    />
-                  </div>
-                );
-              })}
-          </div>
-        </>
-      )}
+      <>
+        <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
+          Required items to display hint
+        </label>
+        <Checkbox
+          label="Not in inventory"
+          checked={notInInventory}
+          onChange={(evt) => {
+            setNotInInventory(evt.currentTarget.checked);
+          }}
+        />
+        <br />
+
+        <div className="grid gap-2 grid-cols-6">
+          {props.sceneItems
+            ?.filter(
+              (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
+            )
+            .map((i) => {
+              const item = i as Item;
+              return (
+                <div
+                  key={i._id}
+                  onClick={() => {
+                    updateRequired(`${i._id}`);
+                  }}
+                  className={clsx(
+                    "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                    {
+                      "bg-green-500": requiredItems?.includes(`${i._id}`),
+                    }
+                  )}
+                >
+                  <img
+                    className="hover:scale-150 w-full p-2"
+                    src={item.src}
+                    alt=""
+                  />
+                </div>
+              );
+            })}
+        </div>
+      </>
+
       <div className="grid mt-4 grid-cols-2 gap-x-1">
         <button
           className="btn"
@@ -223,10 +216,10 @@ function Row(props: Item & { sceneItems: Item[] }) {
               .put(
                 `/api/items/${props._id}`,
                 JSON.stringify({
-                  hintType: type,
                   text: hint,
                   delayTimeHint: time,
                   requiredItems,
+                  notInInventory,
                 }),
                 {
                   headers: {
