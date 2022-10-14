@@ -233,15 +233,19 @@ export default function Ui(props: { items: Item[]; time: number }) {
                 )}
               >
                 {item && (
-                  <div className="relative">
+                  <div className="relative h-full w-full flex items-center justify-center">
                     <img
                       className="w-full p-1"
                       src={item.inventorySrc ? item?.inventorySrc : item.src}
                       alt=""
                     />
-                    <div className="h-full w-full  flex items-center justify-center hover:opacity-100  opacity-0 absolute left-0 bottom-0 bg-black text-center">
-                      {item?.name ?? "need name"}
-                    </div>
+                    {item._id && (
+                      <div className="h-full w-full    whitespace-pre-wrap  flex items-center justify-center hover:opacity-100  opacity-0 absolute left-0 bottom-0 bg-black text-center">
+                        <span className="w-full h-full rotate-45 flex items-center justify-center text-xs">
+                          {item?.name.replace(/_/g, " ") ?? "need name"}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
