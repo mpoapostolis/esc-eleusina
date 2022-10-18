@@ -63,10 +63,13 @@ export async function updateInv(req: NextApiRequest, res: NextApiResponse) {
     const item = await db.collection("items").findOne({
       _id: new ObjectId(`${req.query.itemId}`),
     });
+    const achievement = await db.collection("library").findOne({
+      _id: new ObjectId(`${req.query.itemId}`),
+    });
     await db.collection("used").insertOne({
       userId: new ObjectId(id),
-      itemId: new ObjectId(`${item?._id}`),
-      scene: item?.scene,
+      itemId: new ObjectId(`${item?._id ?? achievement?._id}`),
+      scene: item?.scene ?? "intro",
       ...req.body,
     });
   }
