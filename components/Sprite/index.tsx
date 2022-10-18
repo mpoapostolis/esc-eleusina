@@ -49,7 +49,7 @@ export default function Sprite(props: Item) {
       })
       .every((e) => e) ?? true
   );
-  console.log(props.name, show);
+
   useEffect(() => {
     if (typeof document !== "undefined")
       document.body.style.cursor = hovered ? "pointer" : "auto";

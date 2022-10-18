@@ -68,11 +68,11 @@ export default function Compass() {
         container: "map",
         pitch: 0, // pitch in degrees
         center: {
-          lng: 23.5061835,
-          lat: 38.0,
+          lat: 37.983103884150424,
+          lng: 23.545958305471515,
         },
         style: "mapbox://styles/farandourisp/cl96wxlg300fn15qu2u22crjs",
-        zoom: 12,
+        zoom: 10.9,
       });
 
       initialMap.on("load", () => {
@@ -168,7 +168,7 @@ export default function Compass() {
     }
   }, [answers]);
   const timer = useTimer({
-    initialTime: 10,
+    initialTime: 2,
     step: -1,
     endTime: 0,
   });
@@ -230,8 +230,10 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[1].coords, desc: points[1].desc });
-                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
                   timer.reset();
+                  setHelp(
+                    `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη`
+                  );
                   timer.start();
 
                   setIdx(2);
@@ -249,8 +251,8 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[0].coords, desc: points[0].desc });
-                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
                   timer.reset();
+                  setHelp(``);
                   timer.start();
 
                   setIdx(0);
@@ -290,8 +292,8 @@ export default function Compass() {
                 onChange={setPlace}
                 onFocus={() => {
                   flyTo({ ...points[2].coords, desc: points[2].desc });
-                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
                   timer.reset();
+                  setHelp(`Το πρώτο συνθετικό του ποταμού είναι αριθμός`);
                   timer.start();
 
                   setIdx(1);
@@ -304,8 +306,8 @@ export default function Compass() {
               <input
                 onFocus={() => {
                   flyTo({ ...points[3].coords, desc: points[3].desc });
-                  setHelp(`o theos na filaksi opoion ftasei se afto to simeio`);
                   timer.reset();
+                  setHelp(`Κόλπος της Αττικής, γνωστός για τη ρύπανσή του`);
                   timer.start();
 
                   setIdx(3);
@@ -330,7 +332,7 @@ export default function Compass() {
 
         {timer.time === 0 && (
           <div className="absolute  bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
-            <div className="w-2/4">{points[deg / 90].desc}</div>
+            <div className="w-2/4">{help}</div>
           </div>
         )}
       </div>

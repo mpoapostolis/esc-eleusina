@@ -348,6 +348,7 @@ const Home: NextPage<{ id: string }> = (props) => {
 
   const { data: usedItems } = useUsed();
   const usedIds = usedItems.map((e) => e.itemId);
+  console.log(usedIds);
 
   return (
     <div {...bind()} className="select-none">
