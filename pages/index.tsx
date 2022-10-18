@@ -25,7 +25,6 @@ import useTimerHint from "../Hooks/useTimerHint";
 import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
-import MiniGameModal from "../components/MiniGameModal";
 import { motion } from "framer-motion";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
@@ -43,6 +42,7 @@ export type MiniGame = {
   scene?: string;
   requiredItems?: string[] | null;
   reward?: Reward | null;
+  jigSawAncientText?: string;
   type?: string;
 } & Record<string, any>;
 
@@ -348,18 +348,17 @@ const Home: NextPage<{ id: string }> = (props) => {
 
   const { data: usedItems } = useUsed();
   const usedIds = usedItems.map((e) => e.itemId);
-  console.log(usedIds);
 
   return (
     <div {...bind()} className="select-none">
       <FadeOut />
       {store.status === "COMPASS" && <Compass />}
+      <Ui items={sceneItems} time={timer.time} />
       <JigSaw />
       <Clock />
       <GuideLines />
       <Lexigram />
       <AncientText />
-      <Ui items={sceneItems} time={timer.time} />
       <Reward />
       <WordSearch />
       <div className="canvas">
