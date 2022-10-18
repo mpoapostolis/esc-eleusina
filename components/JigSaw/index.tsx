@@ -39,6 +39,7 @@ const range = (start: number, stop: number, step = 1) =>
 
 function Piece(p: {
   onMove: (p: { x: number; y: number }) => void;
+  done?: boolean;
   idx: number;
   clip: string;
   shuffle: boolean;
@@ -131,7 +132,7 @@ function Piece(p: {
 
   return (
     <animated.img
-      src={store.jigSawUrl}
+      src={p.done ? store.jigSawUrl2 : store.jigSawUrl}
       ref={ref}
       onDragStart={(e) => e.preventDefault()}
       {...bind()}
@@ -156,11 +157,10 @@ export default function JigSaw() {
     `/api/items?scene=${store.scene}`,
   ]);
 
+  const isDone = position.every((item) => item && item?.x === position[0]?.x);
   useEffect(() => {
-    const isDone = position.every((item) => item && item?.x === position[0]?.x);
-    if (isDone) {
-      if (store.nextGame) return store.setStatus(store.nextGame);
-      else if (store.reward) {
+    if (isDone && !store.jigSawUrl2) {
+      if (store.reward) {
         _addReward(store.reward);
         store.setReward(store.reward);
       }
@@ -168,7 +168,17 @@ export default function JigSaw() {
   }, [position]);
 
   return (
-    <MiniGameWrapper status="JIGSAW">
+    <MiniGameWrapper
+      onClose={() => {
+        if (isDone) {
+          if (store.reward) {
+            _addReward(store.reward);
+            store.setReward(store.reward);
+          }
+        }
+      }}
+      status="JIGSAW"
+    >
       <button
         onClick={() => {
           setShuffle(!shuffle);
@@ -186,6 +196,7 @@ export default function JigSaw() {
       >
         {paths.map((d, idx) => (
           <Piece
+            done={isDone}
             idx={idx}
             key={d}
             shuffle={shuffle}
@@ -201,8 +212,7 @@ export default function JigSaw() {
       </div>
       <div
         onClick={() => {
-          if (store.nextGame) return store.setStatus(store.nextGame);
-          else if (store.reward) {
+          if (store.reward) {
             _addReward(store.reward);
             store.setReward(store.reward);
           }

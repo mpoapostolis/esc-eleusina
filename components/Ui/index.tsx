@@ -60,11 +60,11 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const openMiniGame = () => {
     switch (miniGame?.type) {
       case "jigsaw":
-        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward);
-        break;
-
-      case "arxaiologikos":
-        store.setJigSaw(miniGame.jigSawUrl, miniGame.reward, "CLOCK");
+        store.setJigSaw(
+          miniGame.jigSawUrl,
+          miniGame.reward,
+          miniGame?.jigSawUrl2
+        );
         break;
 
       case "compass":

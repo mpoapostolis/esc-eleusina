@@ -75,7 +75,7 @@ export function Clock() {
   };
   return (
     <MiniGameWrapper status="CLOCK">
-      <div onMouseUp={reset} className="grid grid-cols-[1fr_0.2fr] p-10 h-full">
+      <div onMouseUp={reset} className="grid grid-cols-[1fr_0.3fr] p-10 h-full">
         <div className="flex flex-col justify-center items-center w-full h-full">
           <div className=" gap-x-2 flex">
             {emptyArr.map((_, i) => (
@@ -122,19 +122,30 @@ export function Clock() {
         </div>
         <div className="h-full  flex">
           <div className="divider-horizontal divider h-full"></div>
-
-          <ul className=" mx-auto list-disc">
-            {words.map((word, idx) => (
-              <li
-                key={idx}
-                className={clsx("whitespace-nowrap list-item font-bold", {
-                  "line-through": found.includes(word.replace(/ /g, "")),
-                })}
-              >
-                {word}
-              </li>
-            ))}
-          </ul>
+          <div className="w-full h-full p-4">
+            <ul className=" mx-auto list-disc">
+              {words.map((word, idx) => (
+                <li
+                  key={idx}
+                  className={clsx("whitespace-nowrap list-item font-bold")}
+                >
+                  <span
+                    className={clsx("opacity-0", {
+                      "opacity-100": found.includes(word.replace(/ /g, "")),
+                    })}
+                  >
+                    {word}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <div className="divider"></div>
+            <span className="w-full text-2xl text-center break-words">
+              Σχημάτισε 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων
+              «ομιλία και σιωπή». Μόνον έτσι θα βρεις το μυστικό που είναι
+              φυλακισμένο στον χρόνο.
+            </span>
+          </div>
         </div>
       </div>
     </MiniGameWrapper>

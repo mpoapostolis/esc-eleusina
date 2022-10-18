@@ -149,7 +149,7 @@ export function WordSearch() {
   const foundWorlds = found.map((e) => e.map((e) => e.letter).join(""));
   return (
     <MiniGameWrapper status="WORDSEARCH">
-      <div className="grid grid-cols-[1fr_0.2fr] p-10 h-full">
+      <div className="grid grid-cols-[1fr_0.4fr] p-10 h-full">
         <div
           onMouseLeave={() => {
             if (drag) {
@@ -183,28 +183,48 @@ export function WordSearch() {
         </div>
         <div className="h-full  flex">
           <div className="divider-horizontal divider h-full"></div>
-
-          <ul className=" mx-auto list-disc">
-            {words.map((word, idx) => (
-              <li
-                key={idx}
-                className={clsx("whitespace-nowrap list-item font-bold", {
-                  "line-through": foundWorlds.includes(word.replace(/ /g, "")),
-                })}
+          <div className="w-full h-full p-4">
+            <p className="text-2xl">Διάβασε το κείμενο και βρές τις λέξεις</p>
+            <div className="divider"></div>
+            <ul className=" mx-auto list-disc ">
+              {words.map((word, idx) => (
+                <li
+                  key={idx}
+                  className={clsx("whitespace-nowrap list-item font-bold", {})}
+                >
+                  <span
+                    className={clsx("opacity-0", {
+                      "opacity-100": foundWorlds.includes(
+                        word.replace(/ /g, "")
+                      ),
+                    })}
+                  >
+                    {word}
+                  </span>
+                </li>
+              ))}
+              {/* <div
+                onClick={() => {
+                  setFound(solved);
+                  solve();
+                }}
+                className="btn"
               >
-                {word}
-              </li>
-            ))}
-            <div
-              onClick={() => {
-                setFound(solved);
-                solve();
-              }}
-              className="btn"
-            >
-              solve
-            </div>
-          </ul>
+                solve
+              </div> */}
+            </ul>
+            <div className="divider"></div>
+            <span className="w-full text-2xl text-center break-words">
+              Κει πέρα τίποτα δεν ταράζει τη σιωπή. Μονάχα ένας σκύλος (κι αυτός
+              δε γαβγίζει), άσκημος σκύλος, ο δικός του, σκοτεινός με στραβά
+              δόντια, με δυο μεγάλα μάτια αόριστα, πιστά και ξένα, σκοτεινά σαν
+              πηγάδια, — κι ούτε ξεχωρίζεις μέσα τους το πρόσωπό σου, τα χέρια
+              σου ή το πρόσωπό του. Ωστόσο διακρίνεις το σκοτάδι ακέριο,
+              συμπαγές και διάφανο, πλήρες, παρηγορητικό, αναμάρτητο. Περσεφόνη,
+              <br />
+              <span className=" text-center italic">Γ. Ρίτσος</span>
+            </span>
+          </div>
         </div>
       </div>
     </MiniGameWrapper>

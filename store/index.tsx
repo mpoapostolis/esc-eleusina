@@ -214,8 +214,13 @@ export type Store = {
 
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
-  setJigSaw: (e?: string, reward?: Reward | null, nextGame?: Status) => void;
-
+  setJigSaw: (
+    e?: string,
+    reward?: Reward | null,
+    nextGame?: Status,
+    url2?: string
+  ) => void;
+  jigSawUrl2?: string;
   screenShot?: string;
   takeScreenShot: (src: string) => void;
   fadeOutImg?: string;
@@ -262,11 +267,11 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  setJigSaw: (e, reward, nextGame) => {
+  setJigSaw: (e, reward, b) => {
     set(() => ({
-      nextGame,
-      status: e ? "JIGSAW" : "RUNNING",
+      jigSawUrl2: b,
       jigSawUrl: e,
+      status: e ? "JIGSAW" : "RUNNING",
       reward,
     }));
   },
