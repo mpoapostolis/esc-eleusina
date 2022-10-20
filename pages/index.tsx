@@ -37,6 +37,8 @@ import { WordSearch } from "../components/WordSearch";
 import { Clock } from "../components/Clock";
 import useMutation from "../Hooks/useMutation";
 import { useUsed } from "../lib/used";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 export type MiniGame = {
   scene?: string;
@@ -179,6 +181,7 @@ function Hint(props: Item) {
       .every(Boolean) ?? true
   );
   useTimerHint(props?.text ?? "", props.delayTimeHint, show);
+
   return null;
 }
 
@@ -264,13 +267,20 @@ const Home: NextPage<{ id: string }> = (props) => {
         return n;
       }),
   });
-
+  const router = useRouter();
   const timer = useTimer({
     initialTime: store.timer,
     timerType: "DECREMENTAL",
     step: 1,
     onTimeUpdate: store.setTimer,
     endTime: 0,
+    onTimeOver: () => {
+      axios.post("/api/auth?type=reset").then((e) => {
+        timer.reset();
+        store.setTimer(600);
+        router.push("/gameover");
+      });
+    },
   });
 
   useEffect(() => {
@@ -316,7 +326,9 @@ const Home: NextPage<{ id: string }> = (props) => {
     [`/api/inventory?epic=true`, `/api/items?scene=${store.scene}`],
     {
       onSuccess: () => {
-        store.setScene("pp0_xorafi");
+        setTimeout(() => {
+          store.setScene("pp0_xorafi");
+        }, 3000);
       },
     }
   );
@@ -425,7 +437,9 @@ const Home: NextPage<{ id: string }> = (props) => {
           </Suspense>
         </Canvas>
       </div>
-      {store.sound && <audio ref={ref} src={`/sounds/${store.sound}.mp3`} />}
+      {store.sound && !store.mute && (
+        <audio ref={ref} src={`/sounds/${store.sound}.mp3`} />
+      )}
     </div>
   );
 };
