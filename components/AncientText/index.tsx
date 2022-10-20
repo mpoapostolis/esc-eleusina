@@ -61,7 +61,6 @@ export default function AncientText() {
                     const str = x
                       .replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "")
                       .replace(/s{2,}/g, " ");
-                    console.log(str.match(/_bold/g));
                     return store.ancientText?.keys.includes(str) ? (
                       <button
                         className={clsx("mr-2", {
