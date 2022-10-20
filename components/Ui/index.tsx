@@ -162,7 +162,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
           <img
             src={
               store.mute
-                ? "https://s2.svgbox.net/materialui.svg?ic=volume_mute"
+                ? "https://s2.svgbox.net/octicons.svg?ic=mute-bold"
                 : "https://s2.svgbox.net/octicons.svg?ic=unmute-bold"
             }
             className="w-12"
