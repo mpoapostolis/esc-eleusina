@@ -153,6 +153,23 @@ export default function Ui(props: { items: Item[]; time: number }) {
           hidden: store.status !== "RUNNING",
         })}
       >
+        <button
+          onClick={() => {
+            store.setMute();
+          }}
+          className=" border-dashed flex items-center justify-center w-20 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
+        >
+          <img
+            src={
+              store.mute
+                ? "https://s2.svgbox.net/materialui.svg?ic=volume_mute"
+                : "https://s2.svgbox.net/octicons.svg?ic=unmute-bold"
+            }
+            className="w-12"
+            alt=""
+          />
+        </button>
+
         <Link href="/menu">
           <button
             onClick={() => {

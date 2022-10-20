@@ -211,7 +211,8 @@ export type Store = {
 
   rot?: Euler | null;
   setRot: (e: Euler | null) => void;
-
+  mute: boolean;
+  setMute: () => void;
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
   setJigSaw: (
@@ -250,6 +251,11 @@ export const useStore = create<Store>((set, get) => ({
       screenShot: src,
     })),
   setTimer: (timer) => set(() => ({ timer })),
+  mute: false,
+  setMute: () =>
+    set((s) => ({
+      mute: !s.mute,
+    })),
 
   setFadeOutImg: (obj) =>
     set(() => ({
