@@ -61,6 +61,7 @@ export default function AncientText() {
                     const str = x
                       .replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "")
                       .replace(/s{2,}/g, " ");
+                    console.log(str.match(/_bold/g));
                     return store.ancientText?.keys.includes(str) ? (
                       <button
                         className={clsx("mr-2", {
@@ -82,8 +83,13 @@ export default function AncientText() {
                         {x}
                       </button>
                     ) : (
-                      <span className="mr-2" key={generateUUID()}>
-                        {x}
+                      <span
+                        className={clsx("mr-2", {
+                          "text-red-500": str.match("redd"),
+                        })}
+                        key={generateUUID()}
+                      >
+                        {x.replace("redd", "")}
                       </span>
                     );
                   })}
