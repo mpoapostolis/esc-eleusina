@@ -151,8 +151,11 @@ export default function Sprite(props: Item) {
           store.hand &&
           store.hand === props.requiredToolToReplace?._id
         ) {
+          console.log(props, store.hand);
+
           _updateInv(`${props.requiredToolToReplace._id}`, {
             used: true,
+            scene: store.scene,
           });
           if (props.reward) {
             giveReward();

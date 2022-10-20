@@ -478,7 +478,7 @@ export default function SceneSettings(props: {
         }
       >
         <AllImage
-          imgs={props.imgs}
+          imgs={items}
           onClick={async (o) => {
             update({
               reward: o as Img | null,

@@ -11,7 +11,6 @@ import {
   updateItem,
   useMiniGames,
 } from "../../lib/items";
-import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
@@ -200,7 +199,7 @@ export default function BoxSettings() {
           }
         >
           <AllImage
-            imgs={imgs}
+            imgs={items}
             onClick={async (o) => {
               await axios
                 .post("/api/miniGames", {

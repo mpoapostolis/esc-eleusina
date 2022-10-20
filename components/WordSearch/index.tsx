@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import useMutation from "../../Hooks/useMutation";
 import { addItem, useInventory } from "../../lib/inventory";
-import { getInventory } from "../../lib/inventory/api";
 import { useItems } from "../../lib/items";
 import { useStore } from "../../store";
 import MiniGameWrapper from "../MiniGameWrapper";
@@ -64,24 +63,23 @@ const solved = words.map((e, i) =>
 const randomLetters = () => Array.from({ length: 12 }, r);
 
 const letters = [
-  [r(), r(), r(), r(), r(), "Α", "Σ", "Κ", "Η", "Μ", "Ο", "Σ"],
-  randomLetters(),
-  ["Μ", "Ε", "Γ", "Α", "Λ", "Α", "Μ", "Α", "Τ", "Ι", "Α", r()],
+  [r(), r(), r(), "Μ", r(), r(), r(), r(), r(), r(), r(), r()],
+  [r(), r(), r(), "Ε", r(), r(), r(), r(), r(), r(), r(), r()],
+  [r(), r(), r(), "Γ", r(), r(), r(), "Α", r(), r(), r(), r()],
   ["Σ", "Τ", "Ρ", "Α", "Β", "Α", "Δ", "Ο", "Ν", "Τ", "Ι", "Α"],
-  randomLetters(),
-  [r(), "Α", "Ο", "Ρ", "Ι", "Σ", "Τ", "Α", r(), r(), r(), r()],
-  randomLetters(),
-  [r(), r(), r(), r(), r(), "Π", "Ι", "Σ", "Τ", "Α", r(), r()],
-  ["Ξ", "Ε", "Ν", "Α", r(), r(), r(), r(), r(), r(), r(), r()],
-  [r(), "Σ", "Κ", "Ο", "Τ", "Ε", "Ι", "Ν", "Α", r(), r(), r()],
-]
-  .map((e, i) =>
-    e.map((e, j) => ({
-      letter: e,
-      id: `${i}${j}`,
-    }))
-  )
-  .sort(() => Math.random() - 0.5);
+  ["Κ", r(), r(), "Λ", r(), r(), r(), "Ρ", "Ρ", r(), r(), "Σ"],
+  ["Ο", r(), r(), "Α", r(), r(), r(), "Ι", r(), r(), r(), "Κ"],
+  ["Τ", r(), r(), "Μ", r(), r(), r(), "Σ", r(), r(), r(), "Η"],
+  ["Ε", r(), r(), "Α", r(), r(), r(), "Τ", r(), r(), r(), "Μ"],
+  ["Ι", r(), r(), "Τ", r(), r(), r(), "Α", r(), r(), r(), "Ο"],
+  ["Ν", r(), r(), "Ι", r(), r(), r(), r(), r(), r(), r(), "Σ"],
+  ["Α", r(), r(), "Α", r(), r(), r(), r(), r(), r(), r(), r()],
+].map((e, i) =>
+  e.map((e, j) => ({
+    letter: e,
+    id: `${i}${j}`,
+  }))
+);
 
 type Word = { id: string; letter: string };
 export function WordSearch() {
@@ -203,7 +201,7 @@ export function WordSearch() {
                   </span>
                 </li>
               ))}
-              {/* <div
+              <div
                 onClick={() => {
                   setFound(solved);
                   solve();
@@ -211,7 +209,7 @@ export function WordSearch() {
                 className="btn"
               >
                 solve
-              </div> */}
+              </div>
             </ul>
             <div className="divider"></div>
             <span className="w-full text-2xl text-center break-words">
