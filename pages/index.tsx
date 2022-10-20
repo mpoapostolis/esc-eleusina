@@ -335,6 +335,16 @@ const Home: NextPage<{ id: string }> = (props) => {
 
   const { data: usedItems } = useUsed();
   useEffect(() => {
+    if (
+      store.scene === "intro" &&
+      !store.isHintVisible &&
+      achievements.length === 6
+    ) {
+      store.setIsHintVisible(true);
+      store.setHint(
+        "Τοποθέτησε τα αντικείμενα που κέρδισες στη θέση που ταιριάζουν για να ξεκλειδώσεις το δωμάτιο."
+      );
+    }
     if (store.scene === "intro" && usedItems.length === 6) {
       store.setReward({
         _id: "6332f34b5c2188026f49cce1",
@@ -349,7 +359,7 @@ const Home: NextPage<{ id: string }> = (props) => {
         description: "Συγχαρητήρια! Μόλις κατέκτησες τον πρώτο βαθμό μύησης.",
       });
     }
-  }, [store.scene, usedItems]);
+  }, [store.scene, usedItems, achievements]);
 
   const usedIds = usedItems.map((e) => e.itemId);
 

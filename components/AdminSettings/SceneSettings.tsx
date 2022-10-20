@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { mutate } from "swr";
 import { AllImage, Checkbox } from ".";
 import useMutation from "../../Hooks/useMutation";
+import { useAchievements } from "../../lib/inventory";
 import {
   addItem,
   deleteItem,
@@ -124,6 +125,8 @@ function Row(props: Item & { sceneItems: Item[] }) {
   const [notInInventory, setNotInInventory] = useState<boolean>(false);
   const [load, setLoad] = useState(false);
   const { data: items } = useItems();
+  const { data: achievements } = useAchievements();
+
   useEffect(() => {
     setHint(props.text);
     setTime(props.delayTimeHint);
