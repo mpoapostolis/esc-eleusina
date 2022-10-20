@@ -11,6 +11,7 @@ import {
   useItems,
   Item,
   useMiniGames,
+  updateItem,
 } from "../../lib/items";
 import { MiniGame, Reward } from "../../pages";
 import { Img } from "../../pages/admin";
@@ -121,8 +122,6 @@ function Row(props: Item & { sceneItems: Item[] }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
   const [notInInventory, setNotInInventory] = useState<boolean>(false);
-  const [requiredItems, setRequiredItems] = useState<string[]>([]);
-  const [deleteLoad, setDeleteLoad] = useState(false);
   const [load, setLoad] = useState(false);
   const { data: items } = useItems();
   useEffect(() => {
@@ -132,25 +131,41 @@ function Row(props: Item & { sceneItems: Item[] }) {
   }, [items]);
 
   const updateRequired = (id: string) => {
-    const found = requiredItems?.includes(id);
+    const found = props.requiredItems?.includes(id);
     const tmp = found
-      ? requiredItems?.filter((e) => e !== id)
-      : [...requiredItems, id];
-    setRequiredItems(tmp);
+      ? props.requiredItems?.filter((e) => e !== id)
+      : [...(props.requiredItems ?? []), id];
+
+    _updateItem(props._id, {
+      requiredItems: tmp,
+    });
   };
   const store = useStore();
   const [_deleteItem] = useMutation(deleteItem, [
     `/api/items?scene=${store.scene}`,
   ]);
 
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   return (
     <div className="p-4 my-1  border border-gray-500 bg-gray-500 bg-opacity-5">
       <div className="grid mb-4">
+        {/*                   text: hint,
+                  delayTimeHint: time,
+                  requiredItems,
+                  notInInventory,
+ */}
         <Select
-          value={`${time}`}
-          onChange={(e) => setTime(+`${e.value}`)}
+          value={`${props.delayTimeHint}`}
+          onChange={(e) =>
+            _updateItem(props._id, {
+              delayTimeHint: +`${e.value}`,
+            })
+          }
           label="Delay seconds"
-          options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
+          options={[1, 5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
             label: `${x}`,
             value: x,
           }))}
@@ -159,8 +174,12 @@ function Row(props: Item & { sceneItems: Item[] }) {
       <textarea
         rows={3}
         placeholder="hint"
-        value={hint}
-        onChange={(e) => setHint(e.currentTarget.value)}
+        value={props.text}
+        onChange={(e) =>
+          _updateItem(props._id, {
+            text: e.currentTarget.value,
+          })
+        }
         className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
       />
 
@@ -171,9 +190,11 @@ function Row(props: Item & { sceneItems: Item[] }) {
         <Checkbox
           label="Not in inventory"
           checked={notInInventory}
-          onChange={(evt) => {
-            setNotInInventory(evt.currentTarget.checked);
-          }}
+          onChange={(e) =>
+            _updateItem(props._id, {
+              notInInventory: e.currentTarget.checked,
+            })
+          }
         />
         <br />
 
@@ -193,7 +214,7 @@ function Row(props: Item & { sceneItems: Item[] }) {
                   className={clsx(
                     "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
                     {
-                      "bg-green-500": requiredItems?.includes(`${i._id}`),
+                      "bg-green-500": props.requiredItems?.includes(`${i._id}`),
                     }
                   )}
                 >
@@ -208,54 +229,18 @@ function Row(props: Item & { sceneItems: Item[] }) {
         </div>
       </>
 
-      <div className="grid mt-4 grid-cols-2 gap-x-1">
+      <div className="grid mt-4  gap-x-1">
         <button
           className="btn"
           onClick={async () => {
             _deleteItem(props._id);
           }}
         >
-          {deleteLoad ? (
-            <Load />
-          ) : (
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
-              width="26"
-              height="26"
-            />
-          )}
-        </button>
-        <button
-          onClick={async () => {
-            setLoad(true);
-            await axios
-              .put(
-                `/api/items/${props._id}`,
-                JSON.stringify({
-                  text: hint,
-                  delayTimeHint: time,
-                  requiredItems,
-                  notInInventory,
-                }),
-                {
-                  headers: {
-                    "Content-Type": "application/json; charset=UTF-8",
-                  },
-                }
-              )
-              .then(() => setLoad(false));
-          }}
-          className="btn"
-        >
-          {load ? (
-            <Load />
-          ) : (
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=save&color=777"
-              width="26"
-              height="26"
-            />
-          )}
+          <img
+            src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
+            width="26"
+            height="26"
+          />
         </button>
       </div>
     </div>

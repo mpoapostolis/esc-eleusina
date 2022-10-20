@@ -164,25 +164,20 @@ function Portal(props: Item) {
   ) : null;
 }
 
-function TimerHint(props: Item) {
-  useTimerHint(`${props.text}`, props.delayTimeHint);
-  return null;
-}
-
 function Hint(props: Item) {
   const notInInventory = (a: boolean) => (props.notInInventory ? !a : a);
   const { data: achievements, isLoading } = useAchievements();
   const achIds = achievements.map((e) => e.rewardId);
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+  const used = useUsed();
 
   const store = useStore();
   const { data: inventory } = useInventory();
   const show = notInInventory(
     props?.requiredItems
-      ?.map((v) => invHas(v) || store.usedItems[v] || achIds.includes(v))
+      ?.map((v) => invHas(v) || achIds.includes(v))
       .every(Boolean) ?? true
   );
-
   useTimerHint(props?.text ?? "", props.delayTimeHint, show);
   return null;
 }
