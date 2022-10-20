@@ -17,11 +17,14 @@ export default function Ui(props: { items: Item[]; time: number }) {
   const { data: achievements, isLoading } = useAchievements();
   const { data: usedItems } = useUsed();
   const usedIds = usedItems.map((e) => e.itemId);
-  const ach = achievements?.filter((e) => e.scene === store.scene);
+  const ach = achievements
+    ?.filter((e) => e.scene === store.scene)
+    .filter((e) => !usedIds.includes(`${e.rewardId}`));
   const currInv = inventory
     .filter((e) => !e.hideFromInventory)
     .filter((e) => !usedIds.includes(`${e._id}`));
 
+  console.log(inventory, store.hand);
   const tmpInv: Item[] = Array(
     Math.min(Math.abs(9 - ach?.length - currInv?.length), 9)
   ).fill({
@@ -36,7 +39,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
     achievements.map((e) => e._id).includes(`${currMinigames?.reward?._id}`);
 
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
-  const _achievements = achievements.filter((e) => e.scene === store.scene);
+  const _achievements = achievements
+    .filter((e) => e.scene === store.scene)
+    .filter((e) => !usedIds.includes(`${e.rewardId}`));
+
   const [miniGame] = miniGames.filter((e: any) => e.scene === store.scene);
 
   const doINeedToUseForGame =

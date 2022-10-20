@@ -309,7 +309,7 @@ export default function ItemSettings() {
             }
           >
             <AllImage
-              imgs={getOnlyItems(imgs)}
+              imgs={getOnlyItems(items)}
               onClick={async (o) => {
                 await axios
                   .post("/api/miniGames", {

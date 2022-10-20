@@ -168,7 +168,7 @@ export default function Compass() {
     }
   }, [answers]);
   const timer = useTimer({
-    initialTime: 2,
+    initialTime: 10,
     step: -1,
     endTime: 0,
   });
