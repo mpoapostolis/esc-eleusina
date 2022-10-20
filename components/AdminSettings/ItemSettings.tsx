@@ -243,7 +243,7 @@ export default function ItemSettings() {
         }
       >
         <AllImage
-          imgs={imgs}
+          imgs={items}
           onClick={(o) => {
             _updateItem(id, {
               replaceImg: o?.src ?? null,
