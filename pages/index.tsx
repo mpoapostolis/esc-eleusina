@@ -276,8 +276,6 @@ const Home: NextPage<{ id: string }> = (props) => {
     endTime: 0,
     onTimeOver: () => {
       axios.post("/api/auth?type=reset").then((e) => {
-        timer.reset();
-        store.setTimer(600);
         router.push("/gameover");
       });
     },
@@ -375,6 +373,15 @@ const Home: NextPage<{ id: string }> = (props) => {
       <AncientText />
       <Reward />
       <WordSearch />
+      <button
+        onClick={() => {
+          timer.advanceTime(45);
+        }}
+        className=" border-dashed h-20 flex items-center justify-center w-20 fixed z-50 bottom-3 text-black text-2xl right-52 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
+      >
+        -45
+      </button>
+
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
