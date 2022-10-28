@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import {
   Canvas,
   extend,
@@ -16,6 +16,7 @@ import AdminSettings from "../components/AdminSettings";
 import Library from "../components/AdminSettings/Library";
 import { useRouter } from "next/router";
 import { useItems, useLibrary, updateItem } from "../lib/items";
+import { withSessionSsr } from "../lib/withSession";
 
 extend({ OrbitControls });
 
@@ -289,5 +290,29 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = withSessionSsr(
+  async function getServerSideProps({ req }) {
+    const redirect = !req.session?.user?.admin;
+
+    const user = req.session.user;
+
+    if (redirect) {
+      let destination = "/login";
+      if (user?.admin) destination = "/admin";
+
+      return {
+        redirect: {
+          destination,
+          permanent: false,
+        },
+      };
+    } else {
+      return {
+        props: {},
+      };
+    }
+  }
+);
 
 export default Home;
