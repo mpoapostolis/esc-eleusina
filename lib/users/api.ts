@@ -81,6 +81,7 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     {
       $set: {
         scene: "intro",
+        time: 600
       },
     }
   );
