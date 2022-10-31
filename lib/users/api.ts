@@ -95,6 +95,15 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     userId: new ObjectId(id),
   });
 
+  await db.collection("users").updateOne({
+    userId: new ObjectId(id),
+  }, {
+    $set: {
+      scene: "intro",
+      time: 600
+    }
+  });
+
   await db.collection("items").updateMany(
     {},
     {
@@ -127,6 +136,7 @@ export async function getUser(req: NextApiRequest, res: NextApiResponse) {
     {
       projection: {
         _id: 1,
+        time: 1,
         userName: 1,
         scene: 1,
       },

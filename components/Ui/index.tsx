@@ -113,7 +113,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
             className="bg-gray-400 flex items-center justify-end h-8"
             style={{
               textShadow: "-1px -1px 2px #000, 1px 1px 1px #000",
-              width: `${(props.time / 600) * 100}%`,
+              width: `${Math.min(props.time / 600, 1) * 100}%`,
             }}
           >
             <div className="relative right-4">{props.time}</div>
@@ -201,7 +201,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
             }}
             className="z-50 text-white font-bold text-4xl"
           >
-            Inventory
+            Η συλλογή μου
           </h1>
         </div>
 
