@@ -7,6 +7,8 @@ import {
   useLoader,
   useThree,
 } from "@react-three/fiber";
+import myDb from "../helpers/mongo";
+
 import { Item, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -39,6 +41,7 @@ import useMutation from "../Hooks/useMutation";
 import { useUsed } from "../lib/used";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { ObjectId } from "mongodb";
 
 export type MiniGame = {
   scene?: string;
@@ -190,13 +193,13 @@ function GuideLineItem(props?: Item) {
   return null;
 }
 
-function FadeOut() {
+function FadeOut(props: { time: number }) {
   const store = useStore();
 
   useEffect(() => {
     const scene = store.screenShot;
     if (scene) {
-      updateUser({ scene });
+      updateUser({ scene, time: props.time });
       setTimeout(() => store.setScene(scene as any), 125);
     }
   }, [store.fadeOutImg]);
@@ -254,7 +257,8 @@ function Loader(props: { src?: string }) {
   return null;
 }
 
-const Home: NextPage<{ id: string }> = (props) => {
+const Home: NextPage<{ id: string; time: number }> = (props) => {
+  console.log(props.time);
   const store = useStore();
 
   const bind = useGesture({
@@ -269,7 +273,7 @@ const Home: NextPage<{ id: string }> = (props) => {
   });
   const router = useRouter();
   const timer = useTimer({
-    initialTime: store.timer,
+    initialTime: props.time,
     timerType: "DECREMENTAL",
     step: 1,
     onTimeUpdate: store.setTimer,
@@ -331,6 +335,10 @@ const Home: NextPage<{ id: string }> = (props) => {
     }
   );
 
+  useEffect(() => {
+    if (store.status === "REWARD") timer.advanceTime(-300);
+  }, [store.status]);
+
   const { data: usedItems } = useUsed();
   useEffect(() => {
     if (
@@ -363,7 +371,7 @@ const Home: NextPage<{ id: string }> = (props) => {
 
   return (
     <div {...bind()} className="select-none">
-      <FadeOut />
+      <FadeOut time={timer.time} />
       {store.status === "COMPASS" && <Compass />}
       <Ui items={sceneItems} time={timer.time} />
       <JigSaw />
@@ -465,6 +473,12 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
   async function getServerSideProps({ req }) {
     const user = req.session.user;
     let destination = null;
+    const db = await myDb();
+
+    const account = await db
+      .collection("users")
+      .findOne({ _id: new ObjectId(`${user?.id ?? ""}`) });
+
     if (!user) destination = "/login";
     if (user?.admin) destination = "/admin";
     if (destination)
@@ -476,7 +490,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
       };
     else
       return {
-        props: { ...user },
+        props: { ...user, time: account?.time ?? 600 },
       };
   }
 );
