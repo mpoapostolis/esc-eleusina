@@ -2,7 +2,7 @@
 
 import axios, { AxiosError } from "axios";
 import useSWR from "swr";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
 import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { Used } from "./types";

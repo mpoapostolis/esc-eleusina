@@ -3,7 +3,7 @@ import { mutate } from "swr";
 import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
-import { Reward } from "../pages";
+import { Reward } from "../pages/game";
 import { Img } from "../pages/admin";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";

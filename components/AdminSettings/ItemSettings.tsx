@@ -11,7 +11,7 @@ import {
   updateItem,
   useMiniGames,
 } from "../../lib/items";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
 import { Item, statusArr, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";

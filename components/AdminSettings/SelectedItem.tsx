@@ -12,7 +12,7 @@ import {
   updateItem,
   useMiniGames,
 } from "../../lib/items";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Range from "../Range";

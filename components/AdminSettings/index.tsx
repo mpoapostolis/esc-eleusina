@@ -9,7 +9,7 @@ import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
 import { addItem, useItems, useLibrary } from "../../lib/items";
 import useMutation from "../../Hooks/useMutation";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
