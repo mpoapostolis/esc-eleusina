@@ -53,6 +53,7 @@ export default function Login() {
           />
 
           <input
+            autoComplete=""
             name="password"
             required
             placeholder="Password"

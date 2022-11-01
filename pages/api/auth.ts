@@ -19,7 +19,6 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     case "PUT":
       return updateUser(req, res);
     case "POST":
-      console.log(req.body);
       switch (req.query.type) {
         case "login":
           return login(req, res);
