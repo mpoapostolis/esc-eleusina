@@ -31,7 +31,7 @@ export default function Home() {
         <source src="/videos/rickrolled.mp4" type="video/mp4" />
         Sorry, your browser doesn't support videos.
       </video>
-      <Link href="/step-1">
+      <Link href="/ready">
         <a className="px-8 py-4 rounded-lg text-2xl border  border-opacity-70 border-white  bg-black bg-opacity-90 text-white font-bold absolute bottom-16 right-4">
           Skip
         </a>

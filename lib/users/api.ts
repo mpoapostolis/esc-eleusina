@@ -29,11 +29,12 @@ export async function createUser(req: NextApiRequest, res: NextApiResponse) {
   const id = await db
     .collection("users")
     .insertOne({ ...rest, password: _password });
+  await req.session.destroy();
   req.session.user = {
     id: id.insertedId.toString(),
   };
   await req.session.save();
-  res.status(201).send("ok");
+  return res.writeHead(302, { Location: "/" }).end();
 }
 
 let loginSchema = yup.object().shape({
@@ -45,8 +46,10 @@ export async function login(req: NextApiRequest, res: NextApiResponse) {
   const body = await loginSchema.validate(req.body).catch((err) => {
     return err;
   });
+
   const err = getErrors(body);
   if (err) return res.status(400).json(err);
+
   const db = await myDb();
   const user = await db
     .collection("users")
@@ -61,7 +64,7 @@ export async function login(req: NextApiRequest, res: NextApiResponse) {
       id: user?._id.toString(),
     };
     await req.session.save();
-    res.status(200).send("ok");
+    return res.writeHead(302, { Location: "/" }).end();
   } else {
     return res.status(400).json({ msg: `password or username incorrect` });
   }
