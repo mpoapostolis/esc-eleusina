@@ -19,23 +19,23 @@ export default function Home() {
       }}
       className="w-screen h-screen flex items-center justify-center"
     >
-      <div className="container p-8 border-dashed bg-black bg-opacity-70  grid gap-4 text-center">
+      <div className="max-w-4xl w-full p-8 border-dashed bg-black bg-opacity-70  grid gap-4 text-center">
         <select
           value={locale}
           onChange={(evt) => {
             const locale = evt.currentTarget.value;
             router.push("/", "/", { locale });
           }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none"
+          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
         >
           <option
-            className=" text-orange-400 uppercase  bg-white text-2xl "
+            className=" text-orange-300 uppercase  bg-white text-2xl "
             value="en"
           >
             🇬🇧 &nbsp; {(locale === "el" ? "ΑΓΓΛΙΚΑ" : `English`).toUpperCase()}
           </option>
           <option
-            className="text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value="el"
           >
             🇬🇷 &nbsp;{(locale === "el" ? "ΕΛΛΗΝΙΚΑ" : `Greek`).toUpperCase()}
@@ -47,17 +47,17 @@ export default function Home() {
           onChange={(evt) => {
             const locale = evt.currentTarget.value;
           }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none"
+          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
         >
           <option
-            className=" text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className=" text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value="eleusina"
           >
             {(locale === "el" ? "ΕΛΕΥΣΙΝΑ" : `ELEUSINA`).toUpperCase()}
           </option>
           <option
             disabled
-            className="text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value="skiathos"
           >
             {(locale === "el" ? "ΣΚΙΑΘΟΣ" : `SKIATHOS`).toUpperCase()}
@@ -69,16 +69,16 @@ export default function Home() {
           onChange={(evt) => {
             _updateUser({ scene: evt.currentTarget.value });
           }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none"
+          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
         >
           <option
-            className=" text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className=" text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value="intro"
           >
             {(locale === "el" ? "Φως-Σκόταδι" : `Light-Dark`).toUpperCase()}
           </option>
           <option
-            className="text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value="pp0_xorafi"
           >
             {(locale === "el"
@@ -93,16 +93,16 @@ export default function Home() {
           onChange={(evt) => {
             _updateUser({ time: +evt.currentTarget.value });
           }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none"
+          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
         >
           <option
-            className="text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value={1200}
           >
             {(locale === "el" ? "ΑΡΧΑΡΙΟΣ" : `BEGINNER`).toUpperCase()}
           </option>
           <option
-            className="text-orange-400 drop-shadow-xl uppercase  bg-white text-2xl "
+            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
             value={600}
           >
             {(locale === "el" ? "ΕΜΠΕΙΡΟΣ" : `EXPERIENCED`).toUpperCase()}
@@ -119,11 +119,11 @@ export default function Home() {
             type="submit"
             src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
             title="LOGOUT"
-            className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none"
+            className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
           />
         </form>
         <Link href="/learn-more">
-          <a className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-white text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-400 drop-shadow-xl font-bold    border-opacity-70 border-white border-2 outline-none">
+          <a className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none">
             {(locale === "el"
               ? "ΜΑΘΕ ΠΕΡΙΣΣΟΤΕΡΑ"
               : `LEARN MORE`
