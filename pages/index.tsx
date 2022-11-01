@@ -5,7 +5,6 @@ import useMutation from "../Hooks/useMutation";
 import { updateUser, useUser } from "../lib/users";
 import { withSessionSsr } from "../lib/withSession";
 import myDb from "../helpers/mongo";
-import { ObjectId } from "mongodb";
 
 export default function Home() {
   const router = useRouter();
@@ -142,10 +141,6 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
     let destination = null;
     const db = await myDb();
 
-    const account = await db
-      .collection("users")
-      .findOne({ _id: new ObjectId(`${user?.id ?? ""}`) });
-
     if (!user) destination = "/login";
     if (user?.admin) destination = "/admin";
     if (destination)
@@ -157,7 +152,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(
       };
     else
       return {
-        props: { ...user, time: account?.time ?? 600 },
+        props: { ...user },
       };
   }
 );

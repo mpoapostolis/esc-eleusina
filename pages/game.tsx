@@ -84,7 +84,10 @@ function Controls(props: { fov: number } & OrbitControlsProps) {
 function Environment() {
   const { scene } = useThree();
   const store = useStore();
-  const texture = useLoader(THREE.TextureLoader, `/scenes/${store.scene}.jpg`);
+  const texture = useLoader(
+    THREE.TextureLoader,
+    `/scenes/${store.scene ?? "intro"}.jpg`
+  );
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.background = texture;
   return null;
@@ -258,7 +261,6 @@ function Loader(props: { src?: string }) {
 }
 
 const Home: NextPage<{ id: string; time: number }> = (props) => {
-  console.log(props.time);
   const store = useStore();
 
   const bind = useGesture({
