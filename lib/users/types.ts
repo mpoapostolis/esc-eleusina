@@ -4,4 +4,5 @@ export type User = {
   _id: string;
   userName: string;
   scene: Scene;
+  time?: number;
 };
