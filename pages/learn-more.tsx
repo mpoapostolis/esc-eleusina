@@ -28,7 +28,7 @@ export default function Home() {
         height={700}
         className="w-screen h-screen"
       >
-        <source src="/videos/rickrolled.mp4" type="video/mp4" />
+        <source src="/videos/video.mp4" type="video/mp4" />
         Sorry, your browser does not support videos.
       </video>
       <Link href="/ready">
