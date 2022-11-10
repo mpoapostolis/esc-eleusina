@@ -1,6 +1,15 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
+import useMutation from "../Hooks/useMutation";
+import { updateUser } from "../lib/users";
 
 export default function Login() {
+  const router = useRouter();
+  const [_updateUser] = useMutation(updateUser, ["/api/auth"], {
+    onSuccess: (data) => {
+      router.push("/game");
+    },
+  });
+
   return (
     <>
       <section
@@ -30,12 +39,27 @@ export default function Login() {
           </h1>
         </div>
 
-        <div className=" w-full mt- pl-4 py-4 flex justify-end ">
-          <Link href="/game">
-            <a className="bg-gray-300 px-8 py-4 mr-8 rounded-xl border border-dashed border-white  text-center bg-opacity-70 text-2xl font-bold text-white drop-shadow ">
-              Καλή τύχη! Ξεκίνα
-            </a>
-          </Link>
+        <div className="  ml-auto mt- pl-4 py-4  justify-end grid grid-cols-2 gap-2 ">
+          <button
+            onClick={() =>
+              _updateUser({
+                time: 600,
+              })
+            }
+            className="bg-gray-300 px-8 py-4 mr-8 rounded-xl border border-dashed border-white  text-center bg-opacity-70 text-2xl font-bold text-white drop-shadow "
+          >
+            Δύσκολο
+          </button>
+          <button
+            onClick={() => {
+              _updateUser({
+                time: 900,
+              });
+            }}
+            className="bg-gray-300 px-8 py-4 mr-8 rounded-xl border border-dashed border-white  text-center bg-opacity-70 text-2xl font-bold text-white drop-shadow "
+          >
+            Εύκολο
+          </button>
         </div>
       </section>
     </>

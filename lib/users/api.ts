@@ -34,7 +34,7 @@ export async function createUser(req: NextApiRequest, res: NextApiResponse) {
     id: id.insertedId.toString(),
   };
   await req.session.save();
-  return res.writeHead(302, { Location: "/" }).end();
+  return res.writeHead(302, { Location: "/?newUser=true" }).end();
 }
 
 let loginSchema = yup.object().shape({
@@ -84,7 +84,7 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     {
       $set: {
         scene: "intro",
-        time: 600
+        time: 600,
       },
     }
   );
@@ -99,14 +99,17 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     userId: new ObjectId(id),
   });
 
-  await db.collection("users").updateOne({
-    userId: new ObjectId(id),
-  }, {
-    $set: {
-      scene: "intro",
-      time: 600
+  await db.collection("users").updateOne(
+    {
+      userId: new ObjectId(id),
+    },
+    {
+      $set: {
+        scene: "intro",
+        time: 600,
+      },
     }
-  });
+  );
 
   await db.collection("items").updateMany(
     {},
