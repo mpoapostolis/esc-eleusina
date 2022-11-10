@@ -5,132 +5,40 @@ import useMutation from "../Hooks/useMutation";
 import { updateUser, useUser } from "../lib/users";
 import { withSessionSsr } from "../lib/withSession";
 import myDb from "../helpers/mongo";
+import clsx from "clsx";
 
+const arr = [
+  "/images/btn-1.png",
+  "/images/btn-2.png",
+  "/images/btn-3.png",
+  "/images/btn-4.png",
+  "/images/btn-5.png",
+];
 export default function Home() {
   const router = useRouter();
-  const { locale } = router;
-  const { data: user } = useUser();
-  const [_updateUser] = useMutation(updateUser, ["/api/auth"]);
   return (
-    <div
-      style={{
-        backgroundImage: `url(/images/bg.png)`,
-        backgroundSize: "100% 100%",
-      }}
-      className="w-screen h-screen flex items-center justify-center"
-    >
-      <div className="max-w-4xl w-full p-8 border-dashed bg-black bg-opacity-70  grid gap-4 text-center">
-        <select
-          value={locale}
-          onChange={(evt) => {
-            const locale = evt.currentTarget.value;
-            router.push("/", "/", { locale });
-          }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
-        >
-          <option
-            className=" text-orange-300 uppercase  bg-white text-2xl "
-            value="en"
+    <div className="h-screen w-screen grid grid-cols-5 gap-2 bg-black ">
+      {arr.map((e, idx) => (
+        <Link href={router.query?.newUser ? "/learn-more" : "/ready"}>
+          <button
+            className="disabled:cursor-not-allowed relative disabled:opacity-30 overflow-hidden"
+            disabled={idx !== 2}
           >
-            🇬🇧 &nbsp; {(locale === "el" ? "ΑΓΓΛΙΚΑ" : `English`).toUpperCase()}
-          </option>
-          <option
-            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value="el"
-          >
-            🇬🇷 &nbsp;{(locale === "el" ? "ΕΛΛΗΝΙΚΑ" : `Greek`).toUpperCase()}
-          </option>
-        </select>
-
-        <select
-          value={"eleusina"}
-          onChange={(evt) => {
-            const locale = evt.currentTarget.value;
-          }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
-        >
-          <option
-            className=" text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value="eleusina"
-          >
-            {(locale === "el" ? "ΕΛΕΥΣΙΝΑ" : `ELEUSINA`).toUpperCase()}
-          </option>
-          <option
-            disabled
-            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value="skiathos"
-          >
-            {(locale === "el" ? "ΣΚΙΑΘΟΣ" : `SKIATHOS`).toUpperCase()}
-          </option>
-        </select>
-
-        <select
-          value={user?.scene ?? "intro"}
-          onChange={(evt) => {
-            _updateUser({ scene: evt.currentTarget.value });
-          }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
-        >
-          <option
-            className=" text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value="intro"
-          >
-            {(locale === "el" ? "Φως-Σκόταδι" : `Light-Dark`).toUpperCase()}
-          </option>
-          <option
-            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value="pp0_xorafi"
-          >
-            {(locale === "el"
-              ? "Παρελθόν-Παρον"
-              : `Past-Present`
-            ).toUpperCase()}
-          </option>
-        </select>
-
-        <select
-          value={user?.time ?? 1200}
-          onChange={(evt) => {
-            _updateUser({ time: +evt.currentTarget.value });
-          }}
-          className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
-        >
-          <option
-            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value={1200}
-          >
-            {(locale === "el" ? "ΑΡΧΑΡΙΟΣ" : `BEGINNER`).toUpperCase()}
-          </option>
-          <option
-            className="text-orange-300 drop-shadow-xl uppercase  bg-white text-2xl "
-            value={600}
-          >
-            {(locale === "el" ? "ΕΜΠΕΙΡΟΣ" : `EXPERIENCED`).toUpperCase()}
-          </option>
-        </select>
-
-        <form
-          className="w-full h-full"
-          action="/api/auth?type=logout"
-          method="POST"
-        >
-          <input
-            value="LOGOUT"
-            type="submit"
-            src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
-            title="LOGOUT"
-            className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none"
-          />
-        </form>
-        <Link href="/learn-more">
-          <a className="cursor-pointer rounded-xl border-dashed bg-opacity-70  bg-gray-300 text-center text-4xl appearance-none block px-3 py-4 w-full   text-orange-300 drop-shadow-xl font-bold  border-white border-2 outline-none">
-            {(locale === "el"
-              ? "ΜΑΘΕ ΠΕΡΙΣΣΟΤΕΡΑ"
-              : `LEARN MORE`
-            ).toUpperCase()}
-          </a>
+            <img
+              className={clsx("h-full scale-110 w-full", {
+                "transition hover:scale-150  duration-200": idx == 2,
+              })}
+              src={e}
+            />
+            <div
+              className={clsx({
+                "w-full text-opacity-0 bg-opacity-20 hover:bg-opacity-25 h-full absolute hover:bg-yellow-300 bg-black top-0 left-0 ":
+                  idx === 2,
+              })}
+            ></div>
+          </button>
         </Link>
-      </div>
+      ))}
     </div>
   );
 }

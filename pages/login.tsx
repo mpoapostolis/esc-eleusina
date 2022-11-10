@@ -1,4 +1,3 @@
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -10,7 +9,7 @@ export default function Login() {
     <>
       <section
         style={{
-          backgroundImage: `url(/scenes/pp0_xorafi.jpg)`,
+          backgroundImage: `url(/images/start_map.png)`,
           backgroundSize: "100% 100%",
         }}
         className="h-screen flex items-center  justify-center  w-screen overflow-hidden"
@@ -39,7 +38,7 @@ export default function Login() {
         <form
           method="post"
           action="/api/auth?type=login"
-          className="max-w-3xl  w-full grid gap-y-8  bg-black bg-opacity-50 p-8 rounded"
+          className="max-w-xl  w-full grid gap-y-8  bg-black bg-opacity-80 border border-white border-opacity-30 p-8 rounded"
         >
           <h1 className="text-3xl font-bold h-12 text-yellow-500">
             Στοιχεία χρήστη
