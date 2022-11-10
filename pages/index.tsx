@@ -19,7 +19,9 @@ export default function Home() {
   return (
     <div className="h-screen w-screen grid grid-cols-5 gap-2 bg-black ">
       {arr.map((e, idx) => (
-        <Link href={router.query?.newUser ? "/learn-more" : "/ready"}>
+        <Link
+          href={router.query?.newUser ? "/learn-more?newUser=true" : "/ready"}
+        >
           <button
             className="disabled:cursor-not-allowed relative disabled:opacity-30 overflow-hidden"
             disabled={idx !== 2}
