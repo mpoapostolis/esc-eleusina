@@ -20,6 +20,7 @@ export default function Home() {
     <div className="h-screen w-screen grid grid-cols-5 gap-2 bg-black ">
       {arr.map((e, idx) => (
         <Link
+          key={idx}
           href={router.query?.newUser ? "/learn-more?newUser=true" : "/ready"}
         >
           <button
