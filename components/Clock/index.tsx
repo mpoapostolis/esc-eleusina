@@ -74,7 +74,7 @@ export function Clock() {
     setDrag(false);
   };
   return (
-    <MiniGameWrapper status="RUNNING">
+    <MiniGameWrapper status="CLOCK">
       <div onMouseUp={reset} className="grid grid-cols-[1fr_0.3fr] p-10 h-full">
         <div className="flex    flex-col justify-center items-center w-full h-full">
           <div className="relative gap-x-2  flex">
