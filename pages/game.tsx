@@ -15,6 +15,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Fragment, Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
+import { VRButton } from "@react-three/xr";
+
 import { MathUtils, Mesh, Vector3 } from "three";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
@@ -393,9 +395,9 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       </button>
 
       <div className="canvas">
-        <Canvas flat={true} linear={true} mode="concurrent">
+        <VRButton />
+        <Canvas vr flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
-
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
