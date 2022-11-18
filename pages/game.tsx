@@ -96,6 +96,7 @@ function Environment() {
     `/scenes/${store.scene ?? "intro"}.jpg`
   );
   texture.mapping = THREE.EquirectangularReflectionMapping;
+
   scene.background = texture;
   return null;
 }
@@ -412,7 +413,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       {supportXr && <VRButton />}
 
       <div className="canvas">
-        <Canvas vr flat={true} linear={true} mode="concurrent">
+        <Canvas flat={true} linear={true} mode="concurrent">
           {isMobile ? (
             <DeviceOrientationControls />
           ) : (
