@@ -15,8 +15,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
 import { Fragment, Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
-import { VRButton } from "@react-three/xr";
-
 import { MathUtils, Mesh, Vector3 } from "three";
 import { useTimer } from "use-timer";
 import GuideLines from "../components/GuideLines";
@@ -30,6 +28,7 @@ import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import { motion } from "framer-motion";
+import { VRButton } from "@react-three/xr";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
 import { withSessionSsr } from "../lib/withSession";
@@ -393,11 +392,11 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       >
         -45
       </button>
-
+      <VRButton />
       <div className="canvas">
-        <VRButton />
         <Canvas vr flat={true} linear={true} mode="concurrent">
           <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
+
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
