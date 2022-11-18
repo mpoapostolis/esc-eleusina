@@ -12,7 +12,12 @@ import myDb from "../helpers/mongo";
 import { Item, useStore } from "../store";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { Html, OrbitControlsProps, useProgress } from "@react-three/drei";
+import {
+  DeviceOrientationControls,
+  Html,
+  OrbitControlsProps,
+  useProgress,
+} from "@react-three/drei";
 import { Fragment, Suspense, useEffect, useRef, useState } from "react";
 import { useGesture } from "@use-gesture/react";
 import { MathUtils, Mesh, Vector3 } from "three";
@@ -43,6 +48,7 @@ import { useUsed } from "../lib/used";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { ObjectId } from "mongodb";
+import { useWindowSize } from "../Hooks/useWindowWidth";
 
 export type MiniGame = {
   scene?: string;
@@ -371,7 +377,18 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
   }, [store.scene, usedItems, achievements]);
 
   const usedIds = usedItems.map((e) => e.itemId);
-
+  // get innerWidth
+  const { width = 999 } = useWindowSize();
+  const isMobile = width < 768;
+  const [supportXr, setSupportXr] = useState(false);
+  useEffect(() => {
+    typeof window !== "undefined" &&
+      // @ts-ignore
+      window.navigator.xr
+        ?.isSessionSupported("immersive-vr")
+        .then(setSupportXr);
+  }, []);
+  // console.log(supportXr);
   return (
     <div {...bind()} className="select-none">
       <FadeOut time={timer.time} />
@@ -392,11 +409,15 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       >
         -45
       </button>
-      <VRButton />
+      {supportXr && <VRButton />}
+
       <div className="canvas">
         <Canvas vr flat={true} linear={true} mode="concurrent">
-          <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
-
+          {isMobile ? (
+            <DeviceOrientationControls />
+          ) : (
+            <Controls position={[0, 0, 0]} maxDistance={0.02} fov={fov} />
+          )}
           <Suspense fallback={<CustomLoader />}>
             {sceneItems
               .filter((e) => ["hint", "guidelines"].includes(`${e.type}`))
@@ -451,7 +472,6 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
               })}
             <Scenes />
           </Suspense>
-
           <Screenshot />
           <Suspense fallback={<CustomLoader />}>
             <Hand />
