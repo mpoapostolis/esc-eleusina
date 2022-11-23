@@ -70,6 +70,10 @@ export default function Sprite(props: Item) {
     config: config.wobbly,
   });
 
+  const [deleteScene] = useMutation(async () => {
+    await axios.delete("/api/inventory");
+  });
+
   const [_addReward] = useMutation(addReward, [
     `/api/inventory?epic=true`,
     `/api/items?scene=${store.scene}`,
@@ -92,10 +96,6 @@ export default function Sprite(props: Item) {
     _updateInv(store.hand, { used: true });
     store.setHand(undefined);
   };
-
-  const [deleteScene] = useMutation(async () => {
-    await axios.delete("/api/inventory");
-  });
 
   return (
     <animated.mesh

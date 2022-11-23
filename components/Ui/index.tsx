@@ -124,7 +124,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
         {achievements
           .filter((e) => e.superDuper)
           .map((e) => (
-            <img className="w-10 h-10" src={e.src} />
+            <img key={e._id} className="w-10 h-10" src={e.src} />
           ))}
       </div>
 
