@@ -31,9 +31,11 @@ export default function Menu() {
         />
         <div className="grid gap-4 grid-cols-5">
           {achievements.map((item) => (
-            <div className=" rounded-md  p-4  bg-white bg-opacity-20 flex flex-col  justify-center items-center gap-4 text-center">
+            <div
+              key={item._id}
+              className=" rounded-md  p-4  bg-white bg-opacity-20 flex flex-col  justify-center items-center gap-4 text-center"
+            >
               <img
-                key={item._id}
                 onClick={() => _updateUser({ scene: item })}
                 className={clsx("w-full", {
                   // "opacity-20 cursor-not-allowed": true,
