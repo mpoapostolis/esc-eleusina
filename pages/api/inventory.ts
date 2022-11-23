@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import {
   addAchievements,
   addItem,
+  deleteItems,
   getAchievements,
   getInventory,
   updateInv,
@@ -26,6 +27,8 @@ async function invRoute(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case "GET":
       return getInventory(req, res);
+    case "DELETE":
+      return deleteItems(req, res);
 
     case "PUT":
       return updateInv(req, res);

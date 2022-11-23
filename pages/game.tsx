@@ -37,7 +37,12 @@ import { VRButton } from "@react-three/xr";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
 import { withSessionSsr } from "../lib/withSession";
-import { addReward, useAchievements, useInventory } from "../lib/inventory";
+import {
+  addItem,
+  addReward,
+  useAchievements,
+  useInventory,
+} from "../lib/inventory";
 import { useUser } from "../lib/users";
 import { updateUser } from "../lib/users/queries";
 import { useItems, useMiniGames } from "../lib/items";
@@ -60,6 +65,7 @@ export type MiniGame = {
 
 export type Reward = Img & {
   description?: string;
+  superDuper?: true;
 };
 
 extend({ OrbitControls });
@@ -312,6 +318,15 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     store.setHand(undefined);
   }, [store.scene]);
 
+  const [_addItem, { loading }] = useMutation(addItem, [
+    `/api/inventory?scene=${store.scene}`,
+  ]);
+  const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
+
+  useEffect(() => {
+    const autoCollect = sceneItems.find((e) => e.autoCollect);
+    if (autoCollect) _addItem(autoCollect?._id);
+  }, [sceneItems]);
   const [boxItem] = sceneItems.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
@@ -339,7 +354,9 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     {
       onSuccess: () => {
         setTimeout(() => {
-          store.setScene("pp0_xorafi");
+          store.setStatus("RUNNING");
+          if (store.scene === "intro") store.setScene("pp0_xorafi");
+          if (store.scene === "pp5_navagio_int") store.setScene("final");
         }, 3000);
       },
     }
@@ -361,19 +378,10 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
         "Τοποθέτησε τα αντικείμενα που κέρδισες στη θέση που ταιριάζουν για να ξεκλειδώσεις το δωμάτιο."
       );
     }
+    const superDuper = sceneItems.find((e) => e.superDuper);
+
     if (store.scene === "intro" && usedItems.length === 6) {
-      store.setReward({
-        _id: "6332f34b5c2188026f49cce1",
-        src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
-        name: "kernos_shadow",
-        description: "Συγχαρητήρια! Μόλις κατέκτησες τον πρώτο βαθμό μύησης.",
-      });
-      _addReward({
-        _id: "6332f34b5c2188026f49cce1",
-        src: "https://raw.githubusercontent.com/mpoapostolis/escape-vr/main/public/images/15b2f521-99e3-4553-866a-b1add258dbff.png",
-        name: "kernos_shadow",
-        description: "Συγχαρητήρια! Μόλις κατέκτησες τον πρώτο βαθμό μύησης.",
-      });
+      giveReward();
     }
   }, [store.scene, usedItems, achievements]);
 
@@ -381,15 +389,26 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
   // get innerWidth
   const { width = 999 } = useWindowSize();
   const isMobile = width < 768;
-  const [supportXr, setSupportXr] = useState(false);
-  useEffect(() => {
-    typeof window !== "undefined" &&
-      // @ts-ignore
-      window.navigator.xr
-        ?.isSessionSupported("immersive-vr")
-        .then(setSupportXr);
-  }, []);
-  // console.log(supportXr);
+
+  const doIHaveSuperDuper = sceneItems.find((e) => e.superDuper);
+  const giveReward = () => {
+    const superDuper = sceneItems.find((e) => e.superDuper);
+    if (superDuper) {
+      store.setReward({
+        _id: superDuper._id ?? "",
+        src: superDuper.src,
+        superDuper: true,
+        description: superDuper.description,
+      });
+      _addReward({
+        _id: superDuper._id ?? "",
+        src: superDuper.src,
+        superDuper: true,
+        description: superDuper.description,
+      });
+    }
+  };
+
   return (
     <div {...bind()} className="select-none">
       <FadeOut time={timer.time} />
@@ -402,15 +421,16 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       <AncientText />
       <Reward />
       <WordSearch />
-      <button
-        onClick={() => {
-          timer.advanceTime(45);
-        }}
-        className=" border-dashed h-20 flex items-center justify-center w-20 fixed z-50 bottom-3 text-black text-2xl right-52 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
-      >
-        -45
-      </button>
-      {supportXr && <VRButton />}
+      {doIHaveSuperDuper && (
+        <button
+          onClick={() => {
+            giveReward();
+          }}
+          className=" border-dashed h-20 flex items-center justify-center w-20 fixed z-50 bottom-3 text-black text-2xl right-52 rounded-lg border border-black bg-white bg-opacity-30  cursor-pointer pointer-events-auto"
+        >
+          Reward
+        </button>
+      )}
 
       <div className="canvas">
         <Canvas flat={true} linear={true} mode="concurrent">

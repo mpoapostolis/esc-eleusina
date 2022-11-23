@@ -1,4 +1,4 @@
-import { Item, useStore } from "../../store";
+import { Item, Scene, scenes, useStore } from "../../store";
 import { useSpring, animated, config } from "@react-spring/three";
 import { DoubleSide, Sprite as SpriteType } from "three";
 
@@ -14,6 +14,7 @@ import {
 } from "../../lib/inventory";
 import useMutation from "../../Hooks/useMutation";
 import { updateItem } from "../../lib/items";
+import axios from "axios";
 
 export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
@@ -92,11 +93,15 @@ export default function Sprite(props: Item) {
     store.setHand(undefined);
   };
 
+  const [deleteScene] = useMutation(async () => {
+    await axios.delete("/api/inventory");
+  });
+
   return (
     <animated.mesh
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
-      onClick={(evt) => {
+      onClick={async (evt) => {
         if (props.setStatus) store.setStatus(props.setStatus);
         if (props.doIHaveReward) return;
         if (props.type === "box") {
@@ -138,9 +143,19 @@ export default function Sprite(props: Item) {
           props.type !== "box" &&
           !props.replaceImg
         ) {
-          store.setHint(
-            "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς"
-          );
+          const m = props.onCollectFail?.split("\n") ?? [
+            "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς",
+          ];
+          if (m?.length > 1) {
+            const [scene, msg] = m;
+            if (store.scene === "pp2_kikeonas") {
+              store.setHint(msg);
+              await deleteScene();
+              store.setScene(scene as Scene);
+            }
+          } else {
+            store.setHint(m[0]);
+          }
 
           store.setIsHintVisible(true, `07_add_to_inventory_WRONG`);
           return;

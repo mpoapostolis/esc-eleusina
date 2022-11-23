@@ -40,7 +40,8 @@ export type Scene =
   | "pp2_kikeonas"
   | "pp3_ntamari"
   | "pp4_navagio"
-  | "pp5_navagio_int";
+  | "pp5_navagio_int"
+  | "final";
 
 export const scenes = [
   "arxaiologikos",
@@ -56,6 +57,7 @@ export const scenes = [
   "pp3_ntamari",
   "pp4_navagio",
   "pp5_navagio_int",
+  "final",
 ];
 
 export type Account = {
