@@ -340,11 +340,6 @@ const Menu: NextPage = () => {
           title="Select level"
         />
         <MenuItem
-          goTo="/menu/history"
-          src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
-          title="History"
-        />
-        <MenuItem
           goTo="/menu/achievements"
           src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
           title="Achievements"

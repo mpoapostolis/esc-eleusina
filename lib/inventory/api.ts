@@ -24,6 +24,8 @@ export async function addItem(req: NextApiRequest, res: NextApiResponse) {
 
 export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
+  const scene = req.query.scene;
+
   const db = await myDb();
   const inv = await db
     .collection("inventory")
@@ -52,6 +54,43 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
     ])
     .toArray();
 
+  res.status(200).json(inv);
+}
+
+export async function deleteItems(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+  const items = await db
+    .collection("items")
+    .find({
+      $or: [
+        {
+          scene: "pp1_elaiourgeio",
+        },
+        {
+          scene: "pp2_kikeonas",
+        },
+      ],
+    })
+    .toArray();
+
+  await db.collection("used").deleteMany({
+    userId: new ObjectId(id),
+    $or: [
+      {
+        scene: "pp1_elaiourgeio",
+      },
+      {
+        scene: "pp2_kikeonas",
+      },
+    ],
+  });
+  const inv = await db.collection("inventory").deleteMany({
+    userId: new ObjectId(id),
+    itemId: {
+      $in: items.map((e) => new ObjectId(e._id)),
+    },
+  });
   res.status(200).json(inv);
 }
 

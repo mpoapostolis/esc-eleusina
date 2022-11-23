@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
-import { debug } from "console";
 import { useUsed } from "../../lib/used";
 
 export default function Ui(props: { items: Item[]; time: number }) {
@@ -30,7 +29,6 @@ export default function Ui(props: { items: Item[]; time: number }) {
     name: "",
     src: "",
   });
-
   const [currMinigames] = miniGames.filter((e) => e.scene === store.scene);
 
   const doIHaveAchievement =
@@ -120,6 +118,14 @@ export default function Ui(props: { items: Item[]; time: number }) {
           </div>
         </div>
         <div className="border-b mt-2 border-black w-full border-dashed"></div>
+      </div>
+
+      <div className="absolute flex gap-x-4 top-0 right-0 m-4">
+        {achievements
+          .filter((e) => e.superDuper)
+          .map((e) => (
+            <img className="w-10 h-10" src={e.src} />
+          ))}
       </div>
 
       <div

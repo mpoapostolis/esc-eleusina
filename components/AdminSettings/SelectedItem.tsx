@@ -20,6 +20,7 @@ import Select from "../Select";
 import BoxSettings from "./BoxSettings";
 import ItemSettings from "./ItemSettings";
 import PortalSettings from "./PortalSettings";
+import { Input } from "../input";
 
 const Component = (props: { type?: string }) => {
   switch (props.type) {
@@ -193,6 +194,41 @@ export default function SelectedItem() {
           <br />
           {!selectedItem.type && (
             <>
+              <Checkbox
+                label="Super duper"
+                checked={selectedItem.hideFromInventory}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    superDuper: evt.target.checked,
+                    hidden: evt.target.checked,
+                  });
+                }}
+              />
+              {selectedItem.superDuper && (
+                <Input
+                  onBlur={(evt) => {
+                    _updateItem(id, {
+                      description: evt.currentTarget.value,
+                    });
+                  }}
+                  label="description"
+                  type="input"
+                />
+              )}
+
+              <div className="my-1" />
+
+              <Checkbox
+                label="auto collect"
+                checked={selectedItem.autoCollect}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    autoCollect: evt.target.checked,
+                  });
+                }}
+              />
+              <div className="my-1" />
+
               <Checkbox
                 label="hide from inventory"
                 checked={selectedItem.hideFromInventory}
