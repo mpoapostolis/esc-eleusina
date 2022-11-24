@@ -62,6 +62,26 @@ const solved = words.map((e, i) =>
 // array of 12 with r as values
 const randomLetters = () => Array.from({ length: 12 }, r);
 
+const letters1 = [
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Γ", r(), r(), r()],
+  ["Α", "Ν", "Ε", "Γ", "Γ", "Ι", "Χ", "Τ", "Α", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Λ", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Η", r(), r(), r()],
+  [r(), r(), r(), "Σ", "Τ", "Ι", "Λ", "Π", "Ν", "Ο", r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Ι", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Ο", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Σ", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Α", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Δ", r(), r(), r()],
+  [r(), r(), "Ε", "Ν", "Α", "Σ", "Τ", "Ρ", "Η", r(), r(), r()],
+  [r(), r(), r(), r(), r(), r(), r(), r(), "Σ", r(), r(), r()],
+].map((e, i) =>
+  e.map((e, j) => ({
+    letter: e,
+    id: `${i}${j}`,
+  }))
+);
+
 const letters = [
   [r(), r(), r(), "Μ", r(), r(), r(), r(), r(), r(), r(), r()],
   [r(), r(), "Ξ", "Ε", "Ν", "Α", r(), r(), r(), r(), r(), r()],
@@ -86,6 +106,13 @@ export function WordSearch() {
   const [found, setFound] = useState<Word[][]>([]);
   const [selected, setSelected] = useState<Word[]>([]);
   const store = useStore();
+
+  useEffect(() => {
+    if (store.status === "RUNNING") {
+      setFound([]);
+      setSelected([]);
+    }
+  }, [store.status]);
 
   const { data: items } = useItems();
   const { data: inventory } = useInventory();
@@ -145,6 +172,8 @@ export function WordSearch() {
 
   const [drag, setDrag] = useState(false);
   const foundWorlds = found.map((e) => e.map((e) => e.letter).join(""));
+  const xx = store.scene === "teletourgeio" ? letters : letters1;
+  const l = xx.length;
   return (
     <MiniGameWrapper status="WORDSEARCH">
       <div className="grid grid-cols-[1fr_0.4fr] p-10 h-full">
@@ -157,7 +186,7 @@ export function WordSearch() {
           }}
           className="grid grid-cols-12 "
         >
-          {letters.map((word) =>
+          {xx.map((word) =>
             word.map((letter, idx) => (
               <div
                 key={idx}
