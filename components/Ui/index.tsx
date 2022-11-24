@@ -74,6 +74,10 @@ export default function Ui(props: { items: Item[]; time: number }) {
         store.setCompass(true, miniGame.reward);
         break;
 
+      case "wordSearch":
+        store.setStatus("WORDSEARCH");
+        break;
+
       case "clock":
         store.setStatus("CLOCK");
         break;
