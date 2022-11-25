@@ -6,14 +6,13 @@ export default function Login() {
   const { locale } = router;
 
   return (
-    <>
-      <section
-        style={{
-          backgroundImage: `url(/images/start_map.png)`,
-          backgroundSize: "100% 100%",
-        }}
-        className="h-screen flex items-center  justify-center  w-screen overflow-hidden"
-      >
+    <div className="bg-black w-screen h-screen">
+      <img
+        src="/images/start_map.png"
+        className="z-0 absolute w-screen h-screen object-contain"
+        alt=""
+      />
+      <section className="h-screen z-50 absolute flex items-center  justify-center  w-screen overflow-hidden">
         <select
           value={locale}
           onChange={(evt) => {
@@ -85,6 +84,6 @@ export default function Login() {
           </Link>
         </form>
       </section>
-    </>
+    </div>
   );
 }
