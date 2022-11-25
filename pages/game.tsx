@@ -347,7 +347,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     ref.current.currentTime = 0;
     ref.current?.play();
   }, [store.soundId]);
-
+  const [superDuper1, setSuperDuper1] = useState(false);
   const [_addReward] = useMutation(
     addReward,
     [`/api/inventory?epic=true`, `/api/items?scene=${store.scene}`],
@@ -379,8 +379,11 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       );
     }
     const superDuper = sceneItems.find((e) => e.superDuper);
-
-    if (store.scene === "intro" && usedItems.length === 6 && !superDuper) {
+    if (
+      store.scene === "intro" &&
+      usedItems.length === 6 &&
+      !achievements.find((e) => e.superDuper)
+    ) {
       giveReward();
     }
   }, [store.scene, usedItems, achievements]);
