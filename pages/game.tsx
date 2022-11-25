@@ -380,7 +380,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     }
     const superDuper = sceneItems.find((e) => e.superDuper);
 
-    if (store.scene === "intro" && usedItems.length === 6) {
+    if (store.scene === "intro" && usedItems.length === 6 && !superDuper) {
       giveReward();
     }
   }, [store.scene, usedItems, achievements]);

@@ -33,7 +33,7 @@ export default function Reward() {
           </h1>
           <div className="divider"></div>
           <div className="bg-gray-300 bg-opacity-10 w-full h-full p-8 flex justify-center my-auto">
-            <img className="w-full" src={store.reward?.src} />
+            <img className="w-fit object-fit h-96" src={store.reward?.src} />
           </div>
           <div className="mt-4" style={shadow}>
             {store.reward?.description}

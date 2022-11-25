@@ -174,6 +174,7 @@ function Row(props: Item & { sceneItems: Item[] }) {
           }))}
         />
       </div>
+      <label htmlFor=""> Greek</label>
       <textarea
         rows={3}
         placeholder="hint"
@@ -181,6 +182,19 @@ function Row(props: Item & { sceneItems: Item[] }) {
         onChange={(e) =>
           _updateItem(props._id, {
             text: e.currentTarget.value,
+          })
+        }
+        className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
+      />
+
+      <label htmlFor=""> English</label>
+      <textarea
+        rows={3}
+        placeholder="en hint"
+        value={props.en_text}
+        onChange={(e) =>
+          _updateItem(props._id, {
+            en_text: e.currentTarget.value,
           })
         }
         className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
@@ -260,6 +274,7 @@ export default function SceneSettings(props: {
   const router = useRouter();
   const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
+  const [enGuideLines, setEnGuideLines] = useState<string>();
   const { data: items } = useItems();
   const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
   const [miniGameLoad, setMiniGameLoad] = useState(false);
@@ -328,13 +343,29 @@ export default function SceneSettings(props: {
           rows={5}
         />
       </div>
+
+      <div className="">
+        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+          English Guidelines
+        </label>
+        <textarea
+          value={enGuideLines}
+          onChange={(evt) => setEnGuideLines(evt.currentTarget.value)}
+          className="bg-transparent mb-4  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+        />
+      </div>
+
       <button
         onClick={async () => {
           if (doIHaveGuideLines)
             await axios
               .put(
                 `/api/items/${doIHaveGuideLines._id}`,
-                JSON.stringify({ text: guideLines }),
+                JSON.stringify({
+                  enText: enGuideLines,
+                  text: guideLines,
+                }),
                 {
                   headers: {
                     "Content-Type": "application/json; charset=UTF-8",
