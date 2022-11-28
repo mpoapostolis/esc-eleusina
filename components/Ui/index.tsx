@@ -6,6 +6,7 @@ import { useAchievements, useInventory } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
 import { useUsed } from "../../lib/used";
+import { Router, useRouter } from "next/router";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
@@ -55,7 +56,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
           })
           .every(Boolean));
   const inv = [...currInv, ..._achievements, ...tmpInv];
-
+  const router = useRouter();
   useEffect(() => {
     if (miniGameBnt) store.setSound(`04_are_you_ready`);
   }, [miniGameBnt]);
@@ -239,9 +240,16 @@ export default function Ui(props: { items: Item[]; time: number }) {
                   if (item.onClickOpenModal === "ancientText") {
                     if (item.ancientText && item.author)
                       store.setAncientText({
-                        text: item.ancientText,
-                        keys: item.clickableWords?.split(",") ?? [],
-                        author: item.author,
+                        text:
+                          router.locale === "en"
+                            ? item.enAncientText
+                            : item.ancientText,
+                        keys:
+                          router.locale === "en"
+                            ? item.enClickableWords?.split(",") ?? []
+                            : item.clickableWords?.split(",") ?? [],
+                        author:
+                          router.locale === "en" ? item.enAuthor : item.author,
                       });
                   }
                 }}

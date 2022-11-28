@@ -109,6 +109,15 @@ const Component = (
             }}
             className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
           ></input>
+          <label htmlFor="">English</label>
+          <input
+            onChange={(evt) => {
+              props.update({
+                enClock: evt.currentTarget.value,
+              });
+            }}
+            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
         </div>
       );
 
@@ -531,6 +540,26 @@ export default function SceneSettings(props: {
                 reward: {
                   ...r,
                   description: evt.currentTarget.value,
+                },
+              });
+          }}
+        />
+        <br />
+        <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+          English:Reward Msg
+        </label>
+        <textarea
+          className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          disabled={["box", "replace"].includes(miniGame.type ?? "")}
+          value={miniGame.reward?.enDescription}
+          onChange={(evt) => {
+            const r = miniGame.reward;
+            if (r)
+              update({
+                reward: {
+                  ...r,
+                  enDescription: evt.currentTarget.value,
                 },
               });
           }}
