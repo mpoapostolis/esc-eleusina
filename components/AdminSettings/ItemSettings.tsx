@@ -54,13 +54,16 @@ export default function ItemSettings() {
     const selectedItem = { ...items[idx] };
     const {
       name,
+      enAuthor,
       author,
+      enAncientText,
       ancientText,
       onClickTrigger,
       onClickOpenModal,
       reward,
       setHint,
       setGuidelines,
+      enClickableWords,
       clickableWords,
       inventorySrc,
       collectableIfHandHas,
@@ -70,12 +73,15 @@ export default function ItemSettings() {
     setS({
       name,
       reward,
+      enAncientText,
       ancientText,
       onClickTrigger,
       onClickOpenModal,
       description: reward?.description,
+      enAuthor,
       author,
       setHint,
+      enClickableWords,
       clickableWords,
       setGuidelines,
       inventorySrc,
@@ -164,6 +170,36 @@ export default function ItemSettings() {
             }}
             className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
           ></input>
+
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English Author
+          </label>
+          <input
+            value={s.enAuthor}
+            onBlur={() => onBlur("enAuthor")}
+            onChange={(evt) => {
+              setS({
+                enAuthor: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English Ancient text clickable words seperated by comma (,)
+          </label>
+          <input
+            value={s.enClickableWords}
+            onBlur={() => onBlur("enClickableWords")}
+            onChange={(evt) => {
+              setS({
+                enClickableWords: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
         </>
       )}
       <br />
@@ -179,6 +215,26 @@ export default function ItemSettings() {
           onChange={(evt) => {
             setS({
               ancientText: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+        <div className="text-right w-full text-xs text-gray-400">
+          nl = new Line
+        </div>
+      </div>
+
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Ancient text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          onBlur={() => onBlur("enAncientText")}
+          value={s.enAncientText}
+          onChange={(evt) => {
+            setS({
+              enAncientText: evt.currentTarget.value,
             });
           }}
         ></textarea>

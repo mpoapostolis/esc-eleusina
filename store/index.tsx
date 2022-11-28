@@ -91,6 +91,7 @@ export type Item = {
   lexigram?: string;
   reward?: Reward | null;
   ancientText?: string;
+  enText?: string;
   requiredToolToReplace?: Img;
   replaceImg?: string;
   clickableWords?: string;
