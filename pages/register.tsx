@@ -46,7 +46,7 @@ export default function Login() {
           </h1>
           <input
             name="userName"
-            placeholder="Username"
+            placeholder={t("register_username")}
             type="text"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-60  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
           />
@@ -54,7 +54,7 @@ export default function Login() {
           <input
             name="password"
             minLength={6}
-            placeholder="Password"
+            placeholder={t("register_password")}
             autoComplete="off"
             type="password"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-60  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
@@ -64,7 +64,7 @@ export default function Login() {
             minLength={6}
             autoComplete="off"
             name="passwordConfirmation"
-            placeholder="Repeat Password"
+            placeholder={t("register_password_confirm")}
             type="password"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-70  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
           />

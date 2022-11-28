@@ -205,7 +205,6 @@ export function WordSearch() {
   const solve = () => {
     if (!giveItem) return;
     _addItem(giveItem._id);
-    console.log(locale);
     store.setReward({
       _id: "sss",
       name: giveItem.name,

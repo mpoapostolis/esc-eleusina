@@ -64,7 +64,11 @@ export async function login(req: NextApiRequest, res: NextApiResponse) {
       id: user?._id.toString(),
     };
     await req.session.save();
-    return res.writeHead(302, { Location: user?.admin ? "/admin" : "/" }).end();
+    const location =
+      req.headers.referer?.split("/")[3] === "en" ? "/en" : "/el";
+    return res
+      .writeHead(302, { Location: user?.admin ? "/admin" : location })
+      .end();
   } else {
     return res.status(400).json({ msg: `password or username incorrect` });
   }
