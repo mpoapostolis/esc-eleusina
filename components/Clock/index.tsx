@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import useMutation from "../../Hooks/useMutation";
+import { useT } from "../../Hooks/useT";
 import { addReward } from "../../lib/inventory";
 import { useMiniGames } from "../../lib/items";
 import { useStore } from "../../store";
@@ -22,6 +23,7 @@ export function Clock() {
       .replace(/[\u0300-\u036f]/g, "")
       .toUpperCase()
   ) ?? [""];
+  const t = useT();
   const maxWord = words?.reduce((a, b) => (a.length > b.length ? a : b), "");
   const emptyArr = Array.from({ length: maxWord.length }, () => " ");
   const allCh = words?.join("").split("");
@@ -161,9 +163,7 @@ export function Clock() {
             </ul>
             <div className="divider"></div>
             <span className="w-full text-2xl text-center break-words">
-              Σχημάτισε 4 λέξεις που σχετίζονται με το ζευγάρι των αντιθέσεων
-              «ομιλία και σιωπή». Μόνον έτσι θα βρεις το μυστικό που είναι
-              φυλακισμένο στον χρόνο.
+              {t("clock_text")}
             </span>
           </div>
         </div>

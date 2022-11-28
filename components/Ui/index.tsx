@@ -7,10 +7,11 @@ import { useMiniGames } from "../../lib/items";
 import { useEffect } from "react";
 import { useUsed } from "../../lib/used";
 import { Router, useRouter } from "next/router";
+import { useT } from "../../Hooks/useT";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
-
+  const t = useT();
   const transform = { transform: "skewX(-20deg)" };
   const { data: inventory } = useInventory();
   const { data: miniGames } = useMiniGames();
@@ -108,7 +109,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
           }}
           className="z-50 text-white mb-2 font-bold text-4xl text-right"
         >
-          time remaining
+          {t("ui_time")}
         </h1>
 
         <div className="w-96 bg-white border border-black ">
@@ -156,7 +157,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
             }
           )}
         >
-          <span className="text-4xl font-bold ">Παίξε το παιχνίδι</span>
+          <span className="text-4xl font-bold ">{t("ui_play_the_game")}</span>
         </button>
       )}
       <div
@@ -212,7 +213,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
             }}
             className="z-50 text-white font-bold text-4xl"
           >
-            Η συλλογή μου
+            {t("ui_inventory")}
           </h1>
         </div>
 

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useT } from "../Hooks/useT";
 
 export default function Login() {
   const router = useRouter();
   const { locale } = router;
-
+  const t = useT();
   return (
     <div className="bg-black w-screen h-screen">
       <img
@@ -40,7 +41,7 @@ export default function Login() {
           className="max-w-xl  w-full grid gap-y-8  bg-black bg-opacity-80 border border-white border-opacity-30 p-8 rounded"
         >
           <h1 className="text-3xl font-bold h-12 text-yellow-500">
-            Στοιχεία χρήστη
+            {t("login_title")}
           </h1>
           <input
             name="userName"
@@ -64,6 +65,7 @@ export default function Login() {
             required
             role="button"
             type="submit"
+            value={t("login_button")}
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-70  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
           />
           <Link href="/register">
@@ -71,7 +73,7 @@ export default function Login() {
               role="button"
               className="text-right text-sm text-yellow-300 w-full"
             >
-              Don`t have an account yet? Sign Up
+              {t("login_signup")}
             </a>
           </Link>
         </form>
