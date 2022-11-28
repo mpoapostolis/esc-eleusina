@@ -18,6 +18,7 @@ import Popover from "../Popover";
 export default function BoxSettings() {
   const { data: items } = useItems();
   const [v, setV] = useState<string>();
+  const [enV, setEnV] = useState<string>();
   const [rewardDescription, setRewardDescription] = useState<string>();
   const [enRewardDescription, setEnRewardDescription] = useState<string>();
   const router = useRouter();
@@ -34,7 +35,10 @@ export default function BoxSettings() {
   const [miniGame] = miniGames.filter((e) => e.scene === store.scene);
 
   useEffect(() => {
-    if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
+    if (selectedItem.orderBoxError) {
+      setV(selectedItem.orderBoxError);
+      setEnV(selectedItem.enOrderBoxError);
+    }
     if (selectedItem.reward?.description)
       setRewardDescription(selectedItem.reward?.description);
     if (selectedItem.reward?.enDescription)
@@ -114,6 +118,22 @@ export default function BoxSettings() {
           }}
         ></textarea>
         <br />
+        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+          English: if Order is not correct setError
+        </label>
+        <textarea
+          className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          value={enV}
+          onChange={(evt) => {
+            setEnV(evt.currentTarget.value);
+          }}
+          onBlur={() => {
+            _updateItem(id, {
+              enOrderBoxError: enV,
+            });
+          }}
+        ></textarea>
         <br />
         <Popover
           label={

@@ -16,6 +16,10 @@ import useMutation from "../../Hooks/useMutation";
 import { updateItem } from "../../lib/items";
 import axios from "axios";
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default function Sprite(props: Item) {
   const texture = useLoader(THREE.TextureLoader, props.src);
   const store = useStore();
@@ -132,7 +136,11 @@ export default function Sprite(props: Item) {
             store.setIsHintVisible(false, `09_add_to_target_OK`);
             store.setHand(undefined);
           } else {
-            store.setHint(props.orderBoxError);
+            store.setHint(
+              props.locale === "en"
+                ? props.enOrderBoxError
+                : props.orderBoxError
+            );
             store.setIsHintVisible(true, `10_add_to_target_WRONG`);
           }
         }
@@ -143,13 +151,20 @@ export default function Sprite(props: Item) {
           props.type !== "box" &&
           !props.replaceImg
         ) {
-          const m = props.onCollectFail?.split("\n") ?? [
-            "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς",
+          const str =
+            props.locale === "en" ? props.enOnCollectFail : props.onCollectFail;
+          const m = str?.split("\n") ?? [
+            props.locale === "en"
+              ? "You can't collect this item, check the tool you are holding"
+              : "Δεν μπορείς να μαζέψεις αυτό το αντικείμενο. Έλεγξε τι εργαλείο κρατάς",
           ];
           if (m?.length > 1) {
             const [scene, msg] = m;
             if (store.scene === "pp2_kikeonas") {
               store.setHint(msg);
+              store.setIsHintVisible(true);
+
+              await delay(2000);
               await deleteScene();
               store.setScene(scene as Scene);
             }
@@ -200,9 +215,15 @@ export default function Sprite(props: Item) {
             _addItem(props._id);
           }
         }
-        if (props.setHint) store.setHint(props.setHint);
+        if (props.setHint)
+          store.setHint(
+            props.locale === "en" ? props.setEnHint : props.setHint
+          );
 
-        if (props.setGuidelines) store.setguideLines(props.setGuidelines);
+        if (props.setGuidelines)
+          store.setguideLines(
+            props.locale === "en" ? props.setEnGuidelines : props.setGuidelines
+          );
 
         if (props.onClickOpenModal === "hint") store.setIsHintVisible(true);
         if (props.onClickOpenModal === "ancientText") {
