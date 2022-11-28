@@ -5,6 +5,8 @@ type Key =
   | "login_title"
   | "login_button"
   | "login_signup"
+  | "login_username"
+  | "login_password"
   | "menu_play"
   | "menu_select_level"
   | "menu_achievements"
@@ -13,6 +15,9 @@ type Key =
   | "register_button"
   | "register_title"
   | "register_login"
+  | "register_username"
+  | "register_password"
+  | "register_password_confirm"
   | "ready_continue"
   | "ready_title"
   | "ready_new_game"
@@ -40,9 +45,15 @@ const translations: Record<Locale, Record<Key, string>> = {
     login_title: `User info`,
     login_button: `Login`,
     login_signup: `Don't have an account yet? Sign up`,
+    login_username: `Username`,
+    login_password: `Password`,
+
     register_button: `Register`,
     register_title: `User info`,
     register_login: `Already have an account? Login`,
+    register_username: `Username`,
+    register_password: `Password`,
+    register_password_confirm: `Confirm Password`,
     ready_new_game: `New Game`,
     ready_level: `Level`,
     ready_back: `Back`,
@@ -70,10 +81,15 @@ const translations: Record<Locale, Record<Key, string>> = {
     menu_reset: "Επαναφορά",
     login_title: `Στοιχεία χρήστη`,
     login_button: `Είσοδος`,
+    login_username: `Όνομα χρήστη`,
+    login_password: `Συνθηματικό`,
     login_signup: `Δεν έχετε λογαριασμό; Εγγραφείτε εδώ`,
     register_button: `Εγγραφή`,
     register_title: `Στοιχεία χρήστη`,
     register_login: `Έχετε ήδη λογαριασμό; Συνδεθείτε εδώ`,
+    register_username: `Όνομα χρήστη`,
+    register_password: `Συνθηματικό`,
+    register_password_confirm: `Επιβεβαίωση Συνθηματικού`,
     ready_title: "Σενάριο",
     ready_continue: "Συνέχεια",
     ready_new_game: "Νέο παιχνίδι",

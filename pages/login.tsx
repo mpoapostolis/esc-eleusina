@@ -46,7 +46,7 @@ export default function Login() {
           <input
             name="userName"
             required
-            placeholder="Username"
+            placeholder={t("login_username")}
             type="text"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-60  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
           />
@@ -55,7 +55,7 @@ export default function Login() {
             autoComplete=""
             name="password"
             required
-            placeholder="Password"
+            placeholder={t("login_password")}
             minLength={6}
             type="password"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-60  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
