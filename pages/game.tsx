@@ -65,6 +65,7 @@ export type MiniGame = {
 
 export type Reward = Img & {
   description?: string;
+  enDescription?: string;
   superDuper?: true;
 };
 

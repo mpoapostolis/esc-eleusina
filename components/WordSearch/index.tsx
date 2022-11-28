@@ -83,7 +83,7 @@ const normalize = (arr?: string[]) =>
 const r = (locale?: string) => {
   if (locale === "el")
     return greekLetters[Math.floor(Math.random() * greekLetters.length)];
-  else englishLetters[Math.floor(Math.random() * greekLetters.length)];
+  else return englishLetters[Math.floor(Math.random() * greekLetters.length)];
 };
 
 const solved = (arr: string[]) =>
@@ -123,8 +123,13 @@ const wordOb: Partial<Record<Scene, Structure>> = {
   Ι..Τ...Α...Ο,
   Ν..Ι.......Σ,
   Α..Α........`,
-    en_structure: ``,
-    en_words: [],
+    en_structure: `
+    ...Mouth....
+    ....Teeth...
+    ....Eyes....
+    ....Nose....
+`,
+    en_words: ["Mouth", "Teeth", "Nose", "Eyes"],
   },
   pp4_navagio: {
     en_structure: ``,
@@ -200,12 +205,15 @@ export function WordSearch() {
   const solve = () => {
     if (!giveItem) return;
     _addItem(giveItem._id);
+    console.log(locale);
     store.setReward({
       _id: "sss",
       name: giveItem.name,
       src: giveItem.src,
       description:
         "Τοποθέτησε τον καθρέφτη για να δεις το διπλό καθρέφτισμα του Κέρβερου.",
+      enDescription:
+        "Place the mirror to see the double reflection of the Cervantes.",
     });
   };
 

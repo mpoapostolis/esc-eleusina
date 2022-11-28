@@ -1,5 +1,6 @@
 import { useGesture } from "@use-gesture/react";
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
@@ -10,7 +11,10 @@ import MiniGameWrapper from "../MiniGameWrapper";
 export function Clock() {
   const { data: miniGames = [] } = useMiniGames();
   const miniGame = miniGames?.find((e) => e.scene === "arxaiologikos");
-  const clock = miniGame?.clock?.split(",") ?? [];
+  const { locale } = useRouter();
+  const clock = (miniGame?.[locale === "en" ? "enClock" : "clock"]?.split(
+    ","
+  ) ?? []) as string[];
 
   const words = clock?.map((s) =>
     s

@@ -19,6 +19,7 @@ export default function BoxSettings() {
   const { data: items } = useItems();
   const [v, setV] = useState<string>();
   const [rewardDescription, setRewardDescription] = useState<string>();
+  const [enRewardDescription, setEnRewardDescription] = useState<string>();
   const router = useRouter();
   const id = `${router.query.id}`;
   const idx = items.findIndex((e) => e._id === id);
@@ -36,6 +37,8 @@ export default function BoxSettings() {
     if (selectedItem.orderBoxError) setV(selectedItem.orderBoxError);
     if (selectedItem.reward?.description)
       setRewardDescription(selectedItem.reward?.description);
+    if (selectedItem.reward?.enDescription)
+      setEnRewardDescription(selectedItem.reward?.enDescription);
   }, [selectedItem.orderBoxError, selectedItem.reward]);
 
   const updateOrderInBox = (_id: string) => {
@@ -251,6 +254,40 @@ export default function BoxSettings() {
                 reward: {
                   ...selectedItem.reward,
                   description: rewardDescription,
+                },
+              });
+            }}
+          />
+
+          <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+            English: Reward Msg
+          </label>
+          <textarea
+            className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+            rows={5}
+            value={enRewardDescription}
+            onChange={(evt) => {
+              setEnRewardDescription(evt.currentTarget.value);
+            }}
+            onBlur={async () => {
+              await axios
+                .post("/api/miniGames", {
+                  ...miniGame,
+                  scene: store.scene,
+                  type: "box",
+                  reward: {
+                    ...selectedItem.reward,
+                    enDescription: enRewardDescription,
+                  },
+                })
+                .then(() => {
+                  mutate("/api/miniGames");
+                });
+
+              _updateItem(id, {
+                reward: {
+                  ...selectedItem.reward,
+                  enDescription: enRewardDescription,
                 },
               });
             }}

@@ -15,6 +15,7 @@ mapboxgl.accessToken =
 const points = [
   {
     name: "Σκαραμαγκάς",
+    enName: "Skaramagas",
     bearing: 90,
     coords: {
       lng: 23.601992,
@@ -22,9 +23,11 @@ const points = [
       zoom: 12,
     },
     desc: `Διάσημα τα ναυπηγεία του - ανατολικά `,
+    enDesc: `Famous shipyards - east`,
   },
   {
     name: "Σαλαμίνα",
+    enName: "Salamina",
     bearing: 0,
     coords: {
       lat: 37.967521,
@@ -32,10 +35,12 @@ const points = [
       zoom: 12,
     },
     desc: `Νησί που συνδέεται με αρχαία ναυμαχία - δυτικά  `,
+    enDesc: `Island connected with ancient battle - west`,
   },
 
   {
     name: "Σαρανταπόταμος",
+    enName: "Sarandapotamos",
     bearing: 0,
     coords: {
       lng: 23.554976,
@@ -43,9 +48,11 @@ const points = [
       zoom: 12,
     },
     desc: `Αλλιώς ο ποταμός Ελευσινιακός Κηφισσός - βόρεια `,
+    enDesc: `Otherwise the river Eleusinian Kifissos - north`,
   },
   {
     name: "Σαρωνικός",
+    enName: "Saronikos",
     bearing: 0,
     coords: {
       lng: 23.564024,
@@ -53,6 +60,7 @@ const points = [
       zoom: 12,
     },
     desc: `Ο Ελευσινιακός Κόλπος αποτελεί μικρότερο κομμάτι του -νότια `,
+    enDesc: `The Eleusinian Gulf is a smaller part of it - south`,
   },
 ];
 
@@ -179,22 +187,22 @@ export default function Compass() {
     const name = e.currentTarget.name;
     switch (name) {
       case "north":
-        if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ") {
+        if (["ΑΡΑΝΤΑΠΟΤΑΜΟΣ", "ARANTAPOTAMOS"].includes(value)) {
           setAnswers((s) => ({ ...s, [name]: true }));
         }
         break;
       case "south":
-        if (value === "ΑΡΩΝΙΚΟΣ") {
+        if (["ΑΡΩΝΙΚΟΣ", "ARONIKOS"].includes(value)) {
           setAnswers((s) => ({ ...s, [name]: true }));
         }
         break;
       case "west":
-        if (value === "ΑΛΑΜΙΝΑ") {
+        if (["ΑΛΑΜΙΝΑ", "ALAMINA"].includes(value)) {
           setAnswers((s) => ({ ...s, [name]: true }));
         }
         break;
       case "east":
-        if (value === "ΚΑΡΑΜΑΓΚΑΣ") {
+        if (["ΚΑΡΑΜΑΓΚΑΣ", "KARAMAGAS"].includes(value)) {
           setAnswers((s) => ({ ...s, [name]: true }));
         }
         break;

@@ -43,6 +43,7 @@ export default function ItemSettings() {
     onClickOpenModal: "",
     setHint: "",
     description: "",
+    enDescription: "",
     setGuidelines: "",
     ancientText: "",
     inventorySrc: "",
@@ -78,6 +79,7 @@ export default function ItemSettings() {
       onClickTrigger,
       onClickOpenModal,
       description: reward?.description,
+      enDescription: reward?.enDescription,
       enAuthor,
       author,
       setHint,
@@ -417,6 +419,41 @@ export default function ItemSettings() {
                   reward: {
                     ...selectedItem.reward,
                     description: s.description,
+                  },
+                });
+              }}
+            />
+            <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+              English: Reward Msg
+            </label>
+            <textarea
+              className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+              rows={5}
+              value={s.enDescription}
+              onChange={(evt) => {
+                setS({
+                  enDescription: evt.currentTarget.value,
+                });
+              }}
+              onBlur={async () => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: {
+                      ...selectedItem.reward,
+                      enDescription: s.enDescription,
+                    },
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
+                _updateItem(id, {
+                  reward: {
+                    ...selectedItem.reward,
+                    enDescription: s.enDescription,
                   },
                 });
               }}

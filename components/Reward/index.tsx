@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { useStore } from "../../store";
 
 const shadow = {
@@ -7,6 +8,8 @@ const shadow = {
 
 export default function Reward() {
   const store = useStore();
+  const router = useRouter();
+  const locale = router?.locale as "el" | "en";
   const getMaxW =
     (store.guideLines?.length ?? 100) > 450 ? "max-w-5xl" : "max-w-3xl";
   return (
@@ -36,7 +39,7 @@ export default function Reward() {
             <img className="w-fit object-fit h-96" src={store.reward?.src} />
           </div>
           <div className="mt-4" style={shadow}>
-            {store.reward?.description}
+            {store.reward?.[locale === "en" ? "enDescription" : "description"]}
           </div>
           {/* <div className="my-10 border-b border-white border-opacity-50 " /> */}
           <div className="divider"></div>
