@@ -8,6 +8,7 @@ import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
 import MiniGameWrapper from "../MiniGameWrapper";
 import { useTimer } from "use-timer";
+import { readLang } from "../../pages/_app";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiZmFyYW5kb3VyaXNwIiwiYSI6ImNsOTZ3dzhpczBzNHg0MHFxZ211dGN3OGcifQ.wG1mCl8Bl26T-w2zFwYK8g";
@@ -118,9 +119,11 @@ export default function Compass() {
     lng: number;
     zoom: number;
     desc: string;
+    enDesc: string;
   }) => {
     if (!map.current || !marker) return;
-
+    const locale = readLang();
+    console.log(locale);
     marker.setLngLat({
       lat: c.lat,
       lng: c.lng,
@@ -135,7 +138,10 @@ export default function Compass() {
     const popups = document.getElementsByClassName("mapboxgl-popup");
     Array.from(popups).forEach((e) => e.remove());
 
-    popup.setLngLat(c).setText(c.desc).addTo(map.current);
+    popup
+      .setLngLat(c)
+      .setText(locale === "el" ? c.desc : c.enDesc)
+      .addTo(map.current);
     map.current.easeTo({
       duration: 500,
       center: {
@@ -209,7 +215,7 @@ export default function Compass() {
     }
   };
   const [help, setHelp] = useState("");
-
+  const locale = readLang();
   return (
     <MiniGameWrapper status="COMPASS">
       <div className="relative h-full w-full">
@@ -237,10 +243,16 @@ export default function Compass() {
                 name="west"
                 onChange={setPlace}
                 onFocus={() => {
-                  flyTo({ ...points[1].coords, desc: points[1].desc });
+                  flyTo({
+                    ...points[1].coords,
+                    desc: points[1].desc,
+                    enDesc: points[1].enDesc,
+                  });
                   timer.reset();
                   setHelp(
-                    `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη`
+                    locale === "el"
+                      ? `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη`
+                      : `In this battle, the fleet of Xerxes was destroyed`
                   );
                   timer.start();
 
@@ -252,13 +264,17 @@ export default function Compass() {
                 style={{ transform: `rotate(-${deg}deg)` }}
                 className="text-4xl flex text-black duration-0 transition-500 items-center justify-center "
               >
-                Σ
+                {locale === "el" ? "Σ" : "S"}
               </div>
               <input
                 name="east"
                 onChange={setPlace}
                 onFocus={() => {
-                  flyTo({ ...points[0].coords, desc: points[0].desc });
+                  flyTo({
+                    ...points[0].coords,
+                    desc: points[0].desc,
+                    enDesc: points[0].enDesc,
+                  });
                   timer.reset();
                   setHelp(``);
                   timer.start();
@@ -299,9 +315,17 @@ export default function Compass() {
                 name="north"
                 onChange={setPlace}
                 onFocus={() => {
-                  flyTo({ ...points[2].coords, desc: points[2].desc });
+                  flyTo({
+                    ...points[2].coords,
+                    desc: points[2].desc,
+                    enDesc: points[2].enDesc,
+                  });
                   timer.reset();
-                  setHelp(`Το πρώτο συνθετικό του ποταμού είναι αριθμός`);
+                  setHelp(
+                    locale === "el"
+                      ? `Το πρώτο συνθετικό του ποταμού είναι αριθμός`
+                      : `The first compound of the river is a number`
+                  );
                   timer.start();
 
                   setIdx(1);
@@ -313,9 +337,17 @@ export default function Compass() {
               </div>
               <input
                 onFocus={() => {
-                  flyTo({ ...points[3].coords, desc: points[3].desc });
+                  flyTo({
+                    ...points[3].coords,
+                    desc: points[3].desc,
+                    enDesc: points[3].enDesc,
+                  });
                   timer.reset();
-                  setHelp(`Κόλπος της Αττικής, γνωστός για τη ρύπανσή του`);
+                  setHelp(
+                    locale === "el"
+                      ? `Κόλπος της Αττικής, γνωστός για τη ρύπανσή του`
+                      : `Bay of Attica, known for its pollution`
+                  );
                   timer.start();
 
                   setIdx(3);
