@@ -209,9 +209,13 @@ export default function Sprite(props: Item) {
           if (props.ancientText && props.author)
             store.setAncientText({
               item: props,
-              text: props.ancientText,
-              keys: props.clickableWords?.split(",") ?? [],
-              author: props.author,
+              text:
+                props.locale === "en" ? props.enAncientText : props.ancientText,
+              keys:
+                props.locale === "en"
+                  ? props.enClickableWords?.split(",") ?? []
+                  : props.clickableWords?.split(",") ?? [],
+              author: props.locale === "en" ? props.enAuthor : props.author,
             });
         }
         if (props.onClickOpenModal === "guidelines")

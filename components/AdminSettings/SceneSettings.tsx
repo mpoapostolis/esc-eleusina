@@ -191,10 +191,10 @@ function Row(props: Item & { sceneItems: Item[] }) {
       <textarea
         rows={3}
         placeholder="en hint"
-        value={props.en_text}
+        value={props.enText}
         onChange={(e) =>
           _updateItem(props._id, {
-            en_text: e.currentTarget.value,
+            enText: e.currentTarget.value,
           })
         }
         className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
@@ -294,7 +294,10 @@ export default function SceneSettings(props: {
 
   useEffect(() => {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
-    if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
+    if (doIHaveGuideLines) {
+      setGuideLines(doIHaveGuideLines.text);
+      setEnGuideLines(doIHaveGuideLines.enText);
+    }
   }, [items]);
 
   const { data: miniGames } = useMiniGames();

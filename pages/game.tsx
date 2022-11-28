@@ -186,7 +186,7 @@ function Portal(props: Item) {
   ) : null;
 }
 
-function Hint(props: Item) {
+function Hint(props: Item & { locale: "en" | "el" }) {
   const notInInventory = (a: boolean) => (props.notInInventory ? !a : a);
   const { data: achievements, isLoading } = useAchievements();
   const achIds = achievements.map((e) => e.rewardId);
@@ -200,13 +200,17 @@ function Hint(props: Item) {
       ?.map((v) => invHas(v) || achIds.includes(v))
       .every(Boolean) ?? true
   );
-  useTimerHint(props?.text ?? "", props.delayTimeHint, show);
+  useTimerHint(
+    props?.locale === "en" ? `${props?.enText}` : `${props?.text}`,
+    props.delayTimeHint,
+    show
+  );
 
   return null;
 }
 
-function GuideLineItem(props?: Item) {
-  useGuideLines(`${props?.text}`);
+function GuideLineItem(props?: Item & { locale: "en" | "el" }) {
+  useGuideLines(props?.locale === "en" ? `${props?.enText}` : `${props?.text}`);
   return null;
 }
 
@@ -411,6 +415,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       });
     }
   };
+  const locale = router?.locale as "en" | "el";
 
   return (
     <div {...bind()} className="select-none">
@@ -454,10 +459,11 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
               )
 
               .map((p) => {
-                if (p.type === "hint") return <Hint key={p._id} {...p} />;
+                if (p.type === "hint")
+                  return <Hint locale={locale} key={p._id} {...p} />;
                 if (p.type === "guidelines")
                   if (p.scene === "intro" && inventory.length > 0) return;
-                return <GuideLineItem key={p._id} {...p} />;
+                return <GuideLineItem locale={locale} key={p._id} {...p} />;
               })}
             {user ? <Environment /> : null}
             {sceneItems
@@ -486,6 +492,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
                   }
                   return (
                     <Sprite
+                      locale={locale}
                       isReplaced={isReplaced}
                       id={props?.id}
                       key={p._id}
