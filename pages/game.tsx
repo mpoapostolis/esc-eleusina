@@ -426,7 +426,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       <JigSaw />
       <Clock />
       <GuideLines />
-      <Lexigram />
+      {/* <Lexigram /> */}
       <AncientText />
       <Reward />
       <WordSearch />

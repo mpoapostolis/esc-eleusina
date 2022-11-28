@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useT } from "../Hooks/useT";
 
 export default function Login() {
   const router = useRouter();
   const { locale } = router;
+  const t = useT();
 
   return (
     <div className="bg-black w-screen h-screen">
@@ -17,7 +19,7 @@ export default function Login() {
           value={locale}
           onChange={(evt) => {
             const locale = evt.currentTarget.value;
-            router.push("/login", "/login", { locale });
+            router.push("/register", "/register", { locale });
           }}
           className="cursor-pointer bg-opacity-70 absolute top-0 right-0  bg-black text-center text-2xl appearance-none block px-3 py-4 w-fit   text-yellow-500 font-bold   border border-opacity-25 border-white outline-none"
         >
@@ -40,7 +42,7 @@ export default function Login() {
           className="max-w-xl  w-full grid gap-y-8  bg-black bg-opacity-80 border border-white border-opacity-30 p-8 rounded"
         >
           <h1 className="text-3xl font-bold h-12 text-yellow-500">
-            Στοιχεία χρήστη
+            {t("register_title")}
           </h1>
           <input
             name="userName"
@@ -70,6 +72,7 @@ export default function Login() {
           <input
             name="submit"
             role="button"
+            value={t("register_button")}
             type="submit"
             className="input placeholder-yellow-800  input-bordered bg-black bg-opacity-70  w-full bordered text-yellow-500  outline-none focus:outline-none text-2xl  "
           />
@@ -79,7 +82,7 @@ export default function Login() {
               role="button"
               className="text-right text-sm text-yellow-300 w-full"
             >
-              Already have an account login
+              {t("register_login")}
             </a>
           </Link>
         </form>
