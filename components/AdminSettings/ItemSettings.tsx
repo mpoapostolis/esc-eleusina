@@ -41,14 +41,17 @@ export default function ItemSettings() {
     author: "",
     onClickTrigger: "",
     onClickOpenModal: "",
+    setEnHint: "",
     setHint: "",
     description: "",
     enDescription: "",
+    setEnGuidelines: "",
     setGuidelines: "",
     ancientText: "",
     inventorySrc: "",
     collectableIfHandHas: "",
     onCollectFail: "",
+    enOnCollectFail: "",
   });
 
   useEffect(() => {
@@ -63,12 +66,15 @@ export default function ItemSettings() {
       onClickOpenModal,
       reward,
       setHint,
+      setEnHint,
       setGuidelines,
+      setEnGuidelines,
       enClickableWords,
       clickableWords,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
+      enOnCollectFail,
     } = selectedItem;
     if (idx < 0) return;
     setS({
@@ -83,12 +89,15 @@ export default function ItemSettings() {
       enAuthor,
       author,
       setHint,
+      setEnHint,
       enClickableWords,
       clickableWords,
+      setEnGuidelines,
       setGuidelines,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
+      enOnCollectFail,
     });
   }, [items, idx]);
 
@@ -262,6 +271,24 @@ export default function ItemSettings() {
           }}
         ></textarea>
       </div>
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Hint Text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          value={s.enSetHint}
+          onBlur={() => onBlur("enSetHint")}
+          onChange={(evt) => {
+            setS({
+              enSetHint: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+      </div>
+      <br />
+
       <br />
       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
         on click set Guidance text
@@ -279,7 +306,24 @@ export default function ItemSettings() {
           }}
         ></textarea>
       </div>
+      <br />
 
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Guidance text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          onBlur={() => onBlur("setEnGuidelines")}
+          value={s.setEnGuidelines}
+          onChange={(evt) => {
+            setS({
+              setEnGuidelines: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+      </div>
       <br />
 
       <Popover
@@ -551,6 +595,25 @@ export default function ItemSettings() {
               onChange={(evt) => {
                 setS({
                   onCollectFail: evt.currentTarget.value,
+                });
+              }}
+              className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+              rows={5}
+            ></textarea>
+          </div>
+
+          <br />
+
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English: Hint text when fail to collect (no required tool selected)
+          </label>
+          <div>
+            <textarea
+              value={s.enOnCollectFail}
+              onBlur={() => onBlur("enOnCollectFail")}
+              onChange={(evt) => {
+                setS({
+                  enOnCollectFail: evt.currentTarget.value,
                 });
               }}
               className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
