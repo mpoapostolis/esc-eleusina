@@ -1,8 +1,6 @@
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useMutation from "../Hooks/useMutation";
-import { updateUser, useUser } from "../lib/users";
 import { withSessionSsr } from "../lib/withSession";
 import myDb from "../helpers/mongo";
 import clsx from "clsx";

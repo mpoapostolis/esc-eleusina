@@ -6,6 +6,10 @@ export default function Login() {
   const router = useRouter();
   const { locale } = router;
   const t = useT();
+  const setLang = (e: string) => {
+    if (typeof window !== "undefined") localStorage.setItem("lang", e);
+  };
+
   return (
     <div className="bg-black w-screen h-screen">
       <img
@@ -18,6 +22,7 @@ export default function Login() {
           value={locale}
           onChange={(evt) => {
             const locale = evt.currentTarget.value;
+            setLang(locale);
             router.push("/login", "/login", { locale });
           }}
           className="cursor-pointer bg-opacity-70 absolute top-0 right-0  bg-black text-center text-2xl appearance-none block px-3 py-4 w-fit   text-yellow-500 font-bold   border border-opacity-25 border-white outline-none"

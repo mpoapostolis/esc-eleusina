@@ -14,7 +14,7 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html data-theme="dark">
+      <Html lang="el" data-theme="dark">
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
