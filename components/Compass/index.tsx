@@ -123,7 +123,6 @@ export default function Compass() {
   }) => {
     if (!map.current || !marker) return;
     const locale = readLang();
-    console.log(locale);
     marker.setLngLat({
       lat: c.lat,
       lng: c.lng,

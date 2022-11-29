@@ -32,8 +32,12 @@ type Key =
   | "clock_text"
   | "reward_title"
   | "reward_continue"
-  | "wordsearch_title"
-  | "wordsearch_author";
+  | "wordsearch_title_cerberus"
+  | "wordsearch_text_cerberus"
+  | "wordsearch_author_cerberus"
+  | "wordsearch_title_pp4"
+  | "wordsearch_text_pp4"
+  | "wordsearch_author_pp4";
 
 const translations: Record<Locale, Record<Key, string>> = {
   en: {
@@ -70,8 +74,16 @@ const translations: Record<Locale, Record<Key, string>> = {
                imprisoned in time.`,
     reward_title: `Congratulations! You won the room's reward`,
     reward_continue: `Continue your journey`,
-    wordsearch_title: ``,
-    wordsearch_author: ``,
+    wordsearch_title_cerberus: ``,
+    wordsearch_text_cerberus: ``,
+    wordsearch_author_cerberus: ``,
+
+    wordsearch_title_pp4: `In the cryptword look for four phrases that oscillate between life and death, earth and sky, night and day…`,
+    wordsearch_text_pp4: `
+The Starry Night
+The ship has crossed the glossy night bringing back Persephone. The joy is so great, even the stars have gone down low. But they remain untouched to maintain balance.
+The couple at the foot of the hill are the Maiden and the painter. He confides the secrets of his soul that drive him to death. The goddess, for her part, peacefully initiates him into Hades, while urging him to reconsider life.`,
+    wordsearch_author_pp4: ``,
   },
   el: {
     menu_play: "Παίξε",
@@ -106,13 +118,20 @@ const translations: Record<Locale, Record<Key, string>> = {
               φυλακισμένο στον χρόνο.`,
     reward_title: `Συγχαρητήρια κέρδισες το έπαθλο του δωματίου`,
     reward_continue: `Συνέχισε τη διαδρομή σου`,
-    wordsearch_title: `Κει πέρα τίποτα δεν ταράζει τη σιωπή.Μονάχα ένας σκύλος (κι αυτός
+    wordsearch_title_cerberus: `Διάβασε το κείμενο και βρές τις λέξεις`,
+    wordsearch_text_cerberus: `Κει πέρα τίποτα δεν ταράζει τη σιωπή.Μονάχα ένας σκύλος (κι αυτός
               δε γαβγίζει), άσκημος σκύλος, ο δικός του, σκοτεινός με στραβά
               δόντια, με δυο μεγάλα μάτια αόριστα, πιστά και ξένα, σκοτεινά σαν
               πηγάδια, — κι ούτε ξεχωρίζεις μέσα τους το πρόσωπό σου, τα χέρια
               σου ή το πρόσωπό του.Ωστόσο διακρίνεις το σκοτάδι ακέριο, συμπαγές
               και διάφανο, πλήρες, παρηγορητικό, αναμάρτητο.Περσεφόνη,`,
-    wordsearch_author: `Γ.Ρίτσος`,
+    wordsearch_author_cerberus: `Γ.Ρίτσος`,
+
+    wordsearch_title_pp4: `Αναζήτησε στο κρυπτόλεξο τις τέσσερις φράσεις που ταλαντεύονται μεταξύ ζωής και θανάτου, γης και ουρανού, νύχτας και μέρας…`,
+    wordsearch_text_pp4: `Η έναστρη νύχτα
+Το πλοίο έχει διασχίσει το στιλπνό βράδυ φέρνοντας πίσω την Περσεφόνη. Η χαρά τόση, ακόμα και τ’ αστέρια έχουν κατεβεί χαμηλά. Αλλά παραμένουν ανέγγιχτα για διατήρηση της ισορροπίας.
+Το ζευγάρι στους πρόποδες του υψώματος είναι η Κόρη και ο ζωγράφος. Εκείνος εμπιστεύεται τα μυστικά της ψυχής του που τον ωθούν στο θάνατο. Η θεά από τη μεριά της τον μυεί γαλήνια στον Άδη, ενώ ταυτόχρονα προτρέπει για επανεξέταση της ζωής.`,
+    wordsearch_author_pp4: ``,
   },
 };
 

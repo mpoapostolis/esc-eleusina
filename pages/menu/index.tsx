@@ -248,9 +248,6 @@ function Select() {
     case "MENU":
       return <Main />;
 
-    case "SELECT_LEVEL":
-      return <SceneSelect />;
-
     case "ACHIEVEMENTS":
       return (
         <div className="grid grid-cols-4 gap-4">
@@ -286,11 +283,6 @@ const Main = () => {
         title="Play"
       />
 
-      <MenuItem
-        goTo="/menu/select-level"
-        src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
-        title="Select level"
-      />
       <MenuItem
         goTo="/menu/history"
         src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"

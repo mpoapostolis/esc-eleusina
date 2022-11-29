@@ -3,8 +3,10 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import useMutation from "../../Hooks/useMutation";
-import { addItem, useInventory } from "../../lib/inventory";
+import { useT } from "../../Hooks/useT";
+import { addItem, addReward, useInventory } from "../../lib/inventory";
 import { useItems } from "../../lib/items";
+import { Reward } from "../../pages/game";
 import { Scene, useStore } from "../../store";
 import MiniGameWrapper from "../MiniGameWrapper";
 
@@ -202,9 +204,17 @@ export function WordSearch() {
     `/api/inventory?scene=${store.scene}`,
   ]);
 
+  const [_addReward] = useMutation(addReward, [
+    `/api/inventory?epic=true`,
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   const solve = () => {
     if (!giveItem) return;
-    _addItem(giveItem._id);
+    if (store.scene === "pp4_navagio") _addReward(giveItem as Reward);
+    else {
+      _addItem(giveItem._id);
+    }
     store.setReward({
       _id: "sss",
       name: giveItem.name,
@@ -247,6 +257,7 @@ export function WordSearch() {
   const foundWorlds = found.map((e) => e.map((e) => e.letter).join(""));
   // const xx = store.scene === "teletourgeio" ? letters1 : letters;
   // const l = xx.length;
+  const t = useT();
   return (
     <MiniGameWrapper status="WORDSEARCH">
       <div className="grid grid-cols-[1fr_0.4fr] p-10 h-full">
@@ -284,7 +295,13 @@ export function WordSearch() {
         <div className="h-full  flex">
           <div className="divider-horizontal divider h-full"></div>
           <div className="w-full h-full p-4">
-            <p className="text-2xl">Διάβασε το κείμενο και βρές τις λέξεις</p>
+            <p className="text-md">
+              {t(
+                store.scene === "pp4_navagio"
+                  ? "wordsearch_title_pp4"
+                  : "wordsearch_title_cerberus"
+              )}
+            </p>
             <div className="divider"></div>
             <ul className=" mx-auto list-disc ">
               {words.map((word, idx) => (
@@ -314,15 +331,20 @@ export function WordSearch() {
               </div>
             </ul>
             <div className="divider"></div>
-            <span className="w-full text-2xl text-center break-words">
-              Κει πέρα τίποτα δεν ταράζει τη σιωπή.Μονάχα ένας σκύλος (κι αυτός
-              δε γαβγίζει), άσκημος σκύλος, ο δικός του, σκοτεινός με στραβά
-              δόντια, με δυο μεγάλα μάτια αόριστα, πιστά και ξένα, σκοτεινά σαν
-              πηγάδια, — κι ούτε ξεχωρίζεις μέσα τους το πρόσωπό σου, τα χέρια
-              σου ή το πρόσωπό του.Ωστόσο διακρίνεις το σκοτάδι ακέριο, συμπαγές
-              και διάφανο, πλήρες, παρηγορητικό, αναμάρτητο.Περσεφόνη,
+            <span className="w-full text-lg text-center break-words">
+              {t(
+                store.scene === "pp4_navagio"
+                  ? "wordsearch_text_pp4"
+                  : "wordsearch_text_cerberus"
+              )}
               <br />
-              <span className=" text-center italic">Γ.Ρίτσος</span>
+              <span className=" text-center ">
+                {t(
+                  store.scene === "pp4_navagio"
+                    ? "wordsearch_author_pp4"
+                    : "wordsearch_author_cerberus"
+                )}
+              </span>
             </span>
           </div>
         </div>
