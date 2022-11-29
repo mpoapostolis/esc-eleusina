@@ -65,7 +65,11 @@ export default function Ui(props: { items: Item[]; time: number }) {
   }, [miniGameBnt]);
 
   useEffect(() => {
-    if (invHas(currMinigames?.requiredItems?.[0]) && currMinigames.reward) {
+    if (
+      currMinigames.type === "collect" &&
+      invHas(currMinigames?.requiredItems?.[0]) &&
+      currMinigames.reward
+    ) {
       store.setReward(currMinigames?.reward);
       if (currMinigames?.reward?.superDuper) {
         setTimeout(async () => {
