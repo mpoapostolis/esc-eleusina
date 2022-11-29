@@ -63,10 +63,9 @@ export default function Ui(props: { items: Item[]; time: number }) {
   useEffect(() => {
     if (miniGameBnt) store.setSound(`04_are_you_ready`);
   }, [miniGameBnt]);
-
   useEffect(() => {
     if (
-      currMinigames.type === "collect" &&
+      currMinigames?.type === "collect" &&
       invHas(currMinigames?.requiredItems?.[0]) &&
       currMinigames.reward
     ) {
