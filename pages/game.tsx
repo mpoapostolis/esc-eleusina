@@ -281,7 +281,6 @@ function Loader(props: { src?: string }) {
 
 const Home: NextPage<{ id: string; time: number }> = (props) => {
   const store = useStore();
-
   const bind = useGesture({
     onWheel: (w) =>
       setFov((s) => {
@@ -293,6 +292,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       }),
   });
   const router = useRouter();
+  const locale = router?.locale as "en" | "el";
   const timer = useTimer({
     initialTime: props.time,
     timerType: "DECREMENTAL",
@@ -380,7 +380,9 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     ) {
       store.setIsHintVisible(true);
       store.setHint(
-        "Τοποθέτησε τα αντικείμενα που κέρδισες στη θέση που ταιριάζουν για να ξεκλειδώσεις το δωμάτιο."
+        locale === "en"
+          ? `Place the items you won in their matching slot in order to unlock the room`
+          : "Τοποθέτησε τα αντικείμενα που κέρδισες στη θέση που ταιριάζουν για να ξεκλειδώσεις το δωμάτιο."
       );
     }
     const superDuper = sceneItems.find((e) => e.superDuper);
@@ -391,7 +393,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     ) {
       giveReward();
     }
-  }, [store.scene, usedItems, achievements]);
+  }, [store.scene, usedItems, locale, achievements]);
 
   const usedIds = usedItems.map((e) => e.itemId);
   // get innerWidth
@@ -416,7 +418,6 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       });
     }
   };
-  const locale = router?.locale as "en" | "el";
 
   return (
     <div {...bind()} className="select-none">
