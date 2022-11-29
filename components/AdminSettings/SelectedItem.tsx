@@ -196,7 +196,7 @@ export default function SelectedItem() {
             <>
               <Checkbox
                 label="Super duper"
-                checked={selectedItem.hideFromInventory}
+                checked={selectedItem.superDuper}
                 onChange={(evt) => {
                   _updateItem(id, {
                     superDuper: evt.target.checked,

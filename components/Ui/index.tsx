@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useUsed } from "../../lib/used";
 import { Router, useRouter } from "next/router";
 import { useT } from "../../Hooks/useT";
+import { updateUser } from "../../lib/users";
 
 export default function Ui(props: { items: Item[]; time: number }) {
   const store = useStore();
@@ -48,6 +49,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
     usedIds.length === miniGame?.requiredItems?.length;
 
   const miniGameBnt =
+    currMinigames?.type !== "collect" &&
     !doIHaveAchievement &&
     (miniGame?.useRequiredItems
       ? doINeedToUseForGame
@@ -61,6 +63,21 @@ export default function Ui(props: { items: Item[]; time: number }) {
   useEffect(() => {
     if (miniGameBnt) store.setSound(`04_are_you_ready`);
   }, [miniGameBnt]);
+
+  useEffect(() => {
+    if (invHas(currMinigames?.requiredItems?.[0]) && currMinigames.reward) {
+      store.setReward(currMinigames?.reward);
+      if (currMinigames?.reward?.superDuper) {
+        setTimeout(async () => {
+          if (store.scene === "pp5_navagio_int") {
+            await updateUser({ scene: "final" });
+            store.setReward(null);
+            store.setScene("final");
+          }
+        }, 3000);
+      }
+    }
+  }, [inventory, store.scene, currMinigames]);
 
   const openMiniGame = () => {
     switch (miniGame?.type) {
