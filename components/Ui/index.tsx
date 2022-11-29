@@ -228,10 +228,17 @@ export default function Ui(props: { items: Item[]; time: number }) {
                     item?.action();
                   }
 
-                  if (item.setHint) store.setHint(item.setHint);
-
+                  if (item.setHint) {
+                    store.setHint(
+                      router.locale === "en" ? item.enSetHint : item.setHint
+                    );
+                  }
                   if (item.setGuidelines)
-                    store.setguideLines(item.setGuidelines);
+                    store.setguideLines(
+                      router.locale === "en"
+                        ? item.setEnGuidelines
+                        : item.setGuidelines
+                    );
 
                   if (item.onClickOpenModal === "hint")
                     store.setIsHintVisible(true);

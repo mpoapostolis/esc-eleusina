@@ -215,11 +215,11 @@ export default function Sprite(props: Item) {
             _addItem(props._id);
           }
         }
-        if (props.setHint)
+        if (props.setHint) {
           store.setHint(
             props.locale === "en" ? props.setEnHint : props.setHint
           );
-
+        }
         if (props.setGuidelines)
           store.setguideLines(
             props.locale === "en" ? props.setEnGuidelines : props.setGuidelines
