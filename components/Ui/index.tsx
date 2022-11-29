@@ -224,6 +224,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
                 key={i}
                 onClick={() => {
                   if (item?.selectable || item?.isEpic) store.setHand(item._id);
+
                   if (item?.action) {
                     item?.action();
                   }
@@ -233,6 +234,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
                       router.locale === "en" ? item.enSetHint : item.setHint
                     );
                   }
+
                   if (item.setGuidelines)
                     store.setguideLines(
                       router.locale === "en"
@@ -242,6 +244,7 @@ export default function Ui(props: { items: Item[]; time: number }) {
 
                   if (item.onClickOpenModal === "hint")
                     store.setIsHintVisible(true);
+
                   if (item.onClickOpenModal === "guidelines")
                     store.setguideLinesVissible(true);
 
