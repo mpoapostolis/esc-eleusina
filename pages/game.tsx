@@ -330,8 +330,9 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
 
   useEffect(() => {
     const autoCollect = sceneItems.find((e) => e.autoCollect);
-    if (autoCollect) _addItem(autoCollect?._id);
-  }, [sceneItems]);
+    const doIHave = invHas(autoCollect?._id);
+    if (autoCollect && !doIHave) _addItem(autoCollect?._id);
+  }, [sceneItems, inventory]);
   const [boxItem] = sceneItems.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
@@ -352,6 +353,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
     ref.current.currentTime = 0;
     ref.current?.play();
   }, [store.soundId]);
+
   const [superDuper1, setSuperDuper1] = useState(false);
   const [_addReward] = useMutation(
     addReward,
@@ -361,7 +363,6 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
         setTimeout(() => {
           store.setStatus("RUNNING");
           if (store.scene === "intro") store.setScene("pp0_xorafi");
-          if (store.scene === "pp5_navagio_int") store.setScene("final");
         }, 3000);
       },
     }
@@ -392,6 +393,10 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       !achievements.find((e) => e.superDuper)
     ) {
       giveReward();
+    }
+
+    if (store.scene === "final" && usedItems.length === 1) {
+      router.push("/gameover");
     }
   }, [store.scene, usedItems, locale, achievements]);
 
@@ -427,7 +432,6 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       <JigSaw />
       <Clock />
       <GuideLines />
-      {/* <Lexigram /> */}
       <AncientText />
       <Reward />
       <WordSearch />

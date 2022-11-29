@@ -461,6 +461,7 @@ export default function SceneSettings(props: {
           "box",
           "wordSearch",
           "replace",
+          "final",
         ].map((o) => ({
           label: o === undefined ? "-" : o,
           value: o,

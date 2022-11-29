@@ -155,7 +155,8 @@ export type Status =
   | "HISTORY"
   | "ANCIENT_TEXT"
   | "REWARD"
-  | "RUNNING";
+  | "RUNNING"
+  | "FINAL";
 
 export const statusArr = [
   "MENU",
@@ -174,6 +175,7 @@ export const statusArr = [
   "ANCIENT_TEXT",
   "REWARD",
   "RUNNING",
+  "FINAL",
 ];
 
 export type Store = {
