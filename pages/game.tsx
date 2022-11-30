@@ -33,7 +33,6 @@ import JigSaw from "../components/JigSaw";
 import Sprite from "../components/Sprite";
 import Compass from "../components/Compass";
 import { motion } from "framer-motion";
-import { VRButton } from "@react-three/xr";
 import { Img } from "./admin";
 import Lexigram from "../components/Lexigram";
 import { withSessionSsr } from "../lib/withSession";
@@ -497,10 +496,10 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
                   }
 
                   const doIHaveReq = (p?.requiredItems ?? []).length > 0;
-                  const useRequired = (a?: boolean) =>
+                  const usedRequired = (a?: boolean) =>
                     !doIHaveReq || p.useRequiredItems ? a : true;
 
-                  const isRequiredUsed = useRequired(
+                  const isRequiredUsed = usedRequired(
                     p.requiredItems?.every((e) => {
                       return usedIds.length > 0 && usedIds.includes(e);
                     })
