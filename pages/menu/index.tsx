@@ -329,11 +329,6 @@ const Menu: NextPage = () => {
         />
 
         <MenuItem
-          goTo="/menu/select-level"
-          src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
-          title={t("menu_select_level")}
-        />
-        <MenuItem
           goTo="/menu/achievements"
           src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
           title={t("menu_achievements")}
