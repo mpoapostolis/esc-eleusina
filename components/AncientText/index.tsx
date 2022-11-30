@@ -17,7 +17,6 @@ export default function AncientText() {
   const [_addItem] = useMutation(addItem, [
     `/api/inventory?scene=${store.scene}`,
   ]);
-
   useEffect(() => {
     const set = new Set(words);
     if (store.ancientText?.keys.every((a) => set.has(a))) {
@@ -59,7 +58,7 @@ export default function AncientText() {
                   .filter((e) => e)
                   .map((x) => {
                     const str = x
-                      .replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "")
+                      // .replace(/[.,/#  !$%^&*;:{}=-_`~()]/g, "")
                       .replace(/s{2,}/g, " ");
                     return store.ancientText?.keys.includes(str) ? (
                       <button
@@ -82,8 +81,13 @@ export default function AncientText() {
                         {x}
                       </button>
                     ) : (
-                      <span className="mr-2" key={generateUUID()}>
-                        {x}
+                      <span
+                        className={clsx("mr-2", {
+                          "text-red-500": str.match("redd"),
+                        })}
+                        key={generateUUID()}
+                      >
+                        {x.replace("redd", "")}
                       </span>
                     );
                   })}

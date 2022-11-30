@@ -34,7 +34,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
       }
 
     default:
-      // res.status(405).send("No method allowed");
+      res.status(405).send("No method allowed");
       break;
   }
 }

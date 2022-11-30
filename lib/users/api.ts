@@ -29,11 +29,12 @@ export async function createUser(req: NextApiRequest, res: NextApiResponse) {
   const id = await db
     .collection("users")
     .insertOne({ ...rest, password: _password });
+  await req.session.destroy();
   req.session.user = {
     id: id.insertedId.toString(),
   };
   await req.session.save();
-  res.status(201).send("ok");
+  return res.writeHead(302, { Location: "/?newUser=true" }).end();
 }
 
 let loginSchema = yup.object().shape({
@@ -45,8 +46,10 @@ export async function login(req: NextApiRequest, res: NextApiResponse) {
   const body = await loginSchema.validate(req.body).catch((err) => {
     return err;
   });
+
   const err = getErrors(body);
   if (err) return res.status(400).json(err);
+
   const db = await myDb();
   const user = await db
     .collection("users")
@@ -61,7 +64,11 @@ export async function login(req: NextApiRequest, res: NextApiResponse) {
       id: user?._id.toString(),
     };
     await req.session.save();
-    res.status(200).send("ok");
+    const location =
+      req.headers.referer?.split("/")[3] === "en" ? "/en" : "/el";
+    return res
+      .writeHead(302, { Location: user?.admin ? "/admin" : location })
+      .end();
   } else {
     return res.status(400).json({ msg: `password or username incorrect` });
   }
@@ -81,15 +88,41 @@ export async function reset(req: NextApiRequest, res: NextApiResponse) {
     {
       $set: {
         scene: "intro",
+        time: 600,
       },
     }
   );
   await db.collection("achievements").deleteMany({
     userId: new ObjectId(id),
   });
+  await db.collection("used").deleteMany({
+    userId: new ObjectId(id),
+  });
+
   await db.collection("inventory").deleteMany({
     userId: new ObjectId(id),
   });
+
+  await db.collection("users").updateOne(
+    {
+      userId: new ObjectId(id),
+    },
+    {
+      $set: {
+        scene: "intro",
+        time: 600,
+      },
+    }
+  );
+
+  await db.collection("items").updateMany(
+    {},
+    {
+      $set: {
+        replaced: [],
+      },
+    }
+  );
 
   return res.writeHead(302, { Location: "/" }).end();
 }
@@ -114,6 +147,7 @@ export async function getUser(req: NextApiRequest, res: NextApiResponse) {
     {
       projection: {
         _id: 1,
+        time: 1,
         userName: 1,
         scene: 1,
       },

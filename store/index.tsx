@@ -3,7 +3,7 @@ import { mutate } from "swr";
 import { Euler, Vector3 } from "three";
 import create from "zustand";
 import { HintType } from "../components/AdminSettings/SceneSettings";
-import { Reward } from "../pages";
+import { Reward } from "../pages/game";
 import { Img } from "../pages/admin";
 
 export const LOCAL_STORAGE_AUTH_KEY = "escape_vr";
@@ -28,13 +28,20 @@ export type Level =
 
 export type Modal = "menu" | "gameOver" | "inventory" | undefined;
 export type Scene =
-  | "intro"
   | "arxaiologikos"
   | "elaiourgeio"
   | "eleusina"
-  | "teletourgeio"
+  | "intro"
+  | "karnagio"
   | "pangal"
-  | "karnagio";
+  | "teletourgeio"
+  | "pp0_xorafi"
+  | "pp1_elaiourgeio"
+  | "pp2_kikeonas"
+  | "pp3_ntamari"
+  | "pp4_navagio"
+  | "pp5_navagio_int"
+  | "final";
 
 export const scenes = [
   "arxaiologikos",
@@ -42,13 +49,15 @@ export const scenes = [
   "eleusina",
   "intro",
   "karnagio",
-  "kikeonas",
-  "navagio_ext",
-  "navagio_int",
-  "ntamari",
   "pangal",
   "teletourgeio",
-  "xorafi",
+  "pp0_xorafi",
+  "pp1_elaiourgeio",
+  "pp2_kikeonas",
+  "pp3_ntamari",
+  "pp4_navagio",
+  "pp5_navagio_int",
+  "final",
 ];
 
 export type Account = {
@@ -71,6 +80,7 @@ export type Item = {
   isEpic?: boolean;
   hintType?: HintType;
   disappearIfIdExist?: string | null;
+  replaced?: string[];
   rotation?: Euler;
   inventorySrc?: string | null;
   orderInsideTheBox?: string[];
@@ -81,6 +91,7 @@ export type Item = {
   lexigram?: string;
   reward?: Reward | null;
   ancientText?: string;
+  enText?: string;
   requiredToolToReplace?: Img;
   replaceImg?: string;
   clickableWords?: string;
@@ -131,8 +142,10 @@ export type Status =
   | "MENU"
   | "LOGIN"
   | "MINIGAMEMODAL"
+  | "CLOCK"
   | "JIGSAW"
   | "LEXIGRAM"
+  | "WORDSEARCH"
   | "COMPASS"
   | "REGISTER"
   | "SELECT_LEVEL"
@@ -142,7 +155,28 @@ export type Status =
   | "HISTORY"
   | "ANCIENT_TEXT"
   | "REWARD"
-  | "RUNNING";
+  | "RUNNING"
+  | "FINAL";
+
+export const statusArr = [
+  "MENU",
+  "LOGIN",
+  "MINIGAMEMODAL",
+  "JIGSAW",
+  "LEXIGRAM",
+  "WORDSEARCH",
+  "COMPASS",
+  "REGISTER",
+  "SELECT_LEVEL",
+  "ACHIEVEMENTS",
+  "MODAL",
+  "GUIDELINES",
+  "HISTORY",
+  "ANCIENT_TEXT",
+  "REWARD",
+  "RUNNING",
+  "FINAL",
+];
 
 export type Store = {
   account: Account;
@@ -157,6 +191,7 @@ export type Store = {
   guideLinesVissible?: boolean;
   setguideLinesVissible: (e: boolean) => void;
   guideLines?: string;
+  nextGame?: Status;
   modal: Modal;
 
   jigSawUrl?: string;
@@ -181,11 +216,17 @@ export type Store = {
 
   rot?: Euler | null;
   setRot: (e: Euler | null) => void;
-
+  mute: boolean;
+  setMute: () => void;
   setCompass: (p?: boolean, reward?: Reward | null) => void;
   setLexigram: (s?: string[], reward?: Reward | null) => void;
-  setJigSaw: (e?: string, reward?: Reward | null) => void;
-
+  setJigSaw: (
+    e?: string,
+    reward?: Reward | null,
+    nextGame?: Status,
+    url2?: string
+  ) => void;
+  jigSawUrl2?: string;
   screenShot?: string;
   takeScreenShot: (src: string) => void;
   fadeOutImg?: string;
@@ -215,6 +256,11 @@ export const useStore = create<Store>((set, get) => ({
       screenShot: src,
     })),
   setTimer: (timer) => set(() => ({ timer })),
+  mute: false,
+  setMute: () =>
+    set((s) => ({
+      mute: !s.mute,
+    })),
 
   setFadeOutImg: (obj) =>
     set(() => ({
@@ -232,10 +278,11 @@ export const useStore = create<Store>((set, get) => ({
         [id]: true,
       },
     })),
-  setJigSaw: (e, reward) => {
+  setJigSaw: (e, reward, b) => {
     set(() => ({
-      status: e ? "JIGSAW" : "RUNNING",
+      jigSawUrl2: b,
       jigSawUrl: e,
+      status: e ? "JIGSAW" : "RUNNING",
       reward,
     }));
   },
@@ -265,7 +312,6 @@ export const useStore = create<Store>((set, get) => ({
     });
   },
   setguideLinesVissible: (b: boolean) => {
-    console.log("setguideLinesVissible", b);
     set((s) => {
       if (b) s.setSound(`02_instruction_box`);
       return {

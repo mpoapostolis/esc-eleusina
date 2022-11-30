@@ -6,117 +6,141 @@ import clsx from "clsx";
 import { useStore } from "../../store";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
+import MiniGameWrapper from "../MiniGameWrapper";
+import { useTimer } from "use-timer";
+import { readLang } from "../../pages/_app";
 
 mapboxgl.accessToken =
-  "pk.eyJ1IjoibXBvYXBvc3RvbGlzYXBwIiwiYSI6ImNsMGt0NWEycTBwbWEzY205cmxjNjZuMjUifQ.PjvkTnV_Puw9hKmBQXVJBA";
+  "pk.eyJ1IjoiZmFyYW5kb3VyaXNwIiwiYSI6ImNsOTZ3dzhpczBzNHg0MHFxZ211dGN3OGcifQ.wG1mCl8Bl26T-w2zFwYK8g";
 
 const points = [
   {
     name: "Σκαραμαγκάς",
+    enName: "Skaramagas",
     bearing: 90,
     coords: {
-      lng: 23.5890555,
-      lat: 38.004808,
+      lng: 23.601992,
+      lat: 38.005316,
       zoom: 12,
     },
     desc: `Διάσημα τα ναυπηγεία του - ανατολικά `,
+    enDesc: `Famous shipyards - east`,
   },
   {
     name: "Σαλαμίνα",
+    enName: "Salamina",
     bearing: 0,
     coords: {
-      lng: 23.5023259,
-      lat: 37.9763449,
+      lat: 37.967521,
+      lng: 23.472213,
       zoom: 12,
     },
     desc: `Νησί που συνδέεται με αρχαία ναυμαχία - δυτικά  `,
+    enDesc: `Island connected with ancient battle - west`,
   },
 
   {
     name: "Σαρανταπόταμος",
+    enName: "Sarandapotamos",
     bearing: 0,
     coords: {
-      lng: 23.5061835,
-      lat: 38.0282363,
+      lng: 23.554976,
+      lat: 38.04945,
       zoom: 12,
     },
     desc: `Αλλιώς ο ποταμός Ελευσινιακός Κηφισσός - βόρεια `,
+    enDesc: `Otherwise the river Eleusinian Kifissos - north`,
   },
   {
     name: "Σαρωνικός",
+    enName: "Saronikos",
     bearing: 0,
     coords: {
-      lng: 23.5431423,
-      lat: 37.979663,
+      lng: 23.564024,
+      lat: 37.891304,
       zoom: 12,
     },
     desc: `Ο Ελευσινιακός Κόλπος αποτελεί μικρότερο κομμάτι του -νότια `,
+    enDesc: `The Eleusinian Gulf is a smaller part of it - south`,
   },
 ];
 
 export default function Compass() {
-  const mapContainer = useRef(null);
   const map = useRef<Map | null>(null);
   const [marker, setMarker] = useState<mapboxgl.Marker | null>(null);
+  const r = useRef(null);
 
   useEffect(() => {
     if (map.current) return;
-    // initialize map only once
-    const initialMap = new mapboxgl.Map({
-      container: "map",
-      pitch: 0, // pitch in degrees
-      center: {
-        lng: 23.5061835,
-        lat: 38.0,
-      },
-      style: "mapbox://styles/mpoapostolisapp/cl0qm3nwo00dk15n0fderkmw0",
-      zoom: 12,
-    });
-
-    initialMap.on("load", () => {
-      initialMap.addSource("mapbox-dem", {
-        type: "raster-dem",
-        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-        tileSize: 512,
-
-        maxzoom: 11,
+    setTimeout(() => {
+      const initialMap = new mapboxgl.Map({
+        container: "map",
+        pitch: 0, // pitch in degrees
+        center: {
+          lat: 37.983103884150424,
+          lng: 23.545958305471515,
+        },
+        style: "mapbox://styles/farandourisp/cl96wxlg300fn15qu2u22crjs",
+        zoom: 10.9,
       });
-      // add the DEM source as a terrain layer with exaggerated height
-      initialMap.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
-    });
 
-    points.forEach((c) => {
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        focusAfterOpen: true,
-      }).setText(c.desc);
-      new mapboxgl.Marker()
-        .setLngLat(c.coords)
-        .setPopup(popup)
-        .addTo(initialMap);
-    });
-    const marker = new mapboxgl.Marker({
-      color: "color",
-      scale: 1.2,
-    }).setLngLat({
-      lng: 0,
-      lat: 0,
-    });
+      initialMap.on("load", () => {
+        initialMap.addSource("mapbox-dem", {
+          type: "raster-dem",
+          url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+          tileSize: 512,
 
-    setMarker(marker);
-    marker.addTo(initialMap);
-    initialMap.addControl(new mapboxgl.NavigationControl(), "top-left");
+          maxzoom: 10,
+        });
+        // add the DEM source as a terrain layer with exaggerated height
+        initialMap.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
+      });
 
-    map.current = initialMap;
+      points.forEach((c) => {
+        new mapboxgl.Marker().setLngLat(c.coords).addTo(initialMap);
+      });
+      const marker = new mapboxgl.Marker({
+        color: "steelblue",
+        scale: 1.8,
+      }).setLngLat({
+        lng: 0,
+        lat: 0,
+      });
+      setMarker(marker);
+      marker.addTo(initialMap);
+      initialMap.addControl(new mapboxgl.NavigationControl(), "top-left");
+      map.current = initialMap;
+    }, 1000);
+    // initialize map only once
   });
 
-  const flyTo = async (c: { lat: number; lng: number; zoom: number }) => {
+  const flyTo = async (c: {
+    lat: number;
+    lng: number;
+    zoom: number;
+    desc: string;
+    enDesc: string;
+  }) => {
     if (!map.current || !marker) return;
+    const locale = readLang();
     marker.setLngLat({
       lat: c.lat,
       lng: c.lng,
     });
 
+    const popup = new mapboxgl.Popup({
+      offset: [0, -30],
+      focusAfterOpen: false,
+      closeButton: false,
+    });
+
+    const popups = document.getElementsByClassName("mapboxgl-popup");
+    Array.from(popups).forEach((e) => e.remove());
+
+    popup
+      .setLngLat(c)
+      .setText(locale === "el" ? c.desc : c.enDesc)
+      .addTo(map.current);
     map.current.easeTo({
       duration: 500,
       center: {
@@ -127,6 +151,7 @@ export default function Compass() {
       easing: (x) => x,
     });
   };
+
   const setIdx = (i: number) => {
     if (!map.current) return;
     setDeg(i * 90);
@@ -155,238 +180,201 @@ export default function Compass() {
       }
     }
   }, [answers]);
+  const timer = useTimer({
+    initialTime: 10,
+    step: -1,
+    endTime: 0,
+  });
 
-  const setPlace = (e: ChangeEvent<HTMLInputElement>) => {
+  const setPlace = async (e: ChangeEvent<HTMLInputElement>) => {
     e.currentTarget.value = e.currentTarget.value.toUpperCase();
     const value = e.currentTarget.value;
     const name = e.currentTarget.name;
-
     switch (name) {
-      case "west":
-        if (value === "ΑΡΑΝΤΑΠΟΤΑΜΟΣ")
+      case "north":
+        if (["ΑΡΑΝΤΑΠΟΤΑΜΟΣ", "ARANTAPOTAMOS"].includes(value)) {
           setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
       case "south":
-        if (value === "ΑΡΩΝΙΚΟΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        if (["ΑΡΩΝΙΚΟΣ", "ARONIKOS"].includes(value)) {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
-      case "north":
-        if (value === "ΑΛΑΜΙΝΑ") setAnswers((s) => ({ ...s, [name]: true }));
+      case "west":
+        if (["ΑΛΑΜΙΝΑ", "ALAMINA"].includes(value)) {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
       case "east":
-        if (value === "ΚΑΡΑΜΑΓΚΑΣ") setAnswers((s) => ({ ...s, [name]: true }));
+        if (["ΚΑΡΑΜΑΓΚΑΣ", "KARAMAGAS"].includes(value)) {
+          setAnswers((s) => ({ ...s, [name]: true }));
+        }
         break;
     }
   };
-
-  const rotateComapss = (idx: number) => {
-    const p = points[idx];
-    flyTo(p.coords);
-    setIdx(idx);
-  };
+  const [help, setHelp] = useState("");
+  const locale = readLang();
   return (
-    <div
-      className={clsx(
-        "fixed flex  items-center z-50 bg-opacity-80 bg-transparent border-b h-screen w-screen",
-        {
-          hidden: store.status !== "COMPASS" || !store.compass,
-        }
-      )}
-    >
-      <div className="relative bg-black h-screen   m-auto  ">
-        <div
-          className=" rounded w-screen h-screen z-0"
-          id="map"
-          ref={mapContainer}
-        >
-          <div
-            style={{ zIndex: 9999 }}
-            className="absolute bottom-0 right-0 z-50 max-w-lg w-full items-center justify-between flex-col md:m-5"
-          >
-            <div className={styles.take}>
-              <div className={styles.ring}></div>
-            </div>
+    <MiniGameWrapper status="COMPASS">
+      <div className="relative h-full w-full">
+        <div id="map" className="w-full h-full" />
+
+        <div className="absolute p-2 border border-dashed border-black items-center   w-96 h-96 right-0 bg-white bottom-0 rounded-full z-50  ">
+          <div className="border relative  rounded-full w-full h-full  flex justify-center border-black items-center overflow-hidden">
             <div
+              style={{ transform: `rotate(${deg}deg)` }}
               className={clsx(
-                styles.compass,
-                "relative w-full p-4 flex items-center"
+                "grid absolute  transition duration-500 gap-x-2 grid-cols-[30px_1fr_20px_1fr_30px] w-full"
               )}
             >
-              <div
-                style={{
-                  transform: `rotate(${deg}deg)`,
-                }}
+              <span
                 className={clsx(
-                  styles.panel,
-                  "w-full overflow-hidden aspect-square duration-1000  flex items-center justify-center relative rounded-full"
+                  "flex justify-center -scale-100 items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.west,
+                  }
                 )}
               >
-                <div className="w-full rounded-full h-full relative">
-                  <img
-                    className="relative right-3"
-                    src="/images/compass.svg"
-                    alt=""
-                  />
-                  {[...Array(24).fill("")].map((_, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        top: "50%",
-                        transform: `rotate(${idx * 7.5}deg)`,
-                      }}
-                      className={clsx(
-                        styles.r,
-                        "top-5 border-b   opacity-10  w-full absolute"
-                      )}
-                    />
-                  ))}
-                </div>
+                W
+              </span>
+              <input
+                name="west"
+                onChange={setPlace}
+                onFocus={() => {
+                  flyTo({
+                    ...points[1].coords,
+                    desc: points[1].desc,
+                    enDesc: points[1].enDesc,
+                  });
+                  timer.reset();
+                  setHelp(
+                    locale === "el"
+                      ? `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη`
+                      : `In this battle, the fleet of Xerxes was destroyed`
+                  );
+                  timer.start();
 
-                <div className="flex w-full justify-center absolute z-50 ">
-                  <div
-                    onClick={() => rotateComapss(2)}
-                    className={clsx("flex rotate-180 ")}
-                  >
-                    <input
-                      onFocus={() => rotateComapss(2)}
-                      disabled={answers.west}
-                      name="west"
-                      onChange={setPlace}
-                      className={clsx(
-                        styles.input,
-                        "bg-black bg-opacity-70 text-lg",
-                        {
-                          "opacity-0 ": deg !== 90 * 2,
-                        }
-                      )}
-                    ></input>
-                    <img
-                      className={clsx(
-                        "absolute right-0 top-2 rounded-full w-7",
-                        {
-                          hidden: !answers.west,
-                        }
-                      )}
-                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
-                      alt=""
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      transform: `rotate(${-deg}deg)`,
-                    }}
-                    className={clsx(
-                      "duration-300  flex justify-center items-center",
-                      styles.textShadow
-                    )}
-                  >
-                    Σ
-                  </div>
-
-                  <div
-                    onClick={() => rotateComapss(0)}
-                    className={clsx("flex ")}
-                  >
-                    <input
-                      autoFocus
-                      onFocus={() => rotateComapss(0)}
-                      disabled={answers.east}
-                      name="east"
-                      onChange={setPlace}
-                      className={clsx(
-                        styles.input,
-                        "bg-black bg-opacity-70 text-lg",
-                        {
-                          "opacity-0 ": deg !== 90 * 0,
-                        }
-                      )}
-                    ></input>
-                    <img
-                      className={clsx(
-                        "absolute right-0 top-2 rounded-full w-7",
-                        {
-                          hidden: !answers.east,
-                        }
-                      )}
-                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
-                      alt=""
-                    />
-                  </div>
-                </div>
-
-                <div className="flex w-full rotate-90 justify-center  absolute z-50 ">
-                  <div
-                    onClick={() => rotateComapss(1)}
-                    className={clsx("flex rotate-180 ")}
-                  >
-                    <input
-                      onFocus={() => rotateComapss(1)}
-                      disabled={answers.north}
-                      name="north"
-                      onChange={setPlace}
-                      className={clsx(
-                        styles.input,
-                        "bg-black bg-opacity-70 text-lg",
-                        {
-                          "opacity-0 ": deg !== 90 * 1,
-                        }
-                      )}
-                    ></input>
-                    <img
-                      className={clsx(
-                        "absolute right-0 top-2 rounded-full w-7",
-                        {
-                          hidden: !answers.north,
-                        }
-                      )}
-                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    onClick={() => rotateComapss(3)}
-                    className={clsx("flex ml-10")}
-                  >
-                    <input
-                      onFocus={() => rotateComapss(3)}
-                      disabled={answers.south}
-                      name="south"
-                      onChange={setPlace}
-                      className={clsx(
-                        styles.input,
-                        "bg-black bg-opacity-70 text-lg",
-                        {
-                          "opacity-0 ": deg !== 90 * 3,
-                        }
-                      )}
-                    ></input>
-                    <img
-                      className={clsx(
-                        "absolute right-0 top-2 rounded-full w-7",
-                        {
-                          hidden: !answers.south,
-                        }
-                      )}
-                      src="https://s2.svgbox.net/hero-solid.svg?ic=check-circle&color=2a2"
-                      alt=""
-                    />
-                  </div>
-                </div>
+                  setIdx(2);
+                }}
+                className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
+              />
+              <div
+                style={{ transform: `rotate(-${deg}deg)` }}
+                className="text-4xl flex text-black duration-0 transition-500 items-center justify-center "
+              >
+                {locale === "el" ? "Σ" : "S"}
               </div>
-            </div>
-            <button
-              onClick={() => store.setCompass(false)}
-              className="fixed text-gray-800 font-  w-10 h-10 flex items-center justify-center rounded-full  border border-gray-300 bg-white shadow-lg  top-0 right-0 z-0 bg-opacity-70 m-3 text-xl"
-            >
-              ✖
-            </button>
+              <input
+                name="east"
+                onChange={setPlace}
+                onFocus={() => {
+                  flyTo({
+                    ...points[0].coords,
+                    desc: points[0].desc,
+                    enDesc: points[0].enDesc,
+                  });
+                  timer.reset();
+                  setHelp(``);
+                  timer.start();
 
-            <div className="fixed bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
-              <div className="w-2/4">{points[deg / 90].desc}</div>
+                  setIdx(0);
+                }}
+                className="uppercase bg-gray-300 text-black outline-none w-full px-2"
+              />
+              <span
+                className={clsx(
+                  "flex justify-center items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.east,
+                  }
+                )}
+              >
+                E
+              </span>
+            </div>
+
+            <div
+              style={{ transform: `rotate(${90 + deg}deg)` }}
+              className={clsx(
+                "grid rotate-90 absolute  transition duration-500 gap-x-2 grid-cols-[30px_1fr_20px_1fr_30px] w-full"
+              )}
+            >
+              <span
+                className={clsx(
+                  "flex justify-center -scale-100 items-center bg-black w-full",
+                  {
+                    "bg-green-600 text-white": answers.north,
+                  }
+                )}
+              >
+                N
+              </span>
+              <input
+                name="north"
+                onChange={setPlace}
+                onFocus={() => {
+                  flyTo({
+                    ...points[2].coords,
+                    desc: points[2].desc,
+                    enDesc: points[2].enDesc,
+                  });
+                  timer.reset();
+                  setHelp(
+                    locale === "el"
+                      ? `Το πρώτο συνθετικό του ποταμού είναι αριθμός`
+                      : `The first compound of the river is a number`
+                  );
+                  timer.start();
+
+                  setIdx(1);
+                }}
+                className="uppercase bg-gray-300 -scale-100 text-black outline-none w-full px-2"
+              />
+              <div className="text-4xl opacity-0 flex items-center justify-center ">
+                Σ
+              </div>
+              <input
+                onFocus={() => {
+                  flyTo({
+                    ...points[3].coords,
+                    desc: points[3].desc,
+                    enDesc: points[3].enDesc,
+                  });
+                  timer.reset();
+                  setHelp(
+                    locale === "el"
+                      ? `Κόλπος της Αττικής, γνωστός για τη ρύπανσή του`
+                      : `Bay of Attica, known for its pollution`
+                  );
+                  timer.start();
+
+                  setIdx(3);
+                }}
+                name="south"
+                onChange={setPlace}
+                className="uppercase bg-gray-300  text-black outline-none w-full px-2"
+              />
+              <span
+                className={clsx(
+                  "flex justify-center items-center bg-black w-full",
+                  {
+                    "bg-green-500 text-white": answers.south,
+                  }
+                )}
+              >
+                S
+              </span>
             </div>
           </div>
         </div>
+
+        {timer.time === 0 && (
+          <div className="absolute  bottom-0 left-0 z-0 bg-opacity-70 w-full p-10 bg-black   text-gray-400 text-3xl full items-center flex justify-left font-bold">
+            <div className="w-2/4">{help}</div>
+          </div>
+        )}
       </div>
-    </div>
+    </MiniGameWrapper>
   );
 }

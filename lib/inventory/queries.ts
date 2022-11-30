@@ -2,7 +2,8 @@
 
 import axios, { AxiosError } from "axios";
 import useSWR from "swr";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
+import Id from "../../pages/api/items/[id]";
 import { useStore } from "../../store";
 import { fetcher } from "../utils";
 import { ACHIEVEMENT, Item } from "./types";
@@ -39,13 +40,15 @@ export async function addItem(itemId?: string) {
     });
 }
 
-export async function useItem(itemId?: string) {
-  if (itemId) await axios.put(`/api/inventory?itemId=${itemId}`);
+export async function updateInv(itemId: string, payload: Record<string, any>) {
+  if (itemId) await axios.put(`/api/inventory?itemId=${itemId}`, payload);
 }
 
 export async function addReward(reward: Reward) {
+  const { _id, ...rest } = reward;
   await axios.post("/api/inventory?epic=true", {
-    ...reward,
+    ...rest,
+    rewardId: _id,
     scene: "intro",
     isEpic: true,
   });

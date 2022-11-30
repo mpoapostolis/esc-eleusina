@@ -7,7 +7,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const collection = await db.collection("items");
   switch (req.method) {
     case "PUT":
-      if (req.body.reward) req.body.reward._id = new ObjectId();
       const x = await collection.updateOne(
         { _id: new ObjectId(`${req.query.id}`) },
         {

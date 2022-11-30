@@ -3,7 +3,6 @@ import { animated, useSpring } from "@react-spring/web";
 import clsx from "clsx";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useStore } from "../../store";
-import MiniGameModal from "../MiniGameModal";
 import MiniGameWrapper from "../MiniGameWrapper";
 import useMutation from "../../Hooks/useMutation";
 import { addReward } from "../../lib/inventory";
@@ -40,6 +39,7 @@ const range = (start: number, stop: number, step = 1) =>
 
 function Piece(p: {
   onMove: (p: { x: number; y: number }) => void;
+  done?: boolean;
   idx: number;
   clip: string;
   shuffle: boolean;
@@ -132,7 +132,7 @@ function Piece(p: {
 
   return (
     <animated.img
-      src={store.jigSawUrl}
+      src={p.done ? store.jigSawUrl2 : store.jigSawUrl}
       ref={ref}
       onDragStart={(e) => e.preventDefault()}
       {...bind()}
@@ -157,10 +157,9 @@ export default function JigSaw() {
     `/api/items?scene=${store.scene}`,
   ]);
 
+  const isDone = position.every((item) => item && item?.x === position[0]?.x);
   useEffect(() => {
-    const isDone = position.every((item) => item && item?.x === position[0]?.x);
-    if (isDone) {
-      store.setJigSaw(undefined);
+    if (isDone && !store.jigSawUrl2) {
       if (store.reward) {
         _addReward(store.reward);
         store.setReward(store.reward);
@@ -169,7 +168,17 @@ export default function JigSaw() {
   }, [position]);
 
   return (
-    <MiniGameWrapper status="JIGSAW">
+    <MiniGameWrapper
+      onClose={() => {
+        if (isDone) {
+          if (store.reward) {
+            _addReward(store.reward);
+            store.setReward(store.reward);
+          }
+        }
+      }}
+      status="JIGSAW"
+    >
       <button
         onClick={() => {
           setShuffle(!shuffle);
@@ -187,6 +196,7 @@ export default function JigSaw() {
       >
         {paths.map((d, idx) => (
           <Piece
+            done={isDone}
             idx={idx}
             key={d}
             shuffle={shuffle}
@@ -199,6 +209,17 @@ export default function JigSaw() {
             clip={d}
           />
         ))}
+      </div>
+      <div
+        onClick={() => {
+          if (store.reward) {
+            _addReward(store.reward);
+            store.setReward(store.reward);
+          }
+        }}
+        className="btn"
+      >
+        solve
       </div>
     </MiniGameWrapper>
   );

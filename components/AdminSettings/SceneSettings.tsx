@@ -3,16 +3,18 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { mutate } from "swr";
-import { AllImage } from ".";
+import { AllImage, Checkbox } from ".";
 import useMutation from "../../Hooks/useMutation";
+import { useAchievements } from "../../lib/inventory";
 import {
   addItem,
   deleteItem,
   useItems,
   Item,
   useMiniGames,
+  updateItem,
 } from "../../lib/items";
-import { MiniGame, Reward } from "../../pages";
+import { MiniGame, Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
 import { useStore } from "../../store";
 import Load from "../Load";
@@ -25,6 +27,40 @@ const Component = (
   }
 ) => {
   switch (props.type) {
+    case "arxaiologikos":
+      return (
+        <>
+          <div key={props.type} className="mt-4">
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              jigsaw image url
+            </label>
+            <input
+              value={props.jigSawUrl}
+              onChange={(evt) => {
+                props.update({
+                  jigSawUrl: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+          </div>
+          <div key={props.type} className="mt-4">
+            <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+              onClick set clock seperated by comma (,)
+            </label>
+            <input
+              value={props.clock}
+              onChange={(evt) => {
+                props.update({
+                  clock: evt.currentTarget.value,
+                });
+              }}
+              className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+            ></input>
+          </div>
+        </>
+      );
+
     case "jigsaw":
       return (
         <div key={props.type} className="mt-4">
@@ -40,19 +76,44 @@ const Component = (
             }}
             className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
           ></input>
+
+          <br />
+          <br />
+
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            jigSaw url2
+          </label>
+          <input
+            value={props.jigSawUrl2}
+            onChange={(evt) => {
+              props.update({
+                jigSawUrl2: evt.currentTarget.value,
+              });
+            }}
+            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
         </div>
       );
 
-    case "lexigram":
+    case "clock":
       return (
         <div key={props.type} className="mt-4">
           <label className="block text-left text-xs font-medium mb-2 text-gray-200">
-            onClick set Lexigram seperated by comma (,)
+            onClick set clock seperated by comma (,)
           </label>
           <input
             onChange={(evt) => {
               props.update({
-                lexigram: evt.currentTarget.value,
+                clock: evt.currentTarget.value,
+              });
+            }}
+            className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+          <label htmlFor="">English</label>
+          <input
+            onChange={(evt) => {
+              props.update({
+                enClock: evt.currentTarget.value,
               });
             }}
             className=" text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
@@ -70,149 +131,142 @@ export type HintType = "conditional" | "timer";
 function Row(props: Item & { sceneItems: Item[] }) {
   const [hint, setHint] = useState<string>();
   const [time, setTime] = useState<number>();
-  const [type, setType] = useState<HintType>("timer");
-  const [requiredItems, setRequiredItems] = useState<string[]>([]);
-  const [deleteLoad, setDeleteLoad] = useState(false);
+  const [notInInventory, setNotInInventory] = useState<boolean>(false);
   const [load, setLoad] = useState(false);
   const { data: items } = useItems();
+  const { data: achievements } = useAchievements();
+
   useEffect(() => {
     setHint(props.text);
     setTime(props.delayTimeHint);
+    setNotInInventory(props.notInInventory);
   }, [items]);
 
   const updateRequired = (id: string) => {
-    const found = requiredItems?.includes(id);
+    const found = props.requiredItems?.includes(id);
     const tmp = found
-      ? requiredItems?.filter((e) => e !== id)
-      : [...requiredItems, id];
-    setRequiredItems(tmp);
+      ? props.requiredItems?.filter((e) => e !== id)
+      : [...(props.requiredItems ?? []), id];
+
+    _updateItem(props._id, {
+      requiredItems: tmp,
+    });
   };
   const store = useStore();
   const [_deleteItem] = useMutation(deleteItem, [
     `/api/items?scene=${store.scene}`,
   ]);
 
+  const [_updateItem] = useMutation(updateItem, [
+    `/api/items?scene=${store.scene}`,
+  ]);
+
   return (
     <div className="p-4 my-1  border border-gray-500 bg-gray-500 bg-opacity-5">
-      <div className="grid gap-x-4 grid-cols-2 mb-4">
+      <div className="grid mb-4">
+        {/*                   text: hint,
+                  delayTimeHint: time,
+                  requiredItems,
+                  notInInventory,
+ */}
         <Select
-          value={type}
-          onChange={(e) => {
-            if (type === "conditional") setTime(undefined);
-            if (type === "timer") setRequiredItems([]);
-            setType(e.value as HintType);
-          }}
-          label="Hint Type"
-          options={["timer", "conditional"].map((x) => ({
+          value={`${props.delayTimeHint}`}
+          onChange={(e) =>
+            _updateItem(props._id, {
+              delayTimeHint: +`${e.value}`,
+            })
+          }
+          label="Delay seconds"
+          options={[1, 5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
             label: `${x}`,
             value: x,
           }))}
         />
-
-        {type === "timer" && (
-          <Select
-            value={`${time}`}
-            onChange={(e) => setTime(+`${e.value}`)}
-            label="Delay seconds"
-            options={[5, 10, 15, 20, 25, 30, 60, 120, 240].map((x) => ({
-              label: `${x}`,
-              value: x,
-            }))}
-          />
-        )}
       </div>
+      <label htmlFor=""> Greek</label>
       <textarea
         rows={3}
         placeholder="hint"
-        value={hint}
-        onChange={(e) => setHint(e.currentTarget.value)}
+        value={props.text}
+        onChange={(e) =>
+          _updateItem(props._id, {
+            text: e.currentTarget.value,
+          })
+        }
         className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
       />
 
-      {type === "conditional" && (
-        <>
-          <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
-            Required items to display hint
-          </label>
-          <div className="grid gap-2 grid-cols-6">
-            {props.sceneItems
-              ?.filter(
-                (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-              )
-              .map((i) => {
-                const item = i as Item;
-                return (
-                  <div
-                    key={i._id}
-                    onClick={() => {
-                      updateRequired(`${i._id}`);
-                    }}
-                    className={clsx(
-                      "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
-                      {
-                        "bg-green-500": requiredItems?.includes(`${i._id}`),
-                      }
-                    )}
-                  >
-                    <img
-                      className="hover:scale-150 w-full p-2"
-                      src={item.src}
-                      alt=""
-                    />
-                  </div>
-                );
-              })}
-          </div>
-        </>
-      )}
-      <div className="grid mt-4 grid-cols-2 gap-x-1">
+      <label htmlFor=""> English</label>
+      <textarea
+        rows={3}
+        placeholder="en hint"
+        value={props.enText}
+        onChange={(e) =>
+          _updateItem(props._id, {
+            enText: e.currentTarget.value,
+          })
+        }
+        className="bg-transparent w-full mb-1 text-sm focus:outline-none p-2 border border-gray-500"
+      />
+
+      <>
+        <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
+          Required items to display hint
+        </label>
+        <Checkbox
+          label="Not in inventory"
+          checked={notInInventory}
+          onChange={(e) =>
+            _updateItem(props._id, {
+              notInInventory: e.currentTarget.checked,
+            })
+          }
+        />
+        <br />
+
+        <div className="grid gap-2 grid-cols-6">
+          {props.sceneItems
+            ?.filter(
+              (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
+            )
+            .map((i) => {
+              const item = i as Item;
+              return (
+                <div
+                  key={i._id}
+                  onClick={() => {
+                    updateRequired(`${i._id}`);
+                  }}
+                  className={clsx(
+                    "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
+                    {
+                      "bg-green-500": props.requiredItems?.includes(`${i._id}`),
+                    }
+                  )}
+                >
+                  <img
+                    className="hover:scale-150 w-full p-2"
+                    src={item.src}
+                    alt=""
+                  />
+                </div>
+              );
+            })}
+        </div>
+      </>
+
+      <div className="grid mt-4  gap-x-1">
         <button
           className="btn"
           onClick={async () => {
             _deleteItem(props._id);
           }}
         >
-          {deleteLoad ? (
-            <Load />
-          ) : (
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
-              width="26"
-              height="26"
-            />
-          )}
-        </button>
-        <button
-          onClick={async () => {
-            setLoad(true);
-            await axios
-              .put(
-                `/api/items/${props._id}`,
-                JSON.stringify({
-                  hintType: type,
-                  text: hint,
-                  delayTimeHint: time,
-                  requiredItems,
-                }),
-                {
-                  headers: {
-                    "Content-Type": "application/json; charset=UTF-8",
-                  },
-                }
-              )
-              .then(() => setLoad(false));
-          }}
-          className="btn"
-        >
-          {load ? (
-            <Load />
-          ) : (
-            <img
-              src="https://s2.svgbox.net/materialui.svg?ic=save&color=777"
-              width="26"
-              height="26"
-            />
-          )}
+          <img
+            src="https://s2.svgbox.net/materialui.svg?ic=delete&color=a88"
+            width="26"
+            height="26"
+          />
         </button>
       </div>
     </div>
@@ -229,6 +283,7 @@ export default function SceneSettings(props: {
   const router = useRouter();
   const [miniGame, setMiniGame] = useState<MiniGame>({});
   const [guideLines, setGuideLines] = useState<string>();
+  const [enGuideLines, setEnGuideLines] = useState<string>();
   const { data: items } = useItems();
   const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
   const [miniGameLoad, setMiniGameLoad] = useState(false);
@@ -246,11 +301,12 @@ export default function SceneSettings(props: {
 
   const currBox = items.find((e) => e.type === "box");
 
-  console.log(currBox);
-
   useEffect(() => {
     const doIHaveGuideLines = items.find((e) => e.type === "guidelines");
-    if (doIHaveGuideLines) setGuideLines(doIHaveGuideLines.text);
+    if (doIHaveGuideLines) {
+      setGuideLines(doIHaveGuideLines.text);
+      setEnGuideLines(doIHaveGuideLines.enText);
+    }
   }, [items]);
 
   const { data: miniGames } = useMiniGames();
@@ -265,6 +321,7 @@ export default function SceneSettings(props: {
   function update(o: MiniGame) {
     setMiniGame((s) => ({ ...s, ...o }));
   }
+  const replacedReward = items.find((e) => e.reward)?.reward;
 
   return (
     <div className="flex flex-col h-screen">
@@ -298,13 +355,29 @@ export default function SceneSettings(props: {
           rows={5}
         />
       </div>
+
+      <div className="">
+        <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+          English Guidelines
+        </label>
+        <textarea
+          value={enGuideLines}
+          onChange={(evt) => setEnGuideLines(evt.currentTarget.value)}
+          className="bg-transparent mb-4  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+        />
+      </div>
+
       <button
         onClick={async () => {
           if (doIHaveGuideLines)
             await axios
               .put(
                 `/api/items/${doIHaveGuideLines._id}`,
-                JSON.stringify({ text: guideLines }),
+                JSON.stringify({
+                  enText: enGuideLines,
+                  text: guideLines,
+                }),
                 {
                   headers: {
                     "Content-Type": "application/json; charset=UTF-8",
@@ -361,6 +434,17 @@ export default function SceneSettings(props: {
 
       <Select
         onChange={(v) => {
+          axios
+            .post("/api/miniGames", {
+              scene: store.scene,
+              ...miniGame,
+              type: v.value,
+            })
+            .then(() => {
+              mutate("/api/miniGames");
+              setMiniGameLoad(false);
+            });
+
           setMiniGame({
             type: v.value as any,
           });
@@ -369,11 +453,15 @@ export default function SceneSettings(props: {
         label="Mini Game"
         options={[
           undefined,
+          "collect",
+          "arxaiologikos",
           "jigsaw",
-          "lexigram",
-          "cerberus",
+          "clock",
           "compass",
           "box",
+          "wordSearch",
+          "replace",
+          "final",
         ].map((o) => ({
           label: o === undefined ? "-" : o,
           value: o,
@@ -382,7 +470,7 @@ export default function SceneSettings(props: {
       <Component {...miniGame} update={update} />
       <br />
       <Popover
-        disabled={miniGame.type === "box"}
+        disabled={["box", "replace"].includes(miniGame.type ?? "")}
         label={
           <>
             <label className="block text-left text-xs font-medium mb-2 text-gray-200">
@@ -390,19 +478,28 @@ export default function SceneSettings(props: {
               {miniGame.type === "box"
                 ? `(change reward from the box item)`
                 : ""}
+              {miniGame.type === "replace"
+                ? `(change reward from the replace item)`
+                : ""}
             </label>
             <div
               className={clsx(
                 "border  p-2 w-full  h-28 text-2xl  border-gray-700 flex items-center justify-center",
                 {
-                  "cursor-not-allowed": miniGame.type === "box",
+                  "cursor-not-allowed": ["box", "replace"].includes(
+                    miniGame.type ?? ""
+                  ),
                 }
               )}
             >
               {miniGame.reward || currBox?.reward ? (
                 <div>
                   <img
-                    src={miniGame.reward?.src || currBox?.reward?.src}
+                    src={
+                      miniGame.reward?.src ||
+                      replacedReward?.src ||
+                      currBox?.reward?.src
+                    }
                     className="w-20 h-auto"
                   />
                 </div>
@@ -414,7 +511,7 @@ export default function SceneSettings(props: {
         }
       >
         <AllImage
-          imgs={props.imgs}
+          imgs={items}
           onClick={async (o) => {
             update({
               reward: o as Img | null,
@@ -424,7 +521,9 @@ export default function SceneSettings(props: {
       </Popover>
       <div
         className={clsx({
-          "cursor-not-allowed pointer-events-none": miniGame.type === "box",
+          "cursor-not-allowed pointer-events-none": ["box", "replace"].includes(
+            miniGame.type ?? ""
+          ),
         })}
       >
         <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
@@ -433,7 +532,8 @@ export default function SceneSettings(props: {
         <textarea
           className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
           rows={5}
-          value={currBox?.reward?.description ?? miniGame.reward?.description}
+          disabled={["box", "replace"].includes(miniGame.type ?? "")}
+          value={miniGame.reward?.description}
           onChange={(evt) => {
             const r = miniGame.reward;
             if (r)
@@ -445,12 +545,44 @@ export default function SceneSettings(props: {
               });
           }}
         />
+        <br />
+        <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+          English:Reward Msg
+        </label>
+        <textarea
+          className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          disabled={["box", "replace"].includes(miniGame.type ?? "")}
+          value={miniGame.reward?.enDescription}
+          onChange={(evt) => {
+            const r = miniGame.reward;
+            if (r)
+              update({
+                reward: {
+                  ...r,
+                  enDescription: evt.currentTarget.value,
+                },
+              });
+          }}
+        />
       </div>
       <br />
 
       <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
         Required items in inventory for mini game
       </label>
+
+      <Checkbox
+        label="Use all items in inventory"
+        checked={miniGame.useRequiredItems}
+        onChange={(evt) => {
+          update({
+            useRequiredItems: evt.currentTarget.checked,
+          });
+        }}
+      />
+
+      <br />
       <div className="grid gap-2 grid-cols-6">
         {items
           ?.filter(

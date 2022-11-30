@@ -1,10 +1,19 @@
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { mutate } from "swr";
+import { Status } from "use-timer/lib/types";
 import { AllImage } from ".";
 import useMutation from "../../Hooks/useMutation";
-import { useItems, useLibrary, updateItem } from "../../lib/items";
+import {
+  useItems,
+  useLibrary,
+  updateItem,
+  useMiniGames,
+} from "../../lib/items";
+import { Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
-import { Item, useStore } from "../../store";
+import { Item, statusArr, useStore } from "../../store";
 import { getOnlyItems } from "../../utils";
 import Popover from "../Popover";
 import Select from "../Select";
@@ -18,8 +27,10 @@ export default function ItemSettings() {
   const { data: imgs } = useLibrary();
 
   const idx = items.findIndex((e) => e._id === id);
+  const { data: miniGames } = useMiniGames();
   const selectedItem = { ...items[idx] };
-  const sceneItems = items.filter((item) => store?.scene === item.scene);
+  const rewards = miniGames.map((e) => e.reward).filter(Boolean) as Reward[];
+  const sceneItems = [...items, ...rewards];
   const [_updateItem] = useMutation(updateItem, [
     `/api/items?scene=${store.scene}`,
   ]);
@@ -30,47 +41,67 @@ export default function ItemSettings() {
     author: "",
     onClickTrigger: "",
     onClickOpenModal: "",
+    setEnHint: "",
     setHint: "",
     description: "",
+    enDescription: "",
+    setEnGuidelines: "",
     setGuidelines: "",
     ancientText: "",
     inventorySrc: "",
     collectableIfHandHas: "",
     onCollectFail: "",
+    enOnCollectFail: "",
   });
 
   useEffect(() => {
     const selectedItem = { ...items[idx] };
     const {
       name,
+      enAuthor,
       author,
+      enAncientText,
       ancientText,
       onClickTrigger,
       onClickOpenModal,
       reward,
       setHint,
+      setEnHint,
       setGuidelines,
+      setEnGuidelines,
+      enClickableWords,
       clickableWords,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
+      enOnCollectFail,
     } = selectedItem;
+    if (idx < 0) return;
     setS({
       name,
       reward,
+      enAncientText,
       ancientText,
       onClickTrigger,
       onClickOpenModal,
       description: reward?.description,
+      enDescription: reward?.enDescription,
+      enAuthor,
       author,
       setHint,
+      setEnHint,
+      enClickableWords,
       clickableWords,
+      setEnGuidelines,
       setGuidelines,
       inventorySrc,
       collectableIfHandHas,
       onCollectFail,
+      enOnCollectFail,
     });
   }, [items, idx]);
+
+  const [miniGame] = miniGames.filter((e) => e.scene === store.scene);
 
   const setS = (y: Partial<Item>) => $S((s) => ({ ...s, ...y }));
 
@@ -150,6 +181,36 @@ export default function ItemSettings() {
             }}
             className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
           ></input>
+
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English Author
+          </label>
+          <input
+            value={s.enAuthor}
+            onBlur={() => onBlur("enAuthor")}
+            onChange={(evt) => {
+              setS({
+                enAuthor: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
+
+          <br />
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English Ancient text clickable words seperated by comma (,)
+          </label>
+          <input
+            value={s.enClickableWords}
+            onBlur={() => onBlur("enClickableWords")}
+            onChange={(evt) => {
+              setS({
+                enClickableWords: evt.currentTarget.value,
+              });
+            }}
+            className="text-sm  bg-transparent w-full focus:outline-none h-10 p-2 border border-gray-600"
+          ></input>
         </>
       )}
       <br />
@@ -165,6 +226,26 @@ export default function ItemSettings() {
           onChange={(evt) => {
             setS({
               ancientText: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+        <div className="text-right w-full text-xs text-gray-400">
+          nl = new Line
+        </div>
+      </div>
+
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Ancient text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          onBlur={() => onBlur("enAncientText")}
+          value={s.enAncientText}
+          onChange={(evt) => {
+            setS({
+              enAncientText: evt.currentTarget.value,
             });
           }}
         ></textarea>
@@ -190,6 +271,24 @@ export default function ItemSettings() {
           }}
         ></textarea>
       </div>
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Hint Text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          value={s.enSetHint}
+          onBlur={() => onBlur("enSetHint")}
+          onChange={(evt) => {
+            setS({
+              enSetHint: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+      </div>
+      <br />
+
       <br />
       <label className="block text-left text-xs font-medium mb-2 text-gray-200">
         on click set Guidance text
@@ -207,7 +306,24 @@ export default function ItemSettings() {
           }}
         ></textarea>
       </div>
+      <br />
 
+      <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+        English: on click set Guidance text
+      </label>
+      <div>
+        <textarea
+          className="bg-transparent w-full focus:outline-none p-2 border border-gray-600"
+          rows={5}
+          onBlur={() => onBlur("setEnGuidelines")}
+          value={s.setEnGuidelines}
+          onChange={(evt) => {
+            setS({
+              setEnGuidelines: evt.currentTarget.value,
+            });
+          }}
+        ></textarea>
+      </div>
       <br />
 
       <Popover
@@ -229,7 +345,7 @@ export default function ItemSettings() {
         }
       >
         <AllImage
-          imgs={imgs}
+          imgs={items}
           onClick={(o) => {
             _updateItem(id, {
               replaceImg: o?.src ?? null,
@@ -295,8 +411,19 @@ export default function ItemSettings() {
             }
           >
             <AllImage
-              imgs={getOnlyItems(imgs)}
+              imgs={getOnlyItems(items)}
               onClick={async (o) => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: o,
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
                 _updateItem(id, {
                   reward: o,
                 });
@@ -317,7 +444,21 @@ export default function ItemSettings() {
                   description: evt.currentTarget.value,
                 });
               }}
-              onBlur={() => {
+              onBlur={async () => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: {
+                      ...selectedItem.reward,
+                      description: s.description,
+                    },
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
                 _updateItem(id, {
                   reward: {
                     ...selectedItem.reward,
@@ -326,10 +467,59 @@ export default function ItemSettings() {
                 });
               }}
             />
+            <label className="block text-left text-xs font-medium mt-4 mb-2 text-gray-200">
+              English: Reward Msg
+            </label>
+            <textarea
+              className="bg-transparent h-20  w-full text-sm focus:outline-none p-2 border border-gray-600"
+              rows={5}
+              value={s.enDescription}
+              onChange={(evt) => {
+                setS({
+                  enDescription: evt.currentTarget.value,
+                });
+              }}
+              onBlur={async () => {
+                await axios
+                  .post("/api/miniGames", {
+                    ...miniGame,
+                    scene: store.scene,
+                    type: "replace",
+                    reward: {
+                      ...selectedItem.reward,
+                      enDescription: s.enDescription,
+                    },
+                  })
+                  .then(() => {
+                    mutate("/api/miniGames");
+                  });
+
+                _updateItem(id, {
+                  reward: {
+                    ...selectedItem.reward,
+                    enDescription: s.enDescription,
+                  },
+                });
+              }}
+            />
           </div>
           <br />
         </>
       )}
+      <div className="divider"></div>
+      <Select
+        onChange={(v) => {
+          _updateItem(id, {
+            setStatus: v.value as Status,
+          });
+        }}
+        value={selectedItem.setStatus}
+        label="onClick setStatus"
+        options={[undefined, ...statusArr].map((o) => ({
+          label: o === undefined ? "-" : o,
+          value: o === undefined ? null : o,
+        }))}
+      ></Select>
 
       {selectedItem.collectable && (
         <>
@@ -405,6 +595,25 @@ export default function ItemSettings() {
               onChange={(evt) => {
                 setS({
                   onCollectFail: evt.currentTarget.value,
+                });
+              }}
+              className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"
+              rows={5}
+            ></textarea>
+          </div>
+
+          <br />
+
+          <label className="block text-left text-xs font-medium mb-2 text-gray-200">
+            English: Hint text when fail to collect (no required tool selected)
+          </label>
+          <div>
+            <textarea
+              value={s.enOnCollectFail}
+              onBlur={() => onBlur("enOnCollectFail")}
+              onChange={(evt) => {
+                setS({
+                  enOnCollectFail: evt.currentTarget.value,
                 });
               }}
               className="bg-transparent  w-full focus:outline-none p-2 border border-gray-600"

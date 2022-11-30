@@ -2,9 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import {
   addAchievements,
   addItem,
+  deleteItems,
   getAchievements,
   getInventory,
-  getItems,
+  updateInv,
 } from "../../lib/inventory/api";
 import { withSessionRoute } from "../../lib/withSession";
 
@@ -26,9 +27,11 @@ async function invRoute(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case "GET":
       return getInventory(req, res);
+    case "DELETE":
+      return deleteItems(req, res);
 
     case "PUT":
-      return getItems(req, res);
+      return updateInv(req, res);
     case "POST":
       return addItem(req, res);
     default:

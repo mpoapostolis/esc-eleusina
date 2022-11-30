@@ -14,6 +14,7 @@ import {
   useStore,
 } from "../../store";
 import { useRouter } from "next/dist/client/router";
+import { useT } from "../../Hooks/useT";
 
 export const ACHIEVEMENTS = ["kernos", "stone", "peiraias"];
 
@@ -247,9 +248,6 @@ function Select() {
     case "MENU":
       return <Main />;
 
-    case "SELECT_LEVEL":
-      return <SceneSelect />;
-
     case "ACHIEVEMENTS":
       return (
         <div className="grid grid-cols-4 gap-4">
@@ -286,11 +284,6 @@ const Main = () => {
       />
 
       <MenuItem
-        goTo="/menu/select-level"
-        src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
-        title="Select level"
-      />
-      <MenuItem
         goTo="/menu/history"
         src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
         title="History"
@@ -318,6 +311,7 @@ const Main = () => {
 const Menu: NextPage = () => {
   const store = useStore();
   const ref = useRef<HTMLAudioElement>(null);
+  const t = useT();
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-black bg-opacity-50">
       <audio ref={ref} src={`/sounds/${store.sound ?? `01_click`}.wav`} />
@@ -331,23 +325,18 @@ const Menu: NextPage = () => {
         <MenuItem
           goTo="/"
           src="https://s2.svgbox.net/octicons.svg?ic=play&color=fff9"
-          title="Play"
+          title={t("menu_play")}
         />
 
         <MenuItem
           goTo="/menu/select-level"
           src="https://s2.svgbox.net/materialui.svg?ic=grid_view&color=fff9"
-          title="Select level"
-        />
-        <MenuItem
-          goTo="/menu/history"
-          src="https://s2.svgbox.net/materialui.svg?ic=library_books&color=fff9"
-          title="History"
+          title={t("menu_select_level")}
         />
         <MenuItem
           goTo="/menu/achievements"
           src="https://s2.svgbox.net/octicons.svg?ic=star-fill&color=fff9"
-          title="Achievements"
+          title={t("menu_achievements")}
         />
         <form
           className="w-full h-full"
@@ -357,7 +346,7 @@ const Menu: NextPage = () => {
           <MenuItem
             type="submit"
             src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
-            title="LOGOUT"
+            title={t("menu_logout")}
           />
         </form>
         <form
@@ -368,7 +357,7 @@ const Menu: NextPage = () => {
           <MenuItem
             type="submit"
             src="https://s2.svgbox.net/hero-outline.svg?ic=logout&color=fff9"
-            title="RESET"
+            title={t("menu_reset")}
           />
         </form>
       </div>

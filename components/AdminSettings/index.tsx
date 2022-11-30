@@ -4,12 +4,12 @@ import Popover from "../Popover";
 import Select from "../Select";
 import { v4 as uuidv4 } from "uuid";
 import { DetailedHTMLProps, InputHTMLAttributes, useEffect } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
 import SceneSettings from "./SceneSettings";
 import SelectedItem from "./SelectedItem";
 import { addItem, useItems, useLibrary } from "../../lib/items";
 import useMutation from "../../Hooks/useMutation";
+import { Reward } from "../../pages/game";
 
 export function Checkbox(
   props: { label: string } & DetailedHTMLProps<
@@ -33,7 +33,7 @@ export function Checkbox(
 }
 
 export function AllImage(props: {
-  imgs?: (Item | Img)[] | undefined;
+  imgs?: (Item | Img | Reward)[] | undefined;
   onClick: (e?: Item | Img | null) => void;
 }) {
   return (

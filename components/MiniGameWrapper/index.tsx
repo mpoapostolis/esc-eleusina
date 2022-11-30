@@ -6,7 +6,9 @@ import { Status } from "../../store";
 
 export default function MiniGameWrapper(props: {
   children: ReactNode;
+  onClose?: (e?: any) => void;
   status: Status;
+  id?: string;
 }) {
   const store = useStore();
   return (
@@ -26,10 +28,16 @@ export default function MiniGameWrapper(props: {
         "fixed  h-screen  w-screen flex  pointer-events-auto  items-center  justify-center z-50"
       )}
     >
-      <div className="bg-black  w-[90%] h-5/6 pointer-events-auto">
+      <div
+        id={props.id}
+        className="bg-black  w-[90%] h-5/6 pointer-events-auto"
+      >
         <img
           onClick={() => {
-            store.setStatus("RUNNING");
+            if (props.onClose) props?.onClose?.();
+            else {
+              store.setStatus("RUNNING");
+            }
           }}
           src="https://s2.svgbox.net/materialui.svg?ic=close&color=fff"
           role="button"

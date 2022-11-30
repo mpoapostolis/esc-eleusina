@@ -24,6 +24,8 @@ export async function addItem(req: NextApiRequest, res: NextApiResponse) {
 
 export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
+  const scene = req.query.scene;
+
   const db = await myDb();
   const inv = await db
     .collection("inventory")
@@ -40,6 +42,7 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
         },
       },
       { $unwind: "$item" },
+
       {
         $replaceRoot: {
           newRoot: { $mergeObjects: ["$item", { used: "$used" }] },
@@ -54,18 +57,69 @@ export async function getInventory(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json(inv);
 }
 
-export async function getItems(req: NextApiRequest, res: NextApiResponse) {
+export async function deleteItems(req: NextApiRequest, res: NextApiResponse) {
   const id = req.session.user?.id;
   const db = await myDb();
+  const items = await db
+    .collection("items")
+    .find({
+      $or: [
+        {
+          scene: "pp1_elaiourgeio",
+        },
+        {
+          scene: "pp2_kikeonas",
+        },
+      ],
+    })
+    .toArray();
+
+  await db.collection("used").deleteMany({
+    userId: new ObjectId(id),
+    $or: [
+      {
+        scene: "pp1_elaiourgeio",
+      },
+      {
+        scene: "pp2_kikeonas",
+      },
+    ],
+  });
+  const inv = await db.collection("inventory").deleteMany({
+    userId: new ObjectId(id),
+    itemId: {
+      $in: items.map((e) => new ObjectId(e._id)),
+    },
+  });
+  res.status(200).json(inv);
+}
+
+export async function updateInv(req: NextApiRequest, res: NextApiResponse) {
+  const id = req.session.user?.id;
+  const db = await myDb();
+
+  if (req.body.used) {
+    const item = await db.collection("items").findOne({
+      _id: new ObjectId(`${req.query.itemId}`),
+    });
+    const achievement = await db.collection("library").findOne({
+      _id: new ObjectId(`${req.query.itemId}`),
+    });
+    await db.collection("used").insertOne({
+      userId: new ObjectId(id),
+      itemId: new ObjectId(`${item?._id ?? achievement?._id}`),
+      scene: item?.scene ?? "intro",
+      ...req.body,
+    });
+  }
+
   const inv = await db.collection("inventory").updateOne(
     {
       userId: new ObjectId(id),
       itemId: new ObjectId(`${req.query.itemId}`),
     },
     {
-      $set: {
-        used: true,
-      },
+      $set: req.body,
     }
   );
   res.status(200).json(inv);
@@ -83,7 +137,7 @@ export async function getAchievements(
       userId: new ObjectId(id),
     })
     .toArray();
-  res.status(200).json(inv);
+  res.status(200).json(inv.map((e) => ({ ...e, _id: e.rewardId })));
 }
 
 export async function addAchievements(
@@ -92,6 +146,7 @@ export async function addAchievements(
 ) {
   const id = req.session.user?.id;
   const db = await myDb();
+
   const inv = await db.collection("achievements").insertOne({
     userId: new ObjectId(id),
     ...req.body,

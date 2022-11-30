@@ -1,6 +1,6 @@
 import { Euler, Vector3 } from "three";
 import { HintType } from "../../components/AdminSettings/SceneSettings";
-import { Reward } from "../../pages";
+import { Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
 import { Scene } from "../../store";
 
@@ -15,6 +15,7 @@ export type ACHIEVEMENT = {
 export type Item = {
   _id?: string;
   imgId: string;
+  clock?: string;
   isMiniGame?: boolean;
   isEpic?: boolean;
   hintType?: HintType;
@@ -24,6 +25,7 @@ export type Item = {
   orderInsideTheBox?: string[];
   scene: Scene;
   rewardDescription?: string;
+  useRequiredItems?: boolean
   orderBoxError?: string;
   goToScene?: Scene;
   lexigram?: string;

@@ -12,6 +12,7 @@ import {
   updateItem,
   useMiniGames,
 } from "../../lib/items";
+import { Reward } from "../../pages/game";
 import { Img } from "../../pages/admin";
 import { Item, useStore } from "../../store";
 import Range from "../Range";
@@ -19,6 +20,7 @@ import Select from "../Select";
 import BoxSettings from "./BoxSettings";
 import ItemSettings from "./ItemSettings";
 import PortalSettings from "./PortalSettings";
+import { Input } from "../input";
 
 const Component = (props: { type?: string }) => {
   switch (props.type) {
@@ -70,11 +72,11 @@ export default function SelectedItem() {
     store.setRot(null);
   };
 
+  const rewards = miniGames.map((e) => e.reward).filter(Boolean);
   useEffect(() => {
     const rot = selectedItem.rotation;
     if (rot) store.setRot(rot);
   }, []);
-
   return (
     <>
       <div className="flex">
@@ -132,7 +134,7 @@ export default function SelectedItem() {
             step={0.1}
             onPointerUp={(e) => {
               _updateItem(id, {
-                rotation: store.rot,
+                scale: store.scale,
               });
             }}
             onChange={(evt) => {
@@ -193,6 +195,52 @@ export default function SelectedItem() {
           {!selectedItem.type && (
             <>
               <Checkbox
+                label="Super duper"
+                checked={selectedItem.superDuper}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    superDuper: evt.target.checked,
+                    hidden: evt.target.checked,
+                  });
+                }}
+              />
+              {selectedItem.superDuper && (
+                <Input
+                  onBlur={(evt) => {
+                    _updateItem(id, {
+                      description: evt.currentTarget.value,
+                    });
+                  }}
+                  label="description"
+                  type="input"
+                />
+              )}
+
+              <div className="my-1" />
+
+              <Checkbox
+                label="auto collect"
+                checked={selectedItem.autoCollect}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    autoCollect: evt.target.checked,
+                  });
+                }}
+              />
+              <div className="my-1" />
+
+              <Checkbox
+                label="hide from inventory"
+                checked={selectedItem.hideFromInventory}
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    hideFromInventory: evt.target.checked,
+                  });
+                }}
+              />
+              <div className="my-1" />
+
+              <Checkbox
                 label="Collect to inventory"
                 checked={selectedItem.collectable}
                 onChange={(evt) => {
@@ -216,6 +264,17 @@ export default function SelectedItem() {
                   });
                 }}
                 checked={selectedItem.selectable}
+              />
+              <div className="my-1" />
+
+              <Checkbox
+                label="Hidden"
+                onChange={(evt) => {
+                  _updateItem(id, {
+                    hidden: !selectedItem.hidden,
+                  });
+                }}
+                checked={selectedItem.hidden}
               />
             </>
           )}
@@ -252,7 +311,7 @@ export default function SelectedItem() {
               }}
               value={selectedItem.type}
               label="type"
-              options={[null, "portal", "box"].map((o) => ({
+              options={[null, "portal", "box", "hint"].map((o) => ({
                 label: o === null ? "-" : o,
                 value: o,
               }))}
@@ -266,24 +325,47 @@ export default function SelectedItem() {
           <label className="block  text-left text-xs font-medium mb-4 text-gray-300">
             Required items in inventory to show {selectedItem.name}
           </label>
-          <div className="grid gap-2 grid-cols-6">
-            {items
-              ?.filter(
+          <Checkbox
+            label="Not in inventory"
+            checked={selectedItem.notInInventory}
+            onChange={(evt) => {
+              _updateItem(id, {
+                notInInventory: evt.currentTarget.checked,
+              });
+            }}
+          />
+          <Checkbox
+            label="Use all items in inventory"
+            checked={selectedItem.useRequiredItems}
+            onChange={(evt) => {
+              _updateItem(id, {
+                useRequiredItems: evt.currentTarget.checked,
+              });
+            }}
+          />
+
+          <br />
+          <div className="grid gap-2 grid-cols-4">
+            {[
+              ...items?.filter(
                 (e) => !["hint", "portal", "guidelines"].includes(`${e.type}`)
-              )
+              ),
+              ...rewards,
+            ]
+              .filter((e) => Boolean(e))
               .map((i) => {
-                const item = i as Item;
+                const item = i as Item | Reward;
                 return (
                   <div
-                    key={i._id}
+                    key={item._id}
                     onClick={() => {
-                      updateRequired(`${i._id}`);
+                      updateRequired(`${item._id}`);
                     }}
                     className={clsx(
                       "relative  bg-opacity-20 cursor-pointer border border-gray-700 w-full",
                       {
                         "bg-green-500": selectedItem.requiredItems?.includes(
-                          `${i._id}`
+                          `${item._id}`
                         ),
                       }
                     )}
@@ -293,6 +375,9 @@ export default function SelectedItem() {
                       src={item.src}
                       alt=""
                     />
+                    <span className="absolute bottom-0 text-center  text-xs">
+                      {item.name}
+                    </span>
                   </div>
                 );
               })}
