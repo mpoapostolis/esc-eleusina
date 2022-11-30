@@ -505,7 +505,7 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
                       return usedIds.length > 0 && usedIds.includes(e);
                     })
                   );
-
+                  //
                   return (
                     <Sprite
                       isRequiredUsed={isRequiredUsed}
