@@ -15,6 +15,7 @@ import {
 import useMutation from "../../Hooks/useMutation";
 import { updateItem } from "../../lib/items";
 import axios from "axios";
+import { updateUser } from "../../lib/users";
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,6 +31,8 @@ export default function Sprite(props: Item) {
     `/api/inventory?scene=${store.scene}`,
     `/api/used?scene=${store.scene}`,
   ]);
+
+  const [_updateUser] = useMutation(updateUser, ["/api/auth"]);
 
   const texture1 = useLoader(
     THREE.TextureLoader,
@@ -168,6 +171,8 @@ export default function Sprite(props: Item) {
 
               await delay(2000);
               await deleteScene();
+
+              await _updateUser({ scene });
               store.setScene(scene as Scene);
             }
           } else {
@@ -199,7 +204,11 @@ export default function Sprite(props: Item) {
           if (store.hand === props.collectableIfHandHas) {
             store.setIsHintVisible(false);
           } else {
-            store.setHint(props.onCollectFail);
+            store.setHint(
+              props.locale === "en"
+                ? props.enOnCollectFail
+                : props.onCollectFail
+            );
             store.setIsHintVisible(true, `07_add_to_inventory_WRONG`);
             return;
           }
@@ -219,7 +228,7 @@ export default function Sprite(props: Item) {
         }
         if (props.setHint) {
           store.setHint(
-            props.locale === "en" ? props.setEnHint : props.setHint
+            props.locale === "en" ? props.enSetHint : props.setHint
           );
         }
         if (props.setGuidelines)
