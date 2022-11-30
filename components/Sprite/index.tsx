@@ -149,7 +149,6 @@ export default function Sprite(props: Item) {
             store.setIsHintVisible(true, `10_add_to_target_WRONG`);
           }
         }
-
         if (
           store.hand &&
           !props.collectableIfHandHas &&
@@ -167,13 +166,13 @@ export default function Sprite(props: Item) {
             const [scene, msg] = m;
             if (store.scene === "pp2_kikeonas") {
               store.setHint(msg);
-              store.setIsHintVisible(true);
+              store.setIsHintVisible(true, `07_add_to_inventory_WRONG`);
 
               await delay(2000);
               await deleteScene();
 
               await _updateUser({ scene });
-              store.setScene(scene as Scene);
+              store.takeScreenShot(scene as Scene);
             }
           } else {
             store.setHint(m[0]);
