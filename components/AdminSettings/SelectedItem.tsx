@@ -334,6 +334,16 @@ export default function SelectedItem() {
               });
             }}
           />
+          <Checkbox
+            label="Use all items in inventory"
+            checked={selectedItem.useRequiredItems}
+            onChange={(evt) => {
+              _updateItem(id, {
+                useRequiredItems: evt.currentTarget.checked,
+              });
+            }}
+          />
+
           <br />
           <div className="grid gap-2 grid-cols-4">
             {[

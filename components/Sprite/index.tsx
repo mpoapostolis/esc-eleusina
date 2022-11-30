@@ -48,11 +48,13 @@ export default function Sprite(props: Item) {
   const achIds = achievements.map((e) => e.rewardId);
   const notInInventory = (a: boolean) => (props.notInInventory ? !a : a);
   const show = notInInventory(
-    props?.requiredItems
-      ?.map((v) => {
-        return invHas(v) || store.usedItems[v] || achIds.includes(v);
-      })
-      .every((e) => e) ?? true
+    (props.isRequiredUsed &&
+      props?.requiredItems
+        ?.map((v) => {
+          return invHas(v) || store.usedItems[v] || achIds.includes(v);
+        })
+        .every((e) => e)) ??
+      true
   );
 
   useEffect(() => {

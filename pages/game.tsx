@@ -423,7 +423,6 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       });
     }
   };
-
   return (
     <div {...bind()} className="select-none">
       <FadeOut time={timer.time} />
@@ -496,8 +495,20 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
                   if (p.requiredToolToReplace) {
                     isReplaced = usedIds.includes(p.requiredToolToReplace._id);
                   }
+
+                  const doIHaveReq = (p?.requiredItems ?? []).length > 0;
+                  const useRequired = (a?: boolean) =>
+                    !doIHaveReq || p.useRequiredItems ? a : true;
+
+                  const isRequiredUsed = useRequired(
+                    p.requiredItems?.every((e) => {
+                      return usedIds.length > 0 && usedIds.includes(e);
+                    })
+                  );
+
                   return (
                     <Sprite
+                      isRequiredUsed={isRequiredUsed}
                       locale={locale}
                       isReplaced={isReplaced}
                       id={props?.id}
