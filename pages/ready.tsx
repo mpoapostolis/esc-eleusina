@@ -20,7 +20,7 @@ export default function Login() {
     <>
       <section
         style={{
-          backgroundImage: `url(/scenes/xorafi_low.jpg.jpg)`,
+          backgroundImage: `url(/scenes/xorafi_low.jpg)`,
           backgroundSize: "100% 100%",
         }}
         className="h-screen flex flex-col justify-around w-screen overflow-hidden"
