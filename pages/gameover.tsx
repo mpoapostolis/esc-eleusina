@@ -13,11 +13,12 @@ export default function GameOver() {
       <h1 className="text-6xl font-extrabold text-white tracking-widest">
         Ο χρόνος σας έληξε
       </h1>
-      <Link href="/">
-        <button className="mt-5 w-full">
+      <br />
+      <form action="/api/auth?type=reset" method="POST">
+        <a className="mt-5 w-full">
           <button className="btn w-72   btn-xl">Προσπαθήστε πάλι</button>
-        </button>
-      </Link>
+        </a>
+      </form>
     </main>
   );
 }

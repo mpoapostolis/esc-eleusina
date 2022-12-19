@@ -325,7 +325,7 @@ export function WordSearch() {
                   </span>
                 </li>
               ))}
-              <div
+              {/* <div
                 onClick={() => {
                   setFound(solved(words));
                   solve();
@@ -333,28 +333,35 @@ export function WordSearch() {
                 className="btn"
               >
                 solve
-              </div>
+              </div> */}
             </ul>
             <div className="divider"></div>
-            <span className="w-full text-lg text-center break-words">
-              {t(
-                store.scene === "pp4_navagio"
-                  ? "wordsearch_text_pp4"
-                  : "wordsearch_text_cerberus"
-              )}
-              <br />
-              <span className=" text-center ">
+            <div className="bg-white  p-4 bg-opacity-10">
+              <span className="w-full text-lg text-left  break-words">
                 {t(
                   store.scene === "pp4_navagio"
-                    ? "wordsearch_author_pp4"
-                    : "wordsearch_author_cerberus"
+                    ? "wordsearch_text_pp4"
+                    : "wordsearch_text_cerberus"
                 )
                   .split("nl")
                   .map((e, idx) => (
                     <div key={idx}>{e}</div>
                   ))}
+
+                <br />
+                <span className=" text-left ">
+                  {t(
+                    store.scene === "pp4_navagio"
+                      ? "wordsearch_author_pp4"
+                      : "wordsearch_author_cerberus"
+                  )
+                    .split("nl")
+                    .map((e, idx) => (
+                      <div key={idx}>{e}</div>
+                    ))}
+                </span>
               </span>
-            </span>
+            </div>
           </div>
         </div>
       </div>

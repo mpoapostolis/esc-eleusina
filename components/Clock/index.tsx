@@ -93,6 +93,7 @@ export function Clock() {
               </div>
             ))}
           </div>
+
           <div className="divider"></div>
           <br />
           <div className="relative w-full flex justify-center ">
@@ -167,6 +168,10 @@ export function Clock() {
         <div className="h-full  flex">
           <div className="divider-horizontal divider h-full"></div>
           <div className="w-full h-full p-4">
+            {store.scene === "pp5_navagio_int" && (
+              <p className="text-md font-bold">{t("clock_pp5_title")}</p>
+            )}
+            <div className="divider"></div>
             <ul className=" mx-auto list-disc">
               {words.map((word, idx) => (
                 <li
@@ -184,13 +189,27 @@ export function Clock() {
               ))}
             </ul>
             <div className="divider"></div>
-            <span className="w-full text-2xl text-center break-words">
-              {t("clock_text")
-                .split("nl")
-                .map((e, idx) => (
-                  <div key={idx}>{e}</div>
-                ))}
-            </span>
+            <div className="bg-white  p-4 bg-opacity-10">
+              <span className="w-full text-lg text-left break-words">
+                {t(
+                  store.scene === "arxaiologikos"
+                    ? "clock_text"
+                    : "clock_pp5_text"
+                )
+                  .split("nl")
+                  .map((e, idx) => (
+                    <div key={idx}>{e}</div>
+                  ))}
+              </span>
+              <br />
+
+              <span className=" text-left ">
+                {store.scene === "pp5_navagio_int" &&
+                  t("clock_pp5_author")
+                    .split("nl")
+                    .map((e, idx) => <div key={idx}>{e}</div>)}
+              </span>
+            </div>
           </div>
         </div>
       </div>

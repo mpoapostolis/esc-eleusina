@@ -38,7 +38,10 @@ type Key =
   | "wordsearch_title_pp4"
   | "wordsearch_text_pp4"
   | "wordsearch_author_pp4"
-  | "learn_more";
+  | "learn_more"
+  | "clock_pp5_title"
+  | "clock_pp5_text"
+  | "clock_pp5_author";
 
 const translations: Record<Locale, Record<Key, string>> = {
   en: {
@@ -84,6 +87,19 @@ const translations: Record<Locale, Record<Key, string>> = {
   The couple at the foot of the hill are the Maiden and the painter. He confides the secrets of his soul that drive him to death. The goddess, for her part, peacefully initiates him into Hades, while urging him to reconsider life.`,
     wordsearch_author_pp4: ``,
     learn_more: `Learn more`,
+    clock_pp5_title: `Search through the ‘lengths’ and the ‘widths’ of the poem to find the words starting with the same letter to complete the ‘Compass of the Caryatid of Eleusis`,
+    clock_pp5_text: `My meek struggle,
+to cast off the tinge of shadow
+from my face, knowledge
+of the most secret expression, though I emerge
+from the darkness.
+Aphrodite, emerging from the waters
+the generator of coiling, the transparent
+and mighty beauty, help me
+to overcome the density of substance
+that then closed upon me,
+an obstacle visible to the light of heaven.`,
+    clock_pp5_author: `Persephone, Zoe Karelli, 1973`,
   },
   el: {
     menu_play: "Παίξε",
@@ -137,6 +153,20 @@ const translations: Record<Locale, Record<Key, string>> = {
   Το ζευγάρι στους πρόποδες του υψώματος είναι η Κόρη και ο ζωγράφος. Εκείνος εμπιστεύεται τα μυστικά της ψυχής του που τον ωθούν στο θάνατο. Η θεά από τη μεριά της τον μυεί γαλήνια στον Άδη, ενώ ταυτόχρονα προτρέπει για επανεξέταση της ζωής.`,
     wordsearch_author_pp4: ``,
     learn_more: `Μάθε περισσότερα`,
+    clock_pp5_title: `Ψάξε σε όλα τα ‘μήκη’ και τα ‘πλάτη’ του ποιήματος να βρεις τις λέξεις που ξεκινούν από το ίδιο γράμμα και συμπλήρώσε την Πυξίδα της Καρυάτιδας της Ελευσίνας`,
+    clock_pp5_text: `Δεινή μου πάλη,
+nl για ν’ αποβάλλω τη χροιά της σκιάς
+nl απ’ το πρόσωπό μου, γνώση
+nl της πιο μυστικής έκφρασης κι ας αναδύομαι
+nl απ’ το σκοτάδι.
+nl Κύπρις, αναδυομένη απ’ των νερών
+nl τη γεννήτρα συσπείρωση, τη διάφανη
+nl και παντοδύναμη καλλονή, βοήθησέ με
+nl την πυκνότητα να ξεπεράσω της ύλης
+nl που, τότε, κλείστηκε απάνω μου,
+nl εμπόδιο φανερό στο φως τ’ ουρανού.
+`,
+    clock_pp5_author: `Περσεφόνη, Ζωή Καρέλλη, 1973`,
   },
 };
 

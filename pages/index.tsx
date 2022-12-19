@@ -16,7 +16,6 @@ const arr = [
 export default function Home() {
   const router = useRouter();
   const [user, setUser] = useState(router.query.newUser);
-  console.log(user);
   return (
     <div className="h-screen w-screen grid grid-cols-5 gap-2 bg-black ">
       {arr.map((e, idx) => (

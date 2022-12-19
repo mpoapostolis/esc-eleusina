@@ -330,10 +330,13 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
   const invHas = (id?: string) => inventory.map((e) => e._id).includes(id);
 
   useEffect(() => {
-    const autoCollect = sceneItems.find((e) => e.autoCollect);
-    const doIHave = invHas(autoCollect?._id);
-    if (autoCollect && !doIHave) _addItem(autoCollect?._id);
+    sceneItems.forEach(async (item) => {
+      if (!item.autoCollect) return;
+      const doIHave = invHas(item?._id);
+      if (!doIHave) await _addItem(item?._id);
+    });
   }, [sceneItems, inventory]);
+
   const [boxItem] = sceneItems.filter(
     (e) => e.scene === store.scene && e.type === "box"
   );
@@ -363,8 +366,7 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
       onSuccess: () => {
         setTimeout(() => {
           store.setStatus("RUNNING");
-          if (store.scene === "intro" && user?.test)
-            router.push("/congratulations");
+          if (store.scene === "intro" && user?.test) router.push("/congrats");
           else if (store.scene === "intro") store.setScene("pp0_xorafi");
         }, 3000);
       },
@@ -399,7 +401,7 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
     }
 
     if (store.scene === "final" && usedItems.length === 1) {
-      router.push("/gameover");
+      router.push("/congrats");
     }
   }, [store.scene, usedItems, locale, achievements]);
 
