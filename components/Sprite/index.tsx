@@ -71,7 +71,9 @@ export default function Sprite(props: Item) {
     ref.current.rotation.copy(props.rotation);
   }, [props.position, ref.current]);
 
-  let s = show ? props.scale ?? 0.2 : 0;
+  const hiddenGuidelines =
+    props.setGuidelines && achIds.includes(`${props.rewardId}`);
+  let s = hiddenGuidelines ? 0 : show ? props.scale ?? 0.2 : 0;
   if (hovered) s += 0.01;
   const collected = props.collectable && invHas(props._id);
   const { scale } = useSpring({

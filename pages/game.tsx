@@ -513,6 +513,7 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
                   //
                   return (
                     <Sprite
+                      rewardId={rewardId}
                       isRequiredUsed={isRequiredUsed}
                       locale={locale}
                       isReplaced={isReplaced}
