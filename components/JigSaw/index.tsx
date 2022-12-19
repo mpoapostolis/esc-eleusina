@@ -210,7 +210,7 @@ export default function JigSaw() {
           />
         ))}
       </div>
-      <div
+      {/* <div
         onClick={() => {
           if (store.reward) {
             _addReward(store.reward);
@@ -220,7 +220,7 @@ export default function JigSaw() {
         className="btn"
       >
         solve
-      </div>
+      </div> */}
     </MiniGameWrapper>
   );
 }
