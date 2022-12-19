@@ -10,6 +10,7 @@ import {
 declare module "iron-session" {
   interface IronSessionData {
     user?: {
+      test?: boolean;
       id: string;
       admin?: boolean;
     };

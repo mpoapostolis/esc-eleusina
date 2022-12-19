@@ -125,57 +125,40 @@ const wordOb: Partial<Record<Scene, Structure>> = {
       Ι..Τ...Α...Ο,
       Ν..Ι.......Σ,
       Α..Α........`,
-    en_structure: ``,
     en_words: [],
+    en_structure: ``,
   },
   pp4_navagio: {
+    el_words: [`ΕΝΑΣΤΡΗ ΝΥΧΤΑ`, `ΠΡΟΠΟΔΕΣ`, `ΑΣΤΕΡΙΑ`, `ΧΑΡΑ`, `ΑΔΗΣ`],
+    el_structure: `
+      ............,
+      ΕΝΑΣΤΡΗΝΥΧΤΑ,
+      ............,
+      .........Π..,
+      ..ΑΔΗΣ...Ρ..,
+      .........Ο..,
+      .......Χ.Π..,
+      .......Α.Ο..,
+      .......Ρ.Δ..,
+      .ΑΣΤΕΡΙΑ.Ε..,
+      .........Σ..,
+      ............`,
+    en_words: [`STARRY NIGHT`, `FOOTHILLS`, `STARS`, `JOY`, `HADES`],
     en_structure: `
       ............,
-      ....U.STARRY,
-      ....N.......,
-      ...STARS....,
-      ....O.......,
-      ....U.....N.,
-      .PEACEFUL.I.,
-      ....H.....G.,
-      ....E.....H.,
-      ....D.....T.,
-      .....HADES..,
-      GLOSSY......`,
-    en_words: [
-      `PEACEFUL`,
-      `HADES`,
-      `UNTOUCHED`,
-      `STARS`,
-      `STARRY`,
-      `NIGHT`,
-      `GLOSSY`,
-    ],
-    el_words: [
-      `ΓΑΛΗΝΙΟΣ ΑΔΗΣ`,
-      `ΑΝΕΓΓΙΧΤΑ`,
-      `ΑΣΤΕΡΙΑ`,
-      `ΣΤΙΛΠΝΟ`,
-      `ΒΡΑΔΥ`,
-      `ΕΝΑΣΤΡΗ`,
-      `ΝΥΧΤΑ`,
-    ],
-    el_structure: `
-      ........Γ...,
-      ΑΝΕΓΓΙΧΤΑ...,
-      Σ.......Λ...,
-      Τ.......Η...,
-      Ε..ΣΤΙΛΠΝΟ..,
-      Ρ.......Ι...,
-      Ι.......Ο.Β.,
-      Α.......Σ.Ρ.,
-      ....ΝΥΧΤΑ.Α.,
-      ........Δ.Δ.,
-      ..ΕΝΑΣΤΡΗ.Υ.,
-      ........Σ...`,
+      .STARRYNIGHT,
+      ............,
+      .........F..,
+      ..HADES..O..,
+      .........O..,
+      ....JOY..T..,
+      .........H..,
+      .........I..,
+      .STARS...L..,
+      .........L..,
+      .........S..`,
   },
 };
-
 type Word = { id: string; letter: string };
 export function WordSearch() {
   const [found, setFound] = useState<Word[][]>([]);
@@ -317,7 +300,7 @@ export function WordSearch() {
         <div className="h-full  flex">
           <div className="divider-horizontal divider h-full"></div>
           <div className="w-full h-full p-4">
-            <p className="text-md">
+            <p className="text-md font-bold">
               {t(
                 store.scene === "pp4_navagio"
                   ? "wordsearch_title_pp4"
@@ -365,7 +348,11 @@ export function WordSearch() {
                   store.scene === "pp4_navagio"
                     ? "wordsearch_author_pp4"
                     : "wordsearch_author_cerberus"
-                )}
+                )
+                  .split("nl")
+                  .map((e, idx) => (
+                    <div key={idx}>{e}</div>
+                  ))}
               </span>
             </span>
           </div>

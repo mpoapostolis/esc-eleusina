@@ -278,7 +278,9 @@ function Loader(props: { src?: string }) {
   return null;
 }
 
-const Home: NextPage<{ id: string; time: number }> = (props) => {
+const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
+  props
+) => {
   const store = useStore();
   const bind = useGesture({
     onWheel: (w) =>
@@ -361,7 +363,9 @@ const Home: NextPage<{ id: string; time: number }> = (props) => {
       onSuccess: () => {
         setTimeout(() => {
           store.setStatus("RUNNING");
-          if (store.scene === "intro") store.setScene("pp0_xorafi");
+          if (store.scene === "intro" && user?.test)
+            router.push("/congratulations");
+          else if (store.scene === "intro") store.setScene("pp0_xorafi");
         }, 3000);
       },
     }

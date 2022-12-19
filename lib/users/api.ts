@@ -28,7 +28,7 @@ export async function createUser(req: NextApiRequest, res: NextApiResponse) {
   const db = await myDb();
   const id = await db
     .collection("users")
-    .insertOne({ ...rest, password: _password });
+    .insertOne({ ...rest, password: _password, test: true });
   await req.session.destroy();
   req.session.user = {
     id: id.insertedId.toString(),
@@ -148,6 +148,7 @@ export async function getUser(req: NextApiRequest, res: NextApiResponse) {
       projection: {
         _id: 1,
         time: 1,
+        test: 1,
         userName: 1,
         scene: 1,
       },
