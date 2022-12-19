@@ -96,20 +96,42 @@ export function Clock() {
           <div className="divider"></div>
           <br />
           <div className="relative w-full flex justify-center ">
-            <div className="absolute left-0 top-0 border  w-40 h-40 rounded-full flex items-center justify-center">
-              One
-            </div>
-
-            <div className="absolute right-0 top-0 border  w-40 h-40 rounded-full flex items-center justify-center">
-              One
-            </div>
-            <div className="absolute left-0 bottom-0 border  w-40 h-40 rounded-full flex items-center justify-center">
-              One
-            </div>
-            <div className="absolute right-0 bottom-0 border  w-40 h-40 rounded-full flex items-center justify-center">
-              One
-            </div>
-
+            {store.scene === "arxaiologikos" && (
+              <div className="absolute left-0 top-0 w-40 h-40 rounded-full grid place-items-center">
+                <img
+                  className="w-full h-full"
+                  src="/images/word_clock_1.png"
+                  alt=""
+                />
+              </div>
+            )}
+            {store.scene === "arxaiologikos" && (
+              <div className="absolute right-0 top-0 w-40 h-40 rounded-full grid place-items-center">
+                <img
+                  className="w-full h-full"
+                  src="/images/word_clock_2.png"
+                  alt=""
+                />
+              </div>
+            )}{" "}
+            {store.scene === "arxaiologikos" && (
+              <div className="absolute left-0 bottom-0 w-40 h-40 rounded-full grid place-items-center">
+                <img
+                  className="w-full h-full"
+                  src="/images/word_clock_3.png"
+                  alt=""
+                />
+              </div>
+            )}{" "}
+            {store.scene === "arxaiologikos" && (
+              <div className="absolute right-0 bottom-0 w-40 h-40 rounded-full grid place-items-center">
+                <img
+                  className="w-full h-full"
+                  src="/images/word_clock_4.png"
+                  alt=""
+                />
+              </div>
+            )}
             <div
               onMouseLeave={reset}
               className="rounded-full border border-base-100 overflow-hidden   relative w-96 h-96"
@@ -163,7 +185,11 @@ export function Clock() {
             </ul>
             <div className="divider"></div>
             <span className="w-full text-2xl text-center break-words">
-              {t("clock_text")}
+              {t("clock_text")
+                .split("nl")
+                .map((e, idx) => (
+                  <div key={idx}>{e}</div>
+                ))}
             </span>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { withSessionSsr } from "../lib/withSession";
 import myDb from "../helpers/mongo";
 import clsx from "clsx";
+import { useState } from "react";
 
 const arr = [
   "/images/btn-1.png",
@@ -14,13 +15,12 @@ const arr = [
 ];
 export default function Home() {
   const router = useRouter();
+  const [user, setUser] = useState(router.query.newUser);
+  console.log(user);
   return (
     <div className="h-screen w-screen grid grid-cols-5 gap-2 bg-black ">
       {arr.map((e, idx) => (
-        <Link
-          key={idx}
-          href={router.query?.newUser ? "/learn-more?newUser=true" : "/ready"}
-        >
+        <Link key={idx} href={user ? "/learn-more?newUser=true" : "/ready"}>
           <button
             className="disabled:cursor-not-allowed relative disabled:opacity-30 overflow-hidden"
             disabled={idx !== 2}

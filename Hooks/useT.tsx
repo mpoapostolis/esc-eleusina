@@ -37,7 +37,8 @@ type Key =
   | "wordsearch_author_cerberus"
   | "wordsearch_title_pp4"
   | "wordsearch_text_pp4"
-  | "wordsearch_author_pp4";
+  | "wordsearch_author_pp4"
+  | "learn_more";
 
 const translations: Record<Locale, Record<Key, string>> = {
   en: {
@@ -82,6 +83,7 @@ const translations: Record<Locale, Record<Key, string>> = {
   The ship has crossed the glossy night bringing back Persephone. The joy is so great, even the stars have gone down low. But they remain untouched to maintain balance.
   The couple at the foot of the hill are the Maiden and the painter. He confides the secrets of his soul that drive him to death. The goddess, for her part, peacefully initiates him into Hades, while urging him to reconsider life.`,
     wordsearch_author_pp4: ``,
+    learn_more: `Learn more`,
   },
   el: {
     menu_play: "Παίξε",
@@ -134,6 +136,7 @@ const translations: Record<Locale, Record<Key, string>> = {
   Το πλοίο έχει διασχίσει το στιλπνό βράδυ φέρνοντας πίσω την Περσεφόνη. Η χαρά τόση, ακόμα και τ’ αστέρια έχουν κατεβεί χαμηλά. Αλλά παραμένουν ανέγγιχτα για διατήρηση της ισορροπίας.
   Το ζευγάρι στους πρόποδες του υψώματος είναι η Κόρη και ο ζωγράφος. Εκείνος εμπιστεύεται τα μυστικά της ψυχής του που τον ωθούν στο θάνατο. Η θεά από τη μεριά της τον μυεί γαλήνια στον Άδη, ενώ ταυτόχρονα προτρέπει για επανεξέταση της ζωής.`,
     wordsearch_author_pp4: ``,
+    learn_more: `Μάθε περισσότερα`,
   },
 };
 
