@@ -126,7 +126,7 @@ const wordOb: Partial<Record<Scene, Structure>> = {
       Ν..Ι.......Σ,
       Α..Α........`,
     en_words: [
-      `UNGLY DOG`,
+      `UGLY DOG`,
       `DARK`,
       `CROOKED TEETH`,
       `LARGE EYES`,
