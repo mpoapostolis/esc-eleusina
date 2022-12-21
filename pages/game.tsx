@@ -439,7 +439,7 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
       <AncientText />
       <Reward />
       <WordSearch />
-      {doIHaveSuperDuper && (
+      {user?.test && doIHaveSuperDuper && (
         <button
           onClick={() => {
             giveReward();
