@@ -125,8 +125,28 @@ const wordOb: Partial<Record<Scene, Structure>> = {
       Ι..Τ...Α...Ο,
       Ν..Ι.......Σ,
       Α..Α........`,
-    en_words: [],
-    en_structure: ``,
+    en_words: [
+      `UNGLY DOG`,
+      `DARK`,
+      `CROOKED TEETH`,
+      `LARGE EYES`,
+      `AMBIGUOUS`,
+      `TRUSTING`,
+      `STRANGE`,
+    ],
+    en_structure: `
+.T.........A,
+.R.........M,
+.UGLYDOG.L.B,
+.S...A...A.I,
+.T...R...R.G,
+.I...K...G.U,
+.N.......E.O,
+.G.STRANGE.U,
+.........Y.S,
+CROOKEDTEETH,
+.........S..
+`,
   },
   pp4_navagio: {
     el_words: [`ΕΝΑΣΤΡΗ ΝΥΧΤΑ`, `ΠΡΟΠΟΔΕΣ`, `ΑΣΤΕΡΙΑ`, `ΧΑΡΑ`, `ΑΔΗΣ`],
@@ -159,6 +179,7 @@ const wordOb: Partial<Record<Scene, Structure>> = {
       .........S..`,
   },
 };
+
 type Word = { id: string; letter: string };
 export function WordSearch() {
   const [found, setFound] = useState<Word[][]>([]);
