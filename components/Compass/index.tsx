@@ -24,7 +24,7 @@ const points = [
       zoom: 12,
     },
     desc: `Διάσημα τα ναυπηγεία του - ανατολικά `,
-    enDesc: `Famous shipyards - east`,
+    enDesc: `Famous shipyards  - east`,
   },
   {
     name: "Σαλαμίνα",
@@ -36,12 +36,11 @@ const points = [
       zoom: 12,
     },
     desc: `Νησί που συνδέεται με αρχαία ναυμαχία - δυτικά  `,
-    enDesc: `Island connected with ancient battle - west`,
+    enDesc: `Island associated with an ancient naval battle - west`,
   },
-
   {
     name: "Σαρανταπόταμος",
-    enName: "Sarandapotamos",
+    enName: "Sarantapotamos",
     bearing: 0,
     coords: {
       lng: 23.554976,
@@ -49,7 +48,7 @@ const points = [
       zoom: 12,
     },
     desc: `Αλλιώς ο ποταμός Ελευσινιακός Κηφισσός - βόρεια `,
-    enDesc: `Otherwise the river Eleusinian Kifissos - north`,
+    enDesc: `A different name for Eleusinianos Kifissos river - north`,
   },
   {
     name: "Σαρωνικός",
@@ -61,7 +60,7 @@ const points = [
       zoom: 12,
     },
     desc: `Ο Ελευσινιακός Κόλπος αποτελεί μικρότερο κομμάτι του -νότια `,
-    enDesc: `The Eleusinian Gulf is a smaller part of it - south`,
+    enDesc: `The Gulf of Elefsina is a smaller part of it - south`,
   },
 ];
 
@@ -250,8 +249,8 @@ export default function Compass() {
                   timer.reset();
                   setHelp(
                     locale === "el"
-                      ? `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη`
-                      : `In this battle, the fleet of Xerxes was destroyed`
+                      ? `Σε αυτή τη ναυμαχία καταστράφηκε ο στόλος του Ξέρξη.`
+                      : `In this battle, the fleet of Xerxes was destroyed.`
                   );
                   timer.start();
 
@@ -322,8 +321,8 @@ export default function Compass() {
                   timer.reset();
                   setHelp(
                     locale === "el"
-                      ? `Το πρώτο συνθετικό του ποταμού είναι αριθμός`
-                      : `The first compound of the river is a number`
+                      ? `Το πρώτο συνθετικό του ποταμού είναι αριθμός.`
+                      : `The first compound of the river is a number.`
                   );
                   timer.start();
 
@@ -344,8 +343,8 @@ export default function Compass() {
                   timer.reset();
                   setHelp(
                     locale === "el"
-                      ? `Κόλπος της Αττικής, γνωστός για τη ρύπανσή του`
-                      : `Bay of Attica, known for its pollution`
+                      ? `Κόλπος της Αττικής, γνωστός για τη ρύπανσή του.`
+                      : `Bay of Attica, known for its pollution.`
                   );
                   timer.start();
 

@@ -387,7 +387,7 @@ const Home: NextPage<{ id: string; time: number; test?: boolean }> = (
       store.setIsHintVisible(true);
       store.setHint(
         locale === "en"
-          ? `Place the items you won in their matching slot in order to unlock the room`
+          ? `Put all the items in your collection in the appropriate imprints to complete your mission.`
           : "Τοποθέτησε τα αντικείμενα που κέρδισες στη θέση που ταιριάζουν για να ξεκλειδώσεις το δωμάτιο."
       );
     }
