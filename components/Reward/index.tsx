@@ -36,7 +36,7 @@ export default function Reward() {
           <h1 className=" text-lg text-yellow-400">{t("reward_title")}</h1>
           <div className="divider"></div>
           <div className="bg-gray-300 bg-opacity-10 w-full h-full p-8 flex justify-center my-auto">
-            <img className="w-fit object-fit h-60" src={store.reward?.src} />
+            <img className="w-fit object-scale-down " src={store.reward?.src} />
           </div>
           <div className="mt-4 text-xl" style={shadow}>
             {store.reward?.[locale === "en" ? "enDescription" : "description"]}
