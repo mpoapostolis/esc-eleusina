@@ -96,8 +96,8 @@ export default function Login() {
             )}
           </div>
 
-          <div className=" w-3/5 mx-auto  py-4 h-fit p-8 my-auto rounded-xl bg-black  text-center bg-opacity-70">
-            <h1 className=" text-xl font-bold text-white drop-shadow leading-10 ">
+          <div className=" w-3/5 mx-auto  py-4 h-fit p-8 my-auto rounded-xl bg-black  text-justify bg-opacity-70">
+            <h1 className=" text-xl font-bold  text-white drop-shadow leading-10 ">
               {t("ready_text")
                 .split("nl")
                 .map((item, key) => {

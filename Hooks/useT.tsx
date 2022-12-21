@@ -66,13 +66,13 @@ const translations: Record<Locale, Record<Key, string>> = {
     ready_new_game: `New Game`,
     ready_level: `Level`,
     ready_back: `<`,
-    ready_text: `Welcome to Elefsina!nl
+    ready_text: `Welcome to Elefsina!nl-nl 
 This is the starting point of your adventure to become an Initiate. You will move into different places.nl
 You’ll wander in Light and Darkness!nl
 You’ll get lost in the Past and the Present!nl
 You’ll crawl in the Underword and the Upworld!nl
 You’ll get confused with Being and Appearing!nl
-Along the way you will find excerpts from literary texts. Do not pass them by. They will help you solve the puzzles. Each escape from the individual places offers you an object that will help you in your final escape...nl
+Along the way you will find excerpts from literary texts. Do not pass them by. They will help you solve the puzzles. Each escape from the individual places offers you an object that will help you in your final escape...nl-nl
 Will you manage to escape and become an Initiate or will you be trapped forever?`,
     ready_easy: `Easy`,
     ready_hard: `Hard`,

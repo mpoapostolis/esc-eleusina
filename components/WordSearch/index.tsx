@@ -224,10 +224,8 @@ export function WordSearch() {
       _id: "sss",
       name: giveItem.name,
       src: giveItem.src,
-      description:
-        "Τοποθέτησε τον καθρέφτη για να δεις το διπλό καθρέφτισμα του Κέρβερου.",
-      enDescription:
-        "Place the mirror to see the double reflection of the Cervantes.",
+      description: "Κέρδισες έναν καθρέφτη.",
+      enDescription: "Υου have won a mirror.",
     });
   };
 
