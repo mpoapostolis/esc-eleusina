@@ -41,6 +41,7 @@ export type Scene =
   | "pp3_ntamari"
   | "pp4_navagio"
   | "pp5_navagio_int"
+  | "pp6_mixanostasio"
   | "final";
 
 export const scenes = [
@@ -57,6 +58,7 @@ export const scenes = [
   "pp3_ntamari",
   "pp4_navagio",
   "pp5_navagio_int",
+  "pp6_mixanostasio",
   "final",
 ];
 
